@@ -1,0 +1,5 @@
+starting-balance: 100
+market:
+  max-listings-per-player: 10
+  min-price: 1
+  max-price: 1000000

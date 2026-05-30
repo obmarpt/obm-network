@@ -1,0 +1,64 @@
+lobby:
+  world: Lobby
+  spawn:
+    x: 0.5
+    y: 164.0
+    z: 0.5
+    yaw: -90
+    pitch: 0
+
+
+holograms:
+  smp_playtime:
+    world: Lobby
+    x: 56
+    y: 65
+    z: 35
+
+  smp_blocks:
+    world: Lobby
+    x: 60
+    y: 65
+    z: 35
+
+  smp_kills:
+    world: Lobby
+    x: 64
+    y: 65
+    z: 35
+
+  smp_money:
+    world: Lobby
+    x: 68
+    y: 65
+    z: 35
+
+  uhc_kills:
+    world: Lobby
+    x: 80
+    y: 65
+    z: 35
+    
+  uhc_deaths:
+    world: Lobby
+    x: 84
+    y: 65
+    z: 35
+
+  uhc_playtime:
+    world: Lobby
+    x: 88
+    y: 65
+    z: 35
+
+  uhc_lives:
+    world: Lobby
+    x: 92
+    y: 65
+    z: 35
+
+  uhc_kdr:
+    world: Lobby
+    x: 96
+    y: 65
+    z: 35

@@ -1,0 +1,32 @@
+name: OBM-SMP
+main: com.obm.network.smp.SMPPlugin
+version: 1.0
+api-version: 1.20
+author: Obmar
+description: SMP da OMD Network com economia e mercado de players
+
+depend:
+  - OBM-Core
+softdepend:
+  - Vault
+
+commands:
+  smp:
+    description: Entrar no SMP principal
+    usage: /smp
+
+  rush:
+    description: Entrar no Rush SMP
+    usage: /rush
+
+  shop:
+    description: Abrir a loja de Rush SMP
+    usage: /shop [list|buy <item>]
+
+  money:
+    description: Ver saldo e pagar outros jogadores
+    usage: /money [pay <player> <amount>]
+
+  market:
+    description: Mercado de SMP com ofertas de players
+    usage: /market <list|sell|buy|remove>

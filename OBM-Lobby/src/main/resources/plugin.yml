@@ -1,0 +1,22 @@
+name: OBM-Lobby
+main: com.obm.network.lobby.OBMLobbyPlugin
+version: 1.0
+api-version: 1.20
+author: Obmar
+description: Lobby da OMD Network
+
+depend:
+  - OBM-Core
+
+softdepend:
+  - PlaceholderAPI
+  - DecentHolograms
+
+commands:
+  lobby:
+    description: Voltar para o lobby
+    usage: /lobby
+
+  menu:
+    description: Abrir menu principal
+    usage: /menu

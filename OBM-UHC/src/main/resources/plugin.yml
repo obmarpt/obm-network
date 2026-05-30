@@ -1,0 +1,21 @@
+name: OBM-UHC
+version: 1.0
+main: com.obm.network.uhc.OBMUHCPlugin
+api-version: 1.20
+
+depend: [OBM-Core]
+softdepend:
+  - OBM-Lobby
+
+commands:
+  uhcstats:
+    description: Vê as tuas estatísticas do UHC.
+  revive:
+    description: Revive um jogador com 2 vidas.
+    permission: uhc.revive
+  revivegeral:
+    description: Revive todos os jogadores eliminados de uma vez.
+    permission: uhc.revive
+  revivetotal:
+    description: Revive o jogador com vidas, itens e teleporta-o para onde morreu.
+    permission: uhc.revive
