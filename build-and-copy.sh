@@ -1,60 +1,36 @@
 #!/bin/bash
 
-echo "===== BUILD + COPY JARS ====="
+echo "===== COPY JARS ====="
 
 BASE_DIR="$(pwd)"
 OUTPUT_DIR="$BASE_DIR/PluginsCompilados"
 
-# ✅ criar pasta
 mkdir -p "$OUTPUT_DIR"
 
 echo ""
-echo "👉 Compilar OBM-Core (install)"
-cd "$BASE_DIR/OBM-Core" || exit
-mvn clean install
+echo "👉 A copiar JARs..."
 
-echo ""
-echo "👉 Compilar plugins em paralelo"
+MODULES=("OBM-Core" "OBM-SMP" "OBM-Lobby" "OBM-Inventory" "OBM-UHC")
 
-PLUGINS=("OBM-Inventory" "OBM-Lobby" "OBM-UHC" "OBM-SMP")
-
-# ✅ array de processos
-PIDS=()
-
-for plugin in "${PLUGINS[@]}"
+for module in "${MODULES[@]}"
 do
-(
-    echo "👉 [THREAD] Compilar $plugin"
+    echo "👉 $module"
 
-    cd "$BASE_DIR/$plugin" || exit
-    mvn clean package
+    JAR_FILE=$(find "$BASE_DIR/$module/target" -name "*.jar" ! -name "*original*")
 
-    JAR_FILE=$(find target -name "*.jar" ! -name "*original*")
+    if [ -z "$JAR_FILE" ]; then
+        echo "❌ JAR não encontrado para $module (compila primeiro!)"
+        continue
+    fi
 
-    echo "✔ Copiar $plugin"
+    echo "✔ Copiado $module"
     cp "$JAR_FILE" "$OUTPUT_DIR"
-
-) &
-
-PIDS+=($!) # guarda PID
-done
-
-# ✅ esperar todos
-for pid in "${PIDS[@]}"
-do
-    wait $pid
 done
 
 echo ""
-echo "👉 Copiar OBM-Core também"
-CORE_JAR=$(find "$BASE_DIR/OBM-Core/target" -name "*.jar" ! -name "*original*")
-cp "$CORE_JAR" "$OUTPUT_DIR"
+echo "✅ TODOS OS JARS COPIADOS"
 
-echo ""
-echo "✅ BUILD COMPLETO"
-
-# ✅ abrir pasta (Windows via Git Bash / WSL)
-echo "👉 Abrir pasta de output"
+echo "👉 Abrir pasta"
 explorer.exe "$(cygpath -w "$OUTPUT_DIR")"
 
 echo ""

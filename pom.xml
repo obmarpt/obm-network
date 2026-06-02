@@ -22,10 +22,10 @@
 
     <modules>
         <module>OBM-Core</module>
+        <module>OBM-SMP</module>
         <module>OBM-Lobby</module>
         <module>OBM-Inventory</module>
         <module>OBM-UHC</module>
-        <module>OBM-SMP</module>
     </modules>
 
     <repositories>

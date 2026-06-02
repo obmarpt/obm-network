@@ -43,7 +43,8 @@ public void onWorldChange(PlayerChangedWorldEvent e) {
 
     Bukkit.getScheduler().runTaskLater(plugin, () -> {
 
-            if (skipRestore && (OBMCorePlugin.get().getWorldModeService().isUHC(to) || OBMCorePlugin.get().getWorldModeService().isRush(to))) {
+            if (skipRestore && (OBMCorePlugin.get().getWorldModeService().isUHC(to)
+                    || OBMCorePlugin.get().getWorldModeService().isSMP(to))) {
                 player.getInventory().clear();
             } else {
                 manager.loadInventory(player, to);

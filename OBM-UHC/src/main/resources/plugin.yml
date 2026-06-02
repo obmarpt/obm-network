@@ -17,5 +17,5 @@ commands:
     description: Revive todos os jogadores eliminados de uma vez.
     permission: uhc.revive
   revivetotal:
-    description: Revive o jogador com vidas, itens e teleporta-o para onde morreu.
+    description: Revive o jogador com vidas, itens e teleporta-o para o spawn seguro do UHC.
     permission: uhc.revive

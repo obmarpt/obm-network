@@ -17,7 +17,6 @@ public class InventoryManager {
 
     private final Map<UUID, ItemStack[]> uhcInv = new HashMap<>();
     private final Map<UUID, ItemStack[]> smpInv = new HashMap<>();
-    private final Map<UUID, ItemStack[]> rushInv = new HashMap<>();
     private final DataStore dataStore;
     private final WorldModeService wms;
 
@@ -26,11 +25,9 @@ public class InventoryManager {
         this.wms = OBMCorePlugin.get().getWorldModeService();
     }
 
-    // ✅ CONVERTE WORLD → MODE
     private String getMode(String world) {
         if (wms.isUHC(world)) return "uhc";
         if (wms.isSMP(world)) return "smp";
-        if (wms.isRush(world)) return "rush";
         return null;
     }
 
@@ -44,7 +41,6 @@ public class InventoryManager {
         switch (mode) {
             case "uhc" -> uhcInv.put(uuid, contents);
             case "smp" -> smpInv.put(uuid, contents);
-            case "rush" -> rushInv.put(uuid, contents);
         }
 
         dataStore.setInventory(uuid, "mode." + mode, contents);
@@ -54,7 +50,7 @@ public class InventoryManager {
     public void loadInventory(Player p, String world) {
         String mode = getMode(world);
         if (mode == null) {
-            p.getInventory().clear(); // lobby
+            p.getInventory().clear();
             return;
         }
 
@@ -64,7 +60,6 @@ public class InventoryManager {
         switch (mode) {
             case "uhc" -> contents = uhcInv.get(uuid);
             case "smp" -> contents = smpInv.get(uuid);
-            case "rush" -> contents = rushInv.get(uuid);
         }
 
         if (contents == null) {

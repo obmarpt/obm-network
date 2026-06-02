@@ -1,0 +1,75 @@
+package com.obm.network.smp.progression;
+
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+public class RankCatalog {
+
+    private final List<RankDefinition> ranks = new ArrayList<>();
+    private final Map<String, RankDefinition> rankById = new LinkedHashMap<>();
+    private String defaultRankId = "bronze";
+
+    public void reload(FileConfiguration config) {
+        ranks.clear();
+        rankById.clear();
+        defaultRankId = config.getString("ranks.default", "bronze");
+
+        ConfigurationSection section = config.getConfigurationSection("ranks.levels");
+        if (section == null) {
+            return;
+        }
+
+        for (String id : section.getKeys(false)) {
+            ConfigurationSection rankSection = section.getConfigurationSection(id);
+            if (rankSection == null) {
+                continue;
+            }
+            RankDefinition rank = new RankDefinition(
+                    id,
+                    rankSection.getString("display-name", id),
+                    rankSection.getInt("cost", 0),
+                    rankSection.getDouble("sell-boost", 0),
+                    rankSection.getDouble("kill-boost", 0),
+                    rankSection.getDouble("shop-discount", 0)
+            );
+            ranks.add(rank);
+            rankById.put(id, rank);
+        }
+    }
+
+    public String getDefaultRankId() {
+        return defaultRankId;
+    }
+
+    public List<RankDefinition> getRanks() {
+        return Collections.unmodifiableList(ranks);
+    }
+
+    public Optional<RankDefinition> getRank(String id) {
+        return Optional.ofNullable(rankById.get(id));
+    }
+
+    public Optional<RankDefinition> getNextRank(String currentRankId) {
+        int index = indexOf(currentRankId);
+        if (index < 0 || index + 1 >= ranks.size()) {
+            return Optional.empty();
+        }
+        return Optional.of(ranks.get(index + 1));
+    }
+
+    public int indexOf(String rankId) {
+        for (int i = 0; i < ranks.size(); i++) {
+            if (ranks.get(i).id().equals(rankId)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+}

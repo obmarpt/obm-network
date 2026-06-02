@@ -114,23 +114,45 @@ public class MarketService {
 
         MarketListing listing = optional.get();
         if (listing.getSeller().equals(buyer.getUniqueId())) {
-            return MarketSaleResult.error("Você não pode comprar seu próprio anúncio.");
+            return MarketSaleResult.error("Não podes comprar o teu próprio anúncio.");
         }
 
         int total = listing.getTotalValue();
         if (!economyService.canAfford(buyer.getUniqueId(), total)) {
-            return MarketSaleResult.error("Saldo insuficiente. Você precisa de " + total + " coins.");
+            return MarketSaleResult.error("Saldo insuficiente. Precisas de " + total + " coins.");
         }
 
         ItemStack itemToGive = listing.getItem().clone();
-        var leftovers = buyer.getInventory().addItem(itemToGive);
-        if (!leftovers.isEmpty()) {
-            return MarketSaleResult.error("Inventário cheio. Libere espaço antes de comprar.");
+        if (buyer.getInventory().firstEmpty() == -1
+                && buyer.getInventory().first(itemToGive.getType()) == -1) {
+            return MarketSaleResult.error("Inventário cheio. Libera espaço antes de comprar.");
         }
 
-        economyService.transfer(buyer.getUniqueId(), listing.getSeller(), total);
-        removeListing(id, listing.getSeller());
-        return MarketSaleResult.success("Comprado com sucesso! Você pagou " + total + " coins.");
+        config.set("listings." + id, null);
+        save();
+
+        if (!economyService.transfer(buyer.getUniqueId(), listing.getSeller(), total)) {
+            restoreListing(id, listing);
+            return MarketSaleResult.error("Pagamento falhou. Tenta novamente.");
+        }
+
+        var leftovers = buyer.getInventory().addItem(itemToGive);
+        if (!leftovers.isEmpty()) {
+            economyService.transfer(listing.getSeller(), buyer.getUniqueId(), total);
+            restoreListing(id, listing);
+            return MarketSaleResult.error("Inventário cheio. Compra cancelada e reembolsada.");
+        }
+
+        return MarketSaleResult.success("§aCompra confirmada! Pagaste §e" + total + " coins§a.");
+    }
+
+    private void restoreListing(String id, MarketListing listing) {
+        String base = "listings." + id + ".";
+        config.set(base + "seller", listing.getSeller().toString());
+        config.set(base + "item", listing.getItem());
+        config.set(base + "price", listing.getPrice());
+        config.set(base + "created_at", listing.getCreatedAt());
+        save();
     }
 
     public MarketSaleResult removeListing(String id, UUID owner) {

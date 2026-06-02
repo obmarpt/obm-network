@@ -12,16 +12,25 @@ softdepend:
 
 commands:
   smp:
-    description: Entrar no SMP principal
+    description: Entrar no SMP
     usage: /smp
 
-  rush:
-    description: Entrar no Rush SMP
-    usage: /rush
-
   shop:
-    description: Abrir a loja de Rush SMP
-    usage: /shop [list|buy <item>]
+    description: Abrir a loja do SMP
+    usage: /shop
+
+  sell:
+    description: Vender itens no SMP
+    usage: /sell
+
+  ah:
+    description: Abrir o leilão do SMP
+    usage: /ah
+    aliases: [auction]
+
+  auction:
+    description: Abrir o leilão do SMP
+    usage: /auction
 
   money:
     description: Ver saldo e pagar outros jogadores
@@ -30,3 +39,12 @@ commands:
   market:
     description: Mercado de SMP com ofertas de players
     usage: /market <list|sell|buy|remove>
+
+  rank:
+    description: Ver rank, comprar rank ou listar ranks
+    usage: /rank [buy|list]
+  
+  
+  top:
+    description: Ver leaderboards
+    usage: /top

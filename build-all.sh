@@ -1,33 +1,37 @@
 #!/bin/bash
 
-echo "===== COMPILAR OBM NETWORK ====="
+echo "===== COPY JARS ====="
 
 BASE_DIR="$(pwd)"
+OUTPUT_DIR="$BASE_DIR/PluginsCompilados"
+
+mkdir -p "$OUTPUT_DIR"
 
 echo ""
-echo "➡️  Compilar OBM-Core (install)"
-cd "$BASE_DIR/OBM-Core" || exit
-mvn clean install
+echo "👉 A copiar JARs..."
+
+MODULES=("OBM-Core" "OBM-SMP" "OBM-Lobby" "OBM-Inventory" "OBM-UHC")
+
+for module in "${MODULES[@]}"
+do
+    echo "👉 $module"
+
+    JAR_FILE=$(find "$BASE_DIR/$module/target" -name "*.jar" ! -name "*original*")
+
+    if [ -z "$JAR_FILE" ]; then
+        echo "❌ JAR não encontrado para $module (compila primeiro!)"
+        continue
+    fi
+
+    echo "✔ Copiado $module"
+    cp "$JAR_FILE" "$OUTPUT_DIR"
+done
 
 echo ""
-echo "➡️  Compilar OBM-Inventory"
-cd "$BASE_DIR/OBM-Inventory" || exit
-mvn clean package
+echo "✅ TODOS OS JARS COPIADOS"
+
+echo "👉 Abrir pasta"
+explorer.exe "$(cygpath -w "$OUTPUT_DIR")"
 
 echo ""
-echo "➡️  Compilar OBM-Lobby"
-cd "$BASE_DIR/OBM-Lobby" || exit
-mvn clean package
-
-echo ""
-echo "➡️  Compilar OBM-UHC"
-cd "$BASE_DIR/OBM-UHC" || exit
-mvn clean package
-
-echo ""
-echo "➡️  Compilar OBM-SMP"
-cd "$BASE_DIR/OBM-SMP" || exit
-mvn clean package
-
-echo ""
-echo "✅ BUILD COMPLETO TERMINADO!"
+echo "📂 Pasta aberta: $OUTPUT_DIR"

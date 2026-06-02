@@ -1,5 +1,167 @@
 starting-balance: 100
+
+spawn:
+  protection-radius: 100
+  center:
+    use-world-spawn: true
+
+economy:
+  kill-reward: 150
+  death-penalty: 50
+  death-penalty-enabled: true
+
+exploits:
+  kill-cooldown-minutes: 30
+
+rewards:
+  playtime:
+    enabled: true
+    interval-minutes: 30
+    amount: 500
+
+ranks:
+  default: bronze
+  levels:
+    bronze:
+      display-name: "Bronze"
+      cost: 0
+      sell-boost: 0.0
+      kill-boost: 0.0
+      shop-discount: 0.0
+    silver:
+      display-name: "Silver"
+      cost: 2500
+      sell-boost: 0.05
+      kill-boost: 0.05
+      shop-discount: 0.03
+    gold:
+      display-name: "Gold"
+      cost: 10000
+      sell-boost: 0.10
+      kill-boost: 0.10
+      shop-discount: 0.05
+    diamond:
+      display-name: "Diamond"
+      cost: 35000
+      sell-boost: 0.15
+      kill-boost: 0.15
+      shop-discount: 0.08
+    emerald:
+      display-name: "Emerald"
+      cost: 100000
+      sell-boost: 0.20
+      kill-boost: 0.20
+      shop-discount: 0.10
+
+levels:
+  xp-per-kill: 25
+  xp-per-sell-coin: 0.4
+  xp-per-playtime-interval: 20
+  base-xp-required: 100
+  xp-scale: 1.15
+  max-level: 100
+  reward-per-level-coins: 25
+  bonus-per-level:
+    sell: 0.002
+    kill: 0.001
+
+shop:
+  blocked-items:
+    - NETHERITE_INGOT
+    - NETHERITE_BLOCK
+    - NETHERITE_SCRAP
+    - ELYTRA
+    - DRAGON_EGG
+    - BEACON
+  categories:
+    blocks:
+      COBBLESTONE: 8
+      STONE: 8
+      OAK_LOG: 15
+      OAK_PLANKS: 12
+      GLASS: 18
+      BRICKS: 28
+      SAND: 6
+      GRAVEL: 6
+    food:
+      BREAD: 20
+      COOKED_BEEF: 35
+      GOLDEN_APPLE: 750
+      COOKED_PORKCHOP: 35
+      BAKED_POTATO: 15
+    ores:
+      COAL: 30
+      IRON_INGOT: 120
+      GOLD_INGOT: 220
+      DIAMOND: 550
+      EMERALD: 450
+      REDSTONE: 22
+      LAPIS_LAZULI: 28
+    armor:
+      IRON_HELMET: 280
+      IRON_CHESTPLATE: 480
+      IRON_LEGGINGS: 420
+      IRON_BOOTS: 250
+      DIAMOND_HELMET: 1100
+      DIAMOND_CHESTPLATE: 1600
+      DIAMOND_LEGGINGS: 1400
+      DIAMOND_BOOTS: 950
+    tools:
+      IRON_SWORD: 350
+      IRON_PICKAXE: 420
+      IRON_AXE: 400
+      DIAMOND_SWORD: 1200
+      DIAMOND_PICKAXE: 1450
+      DIAMOND_AXE: 1350
+      BOW: 200
+      ARROW: 5
+      FISHING_ROD: 110
+      SHEARS: 85
+
+sell:
+  prices:
+    COBBLESTONE: 3
+    STONE: 3
+    OAK_LOG: 6
+    OAK_PLANKS: 5
+    SAND: 2
+    GRAVEL: 2
+    BREAD: 8
+    COOKED_BEEF: 15
+    COOKED_PORKCHOP: 15
+    BAKED_POTATO: 6
+    COAL: 12
+    IRON_INGOT: 55
+    GOLD_INGOT: 100
+    DIAMOND: 250
+    EMERALD: 200
+    REDSTONE: 10
+    LAPIS_LAZULI: 12
+    IRON_HELMET: 130
+    IRON_CHESTPLATE: 220
+    IRON_LEGGINGS: 190
+    IRON_BOOTS: 115
+    DIAMOND_HELMET: 520
+    DIAMOND_CHESTPLATE: 780
+    DIAMOND_LEGGINGS: 650
+    DIAMOND_BOOTS: 450
+    IRON_SWORD: 165
+    IRON_PICKAXE: 195
+    DIAMOND_SWORD: 580
+    DIAMOND_PICKAXE: 700
+    BOW: 95
+    ARROW: 2
+    ROTTEN_FLESH: 1
+    BONE: 3
+    STRING: 4
+    GUNPOWDER: 10
+
 market:
+  max-listings-per-player: 10
+  min-price: 1
+  max-price: 1000000
+
+auction:
   max-listings-per-player: 10
   min-price: 1
   max-price: 1000000

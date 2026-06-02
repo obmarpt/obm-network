@@ -1,5 +1,7 @@
 package com.obm.network.smp.service;
 
+import com.obm.network.core.OBMCorePlugin;
+import com.obm.network.core.storage.DataStore;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
@@ -9,12 +11,17 @@ import java.util.UUID;
 
 public class EconomyService {
 
+    private static final String TOTAL_EARNED_KEY = "smp_total_earned";
+    private static final String TOTAL_SPENT_KEY = "smp_total_spent";
+
     private final Economy economy;
     private final int startingBalance;
+    private final DataStore dataStore;
 
     public EconomyService(Economy economy, int startingBalance) {
         this.economy = economy;
         this.startingBalance = Math.max(0, startingBalance);
+        this.dataStore = OBMCorePlugin.get().getDataStore();
     }
 
     public boolean isEnabled() {
@@ -34,29 +41,52 @@ public class EconomyService {
 
     public int getBalance(UUID uuid) {
         ensureAccount(uuid);
-        return (int) Math.floor(economy.getBalance(getOfflinePlayer(uuid)));
+        return Math.max(0, (int) Math.floor(economy.getBalance(getOfflinePlayer(uuid))));
     }
 
     public boolean canAfford(UUID uuid, int amount) {
-        return getBalance(uuid) >= amount;
+        return amount <= 0 || getBalance(uuid) >= amount;
     }
 
     public EconomyResponse deposit(UUID uuid, int amount) {
         if (amount <= 0) {
-            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.SUCCESS, "No deposit needed");
+            return new EconomyResponse(0, getBalance(uuid), EconomyResponse.ResponseType.SUCCESS, "No deposit needed");
         }
 
         ensureAccount(uuid);
-        return economy.depositPlayer(getOfflinePlayer(uuid), amount);
+        EconomyResponse response = economy.depositPlayer(getOfflinePlayer(uuid), amount);
+        if (response.transactionSuccess()) {
+            trackEarned(uuid, amount);
+        }
+        return response;
     }
 
     public EconomyResponse withdraw(UUID uuid, int amount) {
         if (amount <= 0) {
-            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.SUCCESS, "No withdraw needed");
+            return new EconomyResponse(0, getBalance(uuid), EconomyResponse.ResponseType.SUCCESS, "No withdraw needed");
         }
 
         ensureAccount(uuid);
-        return economy.withdrawPlayer(getOfflinePlayer(uuid), amount);
+        if (!canAfford(uuid, amount)) {
+            return new EconomyResponse(0, getBalance(uuid), EconomyResponse.ResponseType.FAILURE, "Insufficient funds");
+        }
+        EconomyResponse response = economy.withdrawPlayer(getOfflinePlayer(uuid), amount);
+        if (response.transactionSuccess()) {
+            trackSpent(uuid, amount);
+        }
+        return response;
+    }
+
+    public boolean safeWithdraw(UUID uuid, int amount) {
+        if (amount <= 0) {
+            return true;
+        }
+        int balance = getBalance(uuid);
+        int toWithdraw = Math.min(balance, amount);
+        if (toWithdraw <= 0) {
+            return false;
+        }
+        return withdraw(uuid, toWithdraw).transactionSuccess();
     }
 
     public boolean transfer(UUID source, UUID target, int amount) {
@@ -71,10 +101,36 @@ public class EconomyService {
         }
 
         EconomyResponse depositResponse = deposit(target, amount);
-        return depositResponse.transactionSuccess();
+        if (!depositResponse.transactionSuccess()) {
+            deposit(source, amount);
+            return false;
+        }
+        return true;
+    }
+
+    public int getTotalEarned(UUID uuid) {
+        return dataStore.getInt(uuid, TOTAL_EARNED_KEY);
+    }
+
+    public int getTotalSpent(UUID uuid) {
+        return dataStore.getInt(uuid, TOTAL_SPENT_KEY);
+    }
+
+    private void trackEarned(UUID uuid, int amount) {
+        if (amount <= 0) {
+            return;
+        }
+        dataStore.set(uuid, TOTAL_EARNED_KEY, dataStore.getInt(uuid, TOTAL_EARNED_KEY) + amount);
+    }
+
+    private void trackSpent(UUID uuid, int amount) {
+        if (amount <= 0) {
+            return;
+        }
+        dataStore.set(uuid, TOTAL_SPENT_KEY, dataStore.getInt(uuid, TOTAL_SPENT_KEY) + amount);
     }
 
     public String format(int amount) {
-        return String.valueOf(amount) + " coins";
+        return amount + " coins";
     }
 }
