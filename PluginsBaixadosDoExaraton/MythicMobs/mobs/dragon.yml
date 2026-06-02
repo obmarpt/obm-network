@@ -1,0 +1,23 @@
+LobbyDragon:
+  Type: ENDER_DRAGON
+  Display: '&5&lGuardião do Lobby'
+  Health: 200
+  Damage: 0
+
+  Options:
+    NoAI: false
+    Silent: true
+    Invincible: true
+    Collidable: false
+
+  AIGoalSelectors:
+    - clear
+  AITargetSelectors:
+    - clear
+
+  Skills:
+  - effect:particles{p=dragon_breath;amount=20} @self ~onTimer:40
+  - look{headOnly=false} @NearestPlayer{r=20} ~onTimer:20
+
+ 
+

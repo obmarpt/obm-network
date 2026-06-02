@@ -3,7 +3,7 @@ main: com.obm.network.smp.SMPPlugin
 version: 1.0
 api-version: 1.20
 author: Obmar
-description: SMP da OMD Network com economia e mercado de players
+description: SMP do MineSpace com economia e mercado de players
 
 depend:
   - OBM-Core
@@ -43,6 +43,10 @@ commands:
   rank:
     description: Ver rank, comprar rank ou listar ranks
     usage: /rank [buy|list]
+
+  daily:
+    description: Recompensa diária de coins
+    usage: /daily
   
   
   top:

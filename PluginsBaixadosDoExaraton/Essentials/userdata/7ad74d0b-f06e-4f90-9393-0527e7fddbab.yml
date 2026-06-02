@@ -1,0 +1,30 @@
+teleportenabled: true
+teleportauto: false
+godmode: false
+muted: false
+jailed: false
+ip-address: 127.0.0.1
+afk: false
+socialspy: false
+npc: false
+powertoolsenabled: true
+accepting-pay: true
+baltop-exempt: false
+timestamps:
+  lastteleport: 0
+  lastheal: 0
+  mute: 0
+  jail: 0
+  onlinejail: 0
+  logout: 1780160806528
+  login: 1780160754441
+money: '0'
+last-account-name: DriveLOL
+logoutlocation:
+  world: 0f9c8cf7-f3db-4c07-9e3b-6e53a7261cfc
+  world-name: world_nether
+  x: 4.699999988079071
+  y: 75.0
+  z: 5.300097474259606
+  yaw: 4.837173938751221
+  pitch: 0.0

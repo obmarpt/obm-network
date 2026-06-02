@@ -1,0 +1,11 @@
+listings:
+  c9d4b18a:
+    seller: 0181db56-0dac-4766-9b8a-3ed9743cbfb7
+    item:
+      ==: org.bukkit.inventory.ItemStack
+      DataVersion: 4671
+      id: minecraft:iron_golem_spawn_egg
+      count: 32
+      schema_version: 1
+    price: 5000
+    created_at: 1780162677597

@@ -1,0 +1,20 @@
+# ==============================
+# ⚔️ UHC CONFIG
+# ==============================
+
+uhc:
+  world: "uhc"
+
+  lives:
+    max: 2
+    remove_on_kill: true
+    remove_on_death: true
+
+  protection:
+    enabled: true
+    hours: 48
+
+  revive:
+    enabled: false
+    day: "SUNDAY"
+    hour: 18

@@ -1,0 +1,37 @@
+# =========================
+# MineSpace - Core Config
+# =========================
+
+smp-worlds:
+  - world
+  - world_nether
+  - world_the_end
+
+uhc-worlds:
+  - UHC
+  - UHC_nether
+  - UHC_the_end
+
+rush-worlds:
+  - rush
+  - rush_nether
+  - rush_the_end
+
+combatlog:
+  timeout: 15000
+  blocked-commands:
+    - lobby
+    - spawn
+    - home
+    - warp
+    - teleport
+
+lobby:
+  world: Lobby
+  day-time: 1000
+
+hardcore:
+  unlock:
+    enabled: true
+    required-level: 10
+    required-coins: 200000

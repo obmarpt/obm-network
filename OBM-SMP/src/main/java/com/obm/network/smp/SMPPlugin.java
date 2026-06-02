@@ -33,6 +33,8 @@ import com.obm.network.smp.service.SellCatalog;
 import com.obm.network.smp.service.SellService;
 import com.obm.network.smp.service.ShopCatalog;
 import com.obm.network.smp.service.ShopService;
+import com.obm.network.smp.retention.DailyRewardCommand;
+import com.obm.network.smp.retention.PlaytimeMilestoneService;
 import com.obm.network.smp.service.SpawnProtectionService;
 import com.obm.network.smp.shop.ShopGui;
 import net.milkbowl.vault.economy.Economy;
@@ -125,6 +127,9 @@ public class SMPPlugin extends JavaPlugin {
         );
 
         schedulePlaytimeRewards();
+
+        new PlaytimeMilestoneService(this, economyService, worldModeService).start();
+        registerCommand("daily", new DailyRewardCommand(this, economyService));
 
         Bukkit.getPluginManager().registerEvents(new StatsListener(), this);
         

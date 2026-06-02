@@ -1,0 +1,41 @@
+# Default para todos os grupos (usa LuckPerms)
+_DEFAULT_:
+  tabprefix: "%luckperms-prefix%"
+  tagprefix: "%luckperms-prefix%"
+  customtabname: "%player%"
+  tabsuffix: "%luckperms-suffix%"
+  tagsuffix: "%luckperms-suffix%"
+
+# PLAYER (caso não uses prefix em LuckPerms)
+Player:
+  tabprefix: "&8[&7Player&8] &3"
+  tagprefix: "&7Player &3"
+
+# STAFF (opcional)
+Owner:
+  tabprefix: "&8[&aOwner&8] &a"
+  tagprefix: "&aOwner &a"
+
+Admin:
+  tabprefix: "&8[&cAdmin&8] &c"
+  tagprefix: "&cAdmin &c"
+
+Mod:
+  tabprefix: "&8[&2Mod&8] &2"
+  tagprefix: "&2Mod &2"
+
+Helper:
+  tabprefix: "&8[&aHelper&8] &a"
+  tagprefix: "&aHelper &a"
+
+# VIP (exemplo)
+VIP:
+  tabprefix: "&8[&6VIP&8] &6"
+  tagprefix: "&6VIP &6"
+
+# PER WORLD (opcional)
+per-world:
+  world1:
+    Owner:
+      tabprefix: "&8[&aOwner&8] &a"
+      tagprefix: "&aOwner &a"

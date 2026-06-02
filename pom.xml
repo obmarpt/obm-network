@@ -10,7 +10,7 @@
     <version>1.0</version>
     <packaging>pom</packaging>
 
-    <name>OMD Network Plugins</name>
+    <name>MineSpace Plugins</name>
     <description>Agregador Maven para os plugins OBM-Core, OBM-Lobby, OBM-Inventory e OBM-UHC.</description>
 
     <properties>
@@ -23,6 +23,7 @@
     <modules>
         <module>OBM-Core</module>
         <module>OBM-SMP</module>
+        <module>OBM-TierSpace</module>
         <module>OBM-Lobby</module>
         <module>OBM-Inventory</module>
         <module>OBM-UHC</module>

@@ -1,0 +1,66 @@
+# MineSpace — OBM-Lobby (coords dos TOP holograms dinâmicos via TopHologramManager)
+lobby:
+  world: Lobby
+  spawn:
+    x: 0.5
+    y: 164.0
+    z: 0.5
+    yaw: -90
+    pitch: 0
+
+
+# Leaderboards estáticos no lobby (y≈164) + alguns em y=65 (zona inferior)
+holograms:
+  smp_playtime:
+    world: Lobby
+    x: 27.5
+    y: 164
+    z: 18.5
+
+  smp_blocks:
+    world: Lobby
+    x: 37.5
+    y: 164
+    z: 18.5
+
+  smp_kills:
+    world: Lobby
+    x: 24.5
+    y: 164
+    z: 18.5
+
+  smp_money:
+    world: Lobby
+    x: 68
+    y: 65
+    z: 35
+
+  uhc_kills:
+    world: Lobby
+    x: 41.5
+    y: 167
+    z: -4.5
+
+  uhc_deaths:
+    world: Lobby
+    x: 41.5
+    y: 167
+    z: 5.5
+
+  uhc_playtime:
+    world: Lobby
+    x: 88
+    y: 65
+    z: 35
+
+  uhc_lives:
+    world: Lobby
+    x: 92
+    y: 65
+    z: 35
+
+  uhc_kdr:
+    world: Lobby
+    x: 41.5
+    y: 164
+    z: 0.5

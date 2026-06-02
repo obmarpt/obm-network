@@ -4,6 +4,7 @@ import com.obm.network.uhc.actionbar.UHCActionBar;
 import com.obm.network.uhc.commands.ReviveCommand;
 import com.obm.network.uhc.commands.UHCStatsCommand;
 import com.obm.network.uhc.listeners.UHCListener;
+import com.obm.network.uhc.listeners.UHCStatsMenuListener;
 import com.obm.network.uhc.manager.UHCManager;
 import com.obm.network.uhc.service.UHCReviveService;
 import com.obm.network.uhc.task.UHCTimeTracker;
@@ -44,6 +45,7 @@ public class OBMUHCPlugin extends JavaPlugin {
 
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new UHCListener(uhcManager, reviveService), this);
+        getServer().getPluginManager().registerEvents(new UHCStatsMenuListener(), this);
     }
 
     private void registerTasks() {

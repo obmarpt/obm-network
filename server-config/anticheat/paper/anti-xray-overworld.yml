@@ -1,0 +1,47 @@
+# MineSpace — Paper Anti-Xray (SMP/UHC worlds)
+# Colar em config/paper-world-defaults.yml → anticheat.anti-xray
+# Para mundo TierSpace (arenas flat): desactivar anti-xray no paper-world.yml desse mundo
+
+anticheat:
+  anti-xray:
+    enabled: true
+    engine-mode: 2
+    max-block-height: 64
+    update-radius: 2
+    lava-obscures: false
+    use-permission: false
+    hidden-blocks:
+      # SEM air — evita FPS drops em PvP/SMP com muitos jogadores
+      - copper_ore
+      - deepslate_copper_ore
+      - diamond_ore
+      - deepslate_diamond_ore
+      - gold_ore
+      - deepslate_gold_ore
+      - iron_ore
+      - deepslate_iron_ore
+      - lapis_ore
+      - deepslate_lapis_ore
+      - redstone_ore
+      - deepslate_redstone_ore
+      - emerald_ore
+      - deepslate_emerald_ore
+      - coal_ore
+      - deepslate_coal_ore
+      - ancient_debris
+    replacement-blocks:
+      - stone
+      - deepslate
+      - tuff
+      - andesite
+      - diorite
+      - granite
+      - dirt
+      - gravel
+      - calcite
+
+# Mundo TierSpace — criar plugins/GrimAC/../paper-world.yml ou config/paper-world/TierSpace.yml:
+#
+# anticheat:
+#   anti-xray:
+#     enabled: false

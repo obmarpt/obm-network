@@ -1,0 +1,30 @@
+teleportenabled: true
+teleportauto: false
+godmode: false
+muted: false
+jailed: false
+ip-address: 127.0.0.1
+afk: false
+socialspy: false
+npc: false
+powertoolsenabled: true
+accepting-pay: true
+baltop-exempt: false
+timestamps:
+  lastteleport: 0
+  lastheal: 0
+  mute: 0
+  jail: 0
+  onlinejail: 0
+  logout: 1780161031337
+  login: 1780161026423
+money: '0'
+last-account-name: Spark_Shot
+logoutlocation:
+  world: 767fabc4-f64f-4d33-92c2-9c0e9adc6c83
+  world-name: world
+  x: 32.056998513712905
+  y: 86.0
+  z: -125.7033977313323
+  yaw: 5.786534786224365
+  pitch: 0.0

@@ -2,6 +2,7 @@ package com.obm.network.smp.service;
 
 import com.obm.network.smp.progression.LevelService;
 import com.obm.network.smp.progression.ProgressionBonusService;
+import com.obm.network.smp.retention.RetentionFeedback;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -80,6 +81,7 @@ public class SellService {
 
         int total = bonusService.applySellPayout(player.getUniqueId(), baseTotal);
         economyService.deposit(player.getUniqueId(), total);
+        RetentionFeedback.coinsGained(player, total);
 
         levelService.addSellXp(player, total);
 

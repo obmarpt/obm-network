@@ -1,0 +1,21 @@
+# MineSpace — Lobby | Entrada SMP
+# Local: Lobby 35.500 / 164.000 / 6.500
+# Recarregar: /dh reload
+
+location: Lobby:35.500:164.000:6.500
+enabled: true
+display-range: 48
+update-range: 48
+update-interval: 20
+facing: 0.0
+down-origin: false
+
+pages:
+  - lines:
+      - content: '&a&l🌿 SMP'
+        height: 0.3
+      - content: '&7Sobrevive e constrói'
+        height: 0.3
+      - content: '&a» &eClica para entrar'
+        height: 0.3
+    actions: {}

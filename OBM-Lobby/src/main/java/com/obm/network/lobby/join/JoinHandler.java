@@ -54,6 +54,8 @@ public class JoinHandler implements Listener {
             player.getInventory().clear();
             giveMenu(player);
         }, 10L);
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> WelcomeMessage.send(player), 15L);
     }
 
     // =========================

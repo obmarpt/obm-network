@@ -19,6 +19,21 @@ rewards:
     interval-minutes: 30
     amount: 500
 
+  # /daily — recompensa única a cada 24h
+  daily:
+    enabled: true
+    coins: 2000
+    cooldown-hours: 24
+
+  # Marcos únicos por tempo total no Rush (playtime_smp)
+  milestones:
+    enabled: true
+    tiers:
+      - minutes: 30
+        coins: 500
+      - minutes: 60
+        coins: 1200
+
 ranks:
   default: bronze
   levels:

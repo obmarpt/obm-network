@@ -25,6 +25,6 @@ public class LobbyItemListener implements Listener {
         e.setCancelled(true);
 
         // ✅ abrir menu
-        player.openInventory(MainMenu.create());
+        player.openInventory(MainMenu.create(player));
     }
 }

@@ -1,70 +1,109 @@
 package com.obm.network.lobby.gui;
 
+import com.obm.network.core.OBMCorePlugin;
+import com.obm.network.core.integration.EconomyBridge;
+import com.obm.network.core.integration.SMPBridge;
+import com.obm.network.core.integration.TierSpaceBridge;
+import com.obm.network.core.storage.DataStore;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-import com.obm.network.core.OBMCorePlugin;
-import com.obm.network.core.storage.DataStore;
-
+/**
+ * Perfil — 27 slots
+ */
 public class ProfileMenu {
 
+    public static final int SLOT_HEAD = 4;
+    public static final int SLOT_RUSH = 11;
+    public static final int SLOT_HARDCORE = 13;
+    public static final int SLOT_TIERSPACE = 15;
+    public static final int SLOT_PROGRESS = 22;
+    public static final int SLOT_BACK = 18;
+
     public static Inventory create(Player player) {
-        Inventory inv = Bukkit.createInventory(null, 27, "§e§lPROFILE");
+        Inventory inv = Bukkit.createInventory(null, 27, MenuTitles.PROFILE);
+        MenuUtil.fillAll(inv, Material.YELLOW_STAINED_GLASS_PANE);
 
         UUID uuid = player.getUniqueId();
         DataStore ds = OBMCorePlugin.get().getDataStore();
+        SMPBridge.ProgressionSnapshot progression = SMPBridge.getProgression(uuid);
 
-        int playtime = ds.getInt(uuid, "playtime");
-        int kills = ds.getInt(uuid, "kills");
-        int deaths = ds.getInt(uuid, "deaths");
-        int blocks = ds.getInt(uuid, "blocks");
-        int mobs = ds.getInt(uuid, "mobs");
-        int lives = ds.getInt(uuid, "lives");
+        int rushKills = ds.getInt(uuid, "kills_smp");
+        int rushDeaths = ds.getInt(uuid, "deaths_smp");
+        int hcKills = ds.getInt(uuid, "kills_uhc");
+        int hcDeaths = ds.getInt(uuid, "deaths_uhc");
+        int hcLives = ds.getInt(uuid, "lives_uhc");
+        int playtime = ds.getInt(uuid, "playtime_smp") + ds.getInt(uuid, "playtime_uhc");
 
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta meta = (SkullMeta) head.getItemMeta();
-        if (meta != null) {
-            meta.setOwningPlayer(player);
-            meta.setDisplayName("§e" + player.getName());
-            meta.setLore(java.util.List.of(
-                    "§7Playtime: §a" + formatTime(playtime),
-                    "§7Kills: §c" + kills,
-                    "§7Deaths: §f" + deaths,
-                    "§7Blocks: §e" + blocks,
-                    "§7Mobs: §2" + mobs,
-                    "§7Lives: §c❤" + lives,
-                    "§7Rank: §bDefault"
+        SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+        if (skullMeta != null) {
+            skullMeta.setOwningPlayer(player);
+            skullMeta.setDisplayName(MenuColors.bold(MenuColors.hex("#FFD700", player.getName())));
+            skullMeta.setLore(java.util.List.of(
+                    MenuColors.separator(),
+                    MenuColors.neutral("Tempo ") + MenuColors.white(MenuUtil.formatTime(playtime)),
+                    MenuColors.neutral("Level ") + MenuColors.white(String.valueOf(progression.level())),
+                    MenuColors.neutral("Coins ") + MenuColors.rush(String.valueOf(EconomyBridge.getBalance(uuid)))
             ));
-            head.setItemMeta(meta);
+            head.setItemMeta(skullMeta);
         }
+        inv.setItem(SLOT_HEAD, head);
 
-        inv.setItem(13, head);
-        inv.setItem(22, createItem(Material.ARROW, "§bVoltar", "§7Retornar ao menu principal"));
+        inv.setItem(SLOT_RUSH, MenuUtil.item(
+                Material.GOLDEN_SWORD,
+                MenuColors.bold(MenuColors.rush("⚔ RUSH")),
+                MenuColors.separator(),
+                MenuColors.neutral("Kills ") + MenuColors.white(String.valueOf(rushKills)),
+                MenuColors.neutral("Deaths ") + MenuColors.white(String.valueOf(rushDeaths)),
+                MenuColors.neutral("K/D ") + MenuColors.rush(MenuUtil.formatKd(rushKills, rushDeaths)),
+                MenuColors.neutral("Rank ") + MenuColors.rush(progression.rankName())
+        ));
+
+        inv.setItem(SLOT_HARDCORE, MenuUtil.item(
+                Material.TOTEM_OF_UNDYING,
+                MenuColors.bold(MenuColors.hardcore("💀 HARDCORE")),
+                MenuColors.separator(),
+                MenuColors.neutral("Kills ") + MenuColors.white(String.valueOf(hcKills)),
+                MenuColors.neutral("Deaths ") + MenuColors.white(String.valueOf(hcDeaths)),
+                MenuColors.neutral("K/D ") + MenuColors.hardcore(MenuUtil.formatKd(hcKills, hcDeaths)),
+                MenuColors.neutral("Vidas ") + MenuColors.hardcore(String.valueOf(hcLives))
+        ));
+
+        inv.setItem(SLOT_TIERSPACE, MenuUtil.item(
+                Material.DIAMOND_SWORD,
+                MenuColors.bold(MenuColors.tier("🏆 TIERSPACE")),
+                MenuColors.separator(),
+                MenuColors.neutral("Rating ") + MenuColors.tier(String.valueOf(TierSpaceBridge.getRating(uuid, "sword"))),
+                MenuColors.neutral("Rank ") + TierSpaceBridge.getRankDisplay(uuid, "sword"),
+                MenuColors.neutral("W/L ") + MenuColors.success(String.valueOf(TierSpaceBridge.getWins(uuid, "sword")))
+                        + MenuColors.neutral("/") + MenuColors.error(String.valueOf(TierSpaceBridge.getLosses(uuid, "sword"))),
+                MenuColors.neutral("Streak ") + MenuColors.tier(String.valueOf(TierSpaceBridge.getStreak(uuid, "sword")))
+        ));
+
+        inv.setItem(SLOT_PROGRESS, MenuUtil.item(
+                Material.EXPERIENCE_BOTTLE,
+                MenuColors.bold(MenuColors.hex("#CC88FF", "📈 PROGRESSÃO")),
+                MenuColors.separator(),
+                MenuColors.neutral("XP ") + MenuColors.white(progression.xp() + "/" + progression.xpRequired()),
+                MenuColors.neutral("Próximo rank ") + MenuColors.rush(progression.nextRankName()),
+                progression.maxRank()
+                        ? MenuColors.success("Rank máximo!")
+                        : MenuColors.neutral("Custo ") + MenuColors.rush(progression.nextRankCost() + " coins")
+        ));
+
+        inv.setItem(SLOT_BACK, MenuUtil.item(
+                Material.ARROW,
+                MenuColors.neutral("← Voltar"),
+                MenuColors.neutral("Menu principal")
+        ));
 
         return inv;
-    }
-
-    private static ItemStack createItem(Material mat, String name, String lore) {
-        ItemStack item = new ItemStack(mat);
-        ItemMeta meta = item.getItemMeta();
-        if (meta != null) {
-            meta.setDisplayName(name);
-            meta.setLore(java.util.List.of(lore));
-            item.setItemMeta(meta);
-        }
-        return item;
-    }
-
-    private static String formatTime(int seconds) {
-        int hours = seconds / 3600;
-        int minutes = (seconds % 3600) / 60;
-        return hours + "h " + minutes + "m";
     }
 }

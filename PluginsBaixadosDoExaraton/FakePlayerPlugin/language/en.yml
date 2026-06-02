@@ -1,0 +1,176 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  ꜰᴀᴋᴇ ᴘʟᴀʏᴇʀ ᴘʟᴜɢɪɴ  ·  language/en.yml
+#  English language file — edit and run /fpp reload to apply changes.
+#
+#  Colour format : MiniMessage tags
+#    Named colours  : <red>, <gray>, <white>, <dark_gray>, <yellow> …
+#    Hex colours    : <#0079FF>text</#0079FF>
+#    Decorations    : <bold>, <italic>, <underlined>, <strikethrough>
+#    Reset          : <reset>
+#  Placeholders : {placeholder} — see each entry for available ones
+#
+#  ⚠  Keys marked "INTERNAL — do not edit" are used by the plugin's layout
+#     engine. Changing them will break formatting.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Plugin prefix — prepended to all [FPP] messages ──────────────────────────
+#  Feel free to change the colour/text, but keep it short.
+prefix: "<dark_gray>[<#0079FF>ꜰᴘᴘ</#0079FF><dark_gray>]<reset> "
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  INTERNAL LAYOUT STRINGS — do not remove or rename these keys.
+#  You may adjust colours/characters but keep the structure intact.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Horizontal rule used in headers and footers
+divider: "<dark_gray><st>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</st>"
+
+# Help menu — INTERNAL (placeholders {cmd}, {args}, {desc} required)
+help-header: "<dark_gray><st>━━━━━━━━━</st> <#0079FF><bold>ꜰᴀᴋᴇ ᴘʟᴀʏᴇʀ ᴘʟᴜɢɪɴ</#0079FF> <dark_gray><st>━━━━━━━━━</st>"
+help-entry:  "  <#0079FF>/{cmd}</#0079FF><gray> {args} <dark_gray>— <white>{desc}"
+help-footer: "<dark_gray><st>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</st>"
+
+# Plugin info screen (/fpp bare) — INTERNAL header line
+info-screen-header: "  <#0079FF><bold>ꜰᴀᴋᴇ ᴘʟᴀʏᴇʀ ᴘʟᴜɢɪɴ</#0079FF> <dark_gray>· <gray>ꜰᴘᴘ"
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  PLAYER-FACING MESSAGES — safe to edit freely
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Generic errors ────────────────────────────────────────────────────────────
+no-permission:  "{prefix}<red>ʏᴏᴜ ᴅᴏɴ'ᴛ ʜᴀᴠᴇ ᴘᴇʀᴍɪꜱꜱɪᴏɴ ᴛᴏ ᴅᴏ ᴛʜɪꜱ."
+unknown-command: "{prefix}<red>ᴜɴᴋɴᴏᴡɴ ꜱᴜʙ-ᴄᴏᴍᴍᴀɴᴅ. <gray>ᴛʀʏ <#0079FF>/{0} ʜᴇʟᴘ</#0079FF><gray> ꜰᴏʀ ᴀ ʟɪꜱᴛ."
+player-only:    "{prefix}<red>ᴏɴʟʏ ᴀ ᴘʟᴀʏᴇʀ ᴄᴀɴ ʀᴜɴ ᴛʜɪꜱ ᴄᴏᴍᴍᴀɴᴅ."
+invalid-number: "{prefix}<red>ɪɴᴠᴀʟɪᴅ ɴᴜᴍʙᴇʀ. ᴘʟᴇᴀꜱᴇ ᴇɴᴛᴇʀ ᴀ ᴘᴏꜱɪᴛɪᴠᴇ ɪɴᴛᴇɢᴇʀ."
+
+# ── Spawn ─────────────────────────────────────────────────────────────────────
+# {count}  — number of bots spawned
+# {total}  — total bots now active
+# {name}   — custom bot name (name-taken / invalid-name errors)
+# {max}    — max bot limit   (max-reached error)
+# {limit}  — personal limit  (user-limit-reached error)
+spawn-success:            "{prefix}<#0079FF>{count}</#0079FF> <gray>ꜰᴀᴋᴇ ᴘʟᴀʏᴇʀ(ꜱ) <white>ꜱᴜᴍᴍᴏɴᴇᴅ<gray>. <dark_gray>(<#0079FF>{total}</#0079FF> <gray>ᴀᴄᴛɪᴠᴇ<dark_gray>)"
+spawn-max-reached:        "{prefix}<red>ᴍᴀx ʙᴏᴛ ʟɪᴍɪᴛ ʀᴇᴀᴄʜᴇᴅ <dark_gray>(<#0079FF>{max}</#0079FF> <gray>ʙᴏᴛꜱ<dark_gray>)<red>. ᴅᴇʟᴇᴛᴇ ꜱᴏᴍᴇ ꜰɪʀꜱᴛ."
+spawn-user-limit-reached: "{prefix}<red>ʏᴏᴜ'ᴠᴇ ʀᴇᴀᴄʜᴇᴅ ʏᴏᴜʀ ᴘᴇʀꜱᴏɴᴀʟ ʙᴏᴛ ʟɪᴍɪᴛ <dark_gray>(<#0079FF>{limit}</#0079FF> <gray>ʙᴏᴛ(ꜱ)<dark_gray>)<red>."
+spawn-invalid:            "{prefix}<red>ɪɴᴠᴀʟɪᴅ ᴜꜱᴀɢᴇ. <gray>ᴛʀʏ <#0079FF>/fpp spawn [amount] [--name <name>]</#0079FF><gray>."
+spawn-invalid-name:       "{prefix}<red>ɪɴᴠᴀʟɪᴅ ʙᴏᴛ ɴᴀᴍᴇ. <gray>ᴜꜱᴇ <white>1–16 <gray>ᴄʜᴀʀꜱ <dark_gray>(<white>ʟᴇᴛᴛᴇʀꜱ<gray>, <white>ᴅɪɡɪᴛꜱ<gray>, <white>_<dark_gray>)<gray>."
+spawn-name-taken:         "{prefix}<red>ᴀ ʙᴏᴛ ɴᴀᴍᴇᴅ <white>{name} <red>ɪꜱ ᴀʟʀᴇᴀᴅʏ ᴀᴄᴛɪᴠᴇ."
+spawn-no-names-left:      "{prefix}<red>ᴀʟʟ ɴᴀᴍᴇꜱ ɪɴ ᴛʜᴇ ᴘᴏᴏʟ ᴀʀᴇ ɪɴ ᴜꜱᴇ. <gray>ʀᴇᴅᴜᴄᴇ ᴀᴄᴛɪᴠᴇ ʙᴏᴛꜱ ᴏʀ ᴀᴅᴅ ᴍᴏʀᴇ ɴᴀᴍᴇꜱ."
+# Console-specific spawn errors
+# {world} — the world name that was not found
+spawn-console-no-world:   "{prefix}<red>ɴᴏ ᴡᴏʀʟᴅ ɪꜱ ʟᴏᴀᴅᴇᴅ — ᴄᴀɴɴᴏᴛ ᴅᴇᴛᴇʀᴍɪɴᴇ ᴀ ꜱᴘᴀᴡɴ ʟᴏᴄᴀᴛɪᴏɴ."
+spawn-world-not-found:    "{prefix}<red>ᴡᴏʀʟᴅ '<white>{world}<red>' ᴅᴏᴇꜱ ɴᴏᴛ ᴇxɪꜱᴛ ᴏʀ ɪꜱ ɴᴏᴛ ʟᴏᴀᴅᴇᴅ."
+spawn-invalid-coords:     "{prefix}<red>ɪɴᴠᴀʟɪᴅ ᴄᴏᴏʀᴅɪɴᴀᴛᴇꜱ. <gray>ᴜꜱᴇ ꜰᴏʀᴍᴀᴛ: <white>x,y,z <gray><dark_gray>(ᴇ.ɢ. <white>100,64,200<gray>)"
+
+# ── Delete ────────────────────────────────────────────────────────────────────
+# {name}  — bot name
+# {count} — bots deleted (delete all)
+delete-success:       "{prefix}<#0079FF>{name}</#0079FF> <gray>ʜᴀꜱ ʙᴇᴇɴ <white>ᴅɪꜱᴄᴏɴɴᴇᴄᴛᴇᴅ<gray>."
+delete-all:           "{prefix}<#0079FF>{count}</#0079FF> <gray>ꜰᴀᴋᴇ ᴘʟᴀʏᴇʀ(ꜱ) <white>ᴅɪꜱᴄᴏɴɴᴇᴄᴛᴇᴅ<gray>."
+delete-none:          "{prefix}<red>ɴᴏ ʙᴏᴛꜱ ᴀʀᴇ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴄᴛɪᴠᴇ."
+delete-not-found:     "{prefix}<red>ɴᴏ ᴀᴄᴛɪᴠᴇ ʙᴏᴛ ɴᴀᴍᴇᴅ <white>{name}<red> ᴡᴀꜱ ꜰᴏᴜɴᴅ."
+# {count} — number of bots randomly despawned
+delete-random-success: "{prefix}<#0079FF>{count}</#0079FF> <gray>ʀᴀɴᴅᴏᴍ ꜰᴀᴋᴇ ᴘʟᴀʏᴇʀ(ꜱ) <white>ᴅɪꜱᴄᴏɴɴᴇᴄᴛᴇᴅ<gray>."
+
+# ── List ──────────────────────────────────────────────────────────────────────
+list-none:   "  <gray>ɴᴏ ʙᴏᴛꜱ ᴀʀᴇ ᴄᴜʀʀᴇɴᴛʟʏ ᴀᴄᴛɪᴠᴇ."
+
+# ── Bot broadcast messages ────────────────────────────────────────────────────
+# {name}   — bot display name
+# {killer} — killer player name  (bot-kill only)
+bot-join:  "<yellow>{name} joined the game"
+bot-leave: "<yellow>{name} left the game"
+bot-kill:  "<gray>{killer} <white>slain <gray>{name}"
+
+
+# ── Swap ──────────────────────────────────────────────────────────────────────
+swap-enabled:    "{prefix}<#0079FF>ʙᴏᴛ ꜱᴡᴀᴘ</#0079FF> <gray>ʜᴀꜱ ʙᴇᴇɴ <white>ᴇɴᴀʙʟᴇᴅ<gray>."
+swap-disabled:   "{prefix}<#0079FF>ʙᴏᴛ ꜱᴡᴀᴘ</#0079FF> <gray>ʜᴀꜱ ʙᴇᴇɴ <white>ᴅɪꜱᴀʙʟᴇᴅ<gray>."
+swap-status-on:  "{prefix}<#0079FF>ʙᴏᴛ ꜱᴡᴀᴘ</#0079FF> <gray>ɪꜱ <white>ᴇɴᴀʙʟᴇᴅ<gray>."
+swap-status-off: "{prefix}<#0079FF>ʙᴏᴛ ꜱᴡᴀᴘ</#0079FF> <gray>ɪꜱ <white>ᴅɪꜱᴀʙʟᴇᴅ<gray>."
+swap-invalid:    "{prefix}<red>ᴜꜱᴀɢᴇ<gray>: <#0079FF>/fpp swap <on|off|status></#0079FF><gray>."
+
+# ── Fake chat ─────────────────────────────────────────────────────────────────
+chat-enabled:    "{prefix}<#0079FF>ꜰᴀᴋᴇ ᴄʜᴀᴛ</#0079FF> <gray>ʜᴀꜱ ʙᴇᴇɴ <white>ᴇɴᴀʙʟᴇᴅ<gray>."
+chat-disabled:   "{prefix}<#0079FF>ꜰᴀᴋᴇ ᴄʜᴀᴛ</#0079FF> <gray>ʜᴀꜱ ʙᴇᴇɴ <white>ᴅɪꜱᴀʙʟᴇᴅ<gray>."
+chat-status-on:  "{prefix}<#0079FF>ꜰᴀᴋᴇ ᴄʜᴀᴛ</#0079FF> <gray>ɪꜱ <white>ᴇɴᴀʙʟᴇᴅ<gray>."
+chat-status-off: "{prefix}<#0079FF>ꜰᴀᴋᴇ ᴄʜᴀᴛ</#0079FF> <gray>ɪꜱ <white>ᴅɪꜱᴀʙʟᴇᴅ<gray>."
+chat-invalid:    "{prefix}<red>ᴜꜱᴀɢᴇ<gray>: <#0079FF>/fpp chat <on|off|status></#0079FF><gray>."
+
+# ── Info / database ───────────────────────────────────────────────────────────
+# {name} — bot or spawner name queried
+info-no-records:     "{prefix}<red>ɴᴏ ʀᴇᴄᴏʀᴅꜱ ꜰᴏᴜɴᴅ ꜰᴏʀ <white>{name}<red>."
+info-db-unavailable: "{prefix}<red>ᴅᴀᴛᴀʙᴀꜱᴇ ᴜɴᴀᴠᴀɪʟᴀʙʟᴇ. ᴄʜᴇᴄᴋ ʏᴏᴜʀ ᴄᴏɴꜰɪɢ ᴀɴᴅ ꜱᴇʀᴠᴇʀ ʟᴏɡꜱ."
+
+# ── Teleport ──────────────────────────────────────────────────────────────────
+# {name} — bot name
+tph-success:      "{prefix}<gray>ᴛᴇʟᴇᴘᴏʀᴛᴇᴅ <#0079FF>{name}</#0079FF> <gray>ᴛᴏ ʏᴏᴜ."
+tph-no-bots:      "{prefix}<red>ʏᴏᴜ ʜᴀᴠᴇ ɴᴏ ᴀᴄᴛɪᴠᴇ ʙᴏᴛꜱ."
+tph-specify-name: "{prefix}<red>ʏᴏᴜ ʜᴀᴠᴇ ᴍᴜʟᴛɪᴘʟᴇ ʙᴏᴛꜱ. <gray>ꜱᴘᴇᴄɪꜰʏ ᴏɴᴇ: <#0079FF>/fpp tph <botname></#0079FF>"
+tph-not-yours:    "{prefix}<red>ʏᴏᴜ ᴅᴏɴ'ᴛ ᴏᴡɴ ᴀ ʙᴏᴛ ɴᴀᴍᴇᴅ <white>{name}<red>."
+tph-not-found:    "{prefix}<red>ɴᴏ ᴀᴄᴛɪᴠᴇ ʙᴏᴛ ɴᴀᴍᴇᴅ <white>{name}<red>."
+tph-failed:       "{prefix}<red>ᴄᴏᴜʟᴅ ɴᴏᴛ ᴛᴇʟᴇᴘᴏʀᴛ <white>{name}<red> — ᴇɴᴛɪᴛʏ ɪɴᴠᴀʟɪᴅ."
+tp-specify-name:  "{prefix}<red>ᴍᴜʟᴛɪᴘʟᴇ ʙᴏᴛꜱ ᴀᴄᴛɪᴠᴇ. <gray>ꜱᴘᴇᴄɪꜰʏ ᴏɴᴇ: <#0079FF>/fpp tp <botname></#0079FF>"
+
+# ── Update checker ────────────────────────────────────────────────────────────
+# {current} — installed version
+# {latest}  — latest version
+update-available:  "<dark_gray><st>━━━━━━━━━</st> <bold><#0079FF>ᴜᴘᴅᴀᴛᴇ ᴀᴠᴀɪʟᴀʙʟᴇ</#0079FF></bold> <dark_gray><st>━━━━━━━━━</st>\n  <gray>Installed <dark_gray>: <white>v{current}\n  <gray>Latest    <dark_gray>: <#0079FF>v{latest}</#0079FF>\n  <gray>Download  <dark_gray>: <click:open_url:'https://modrinth.com/plugin/fake-player-plugin-(fpp)'><#0079FF><underlined>Modrinth</underlined></#0079FF></click><gray>, <click:open_url:'https://www.spigotmc.org/resources/fake-player-plugin-fpp.133572/'><#0079FF><underlined>SpigotMC</underlined></#0079FF></click><gray>, <click:open_url:'https://hangar.papermc.io/Pepe-tf/FakePlayerPlugin'><#0079FF><underlined>PaperMC</underlined></#0079FF></click><gray>, <click:open_url:'https://builtbybit.com/resources/fake-player-plugin.98704/'><#0079FF><underlined>BuiltByBit</underlined></#0079FF></click>\n<dark_gray><st>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</st>"
+update-beta:       "<dark_gray><st>━━━━━━━━━</st> <bold><#FF9500>ʙᴇᴛᴀ ᴠᴇʀꜱɪᴏɴ</#FF9500></bold> <dark_gray><st>━━━━━━━━━</st>\n  <gray>Running   <dark_gray>: <#FF9500>v{current}</#FF9500> <dark_gray>(<#FF9500>ʙᴇᴛᴀ</#FF9500><dark_gray>)\n  <gray>Stable    <dark_gray>: <#0079FF>v{latest}</#0079FF>\n  <gray>Download  <dark_gray>: <click:open_url:'https://modrinth.com/plugin/fake-player-plugin-(fpp)'><#0079FF><underlined>Modrinth</underlined></#0079FF></click><gray>, <click:open_url:'https://www.spigotmc.org/resources/fake-player-plugin-fpp.133572/'><#0079FF><underlined>SpigotMC</underlined></#0079FF></click><gray>, <click:open_url:'https://hangar.papermc.io/Pepe-tf/FakePlayerPlugin'><#0079FF><underlined>PaperMC</underlined></#0079FF></click><gray>, <click:open_url:'https://builtbybit.com/resources/fake-player-plugin.98704/'><#0079FF><underlined>BuiltByBit</underlined></#0079FF></click>\n<dark_gray><st>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</st>"
+update-up-to-date: "{prefix}<#66CC66>Plugin is up to date</#66CC66> <dark_gray>(<#0079FF>v{current}</#0079FF><dark_gray>)"
+update-failed:     "{prefix}<gray>ᴄᴏᴜʟᴅ ɴᴏᴛ ᴄʜᴇᴄᴋ ꜰᴏʀ ᴜᴘᴅᴀᴛᴇꜱ."
+
+# In-game compatibility warning shown to admins when the server/runtime is restricted
+# compatibility-header       — title line prepended to the per-issue list
+# compatibility-not-paper    — server is not PaperMC     | {version} detected server version
+# compatibility-version-old  — MC version too old         | {version} detected, {required} minimum
+compatibility-header:       "{prefix}<red>⚠ <bold>Compatibility Issues Detected</bold> — some features are disabled:"
+compatibility-not-paper:    "{prefix}<red>  • Not running PaperMC <gray>(detected: <white>{version}</white><gray>) — switch to Paper."
+compatibility-version-old:  "{prefix}<red>  • Server version <white>{version}</white> is below required <white>{required}</white> — please update."
+
+# ── Freeze ────────────────────────────────────────────────────────────────────
+# {name}  — bot display name  |  {count} — number of bots (all)
+freeze-usage:         "{prefix}<red>ᴜꜱᴀɢᴇ<gray>: <#0079FF>/fpp freeze <bot|all> [on|off]</#0079FF><gray>."
+freeze-not-found:     "{prefix}<red>ɴᴏ ᴀᴄᴛɪᴠᴇ ʙᴏᴛ ɴᴀᴍᴇᴅ <white>{name}<red>."
+freeze-frozen:        "{prefix}<#66CCFF>❄</#66CCFF> <#0079FF>{name}</#0079FF> <gray>ɪꜱ ɴᴏᴡ <white>ꜰʀᴏᴢᴇɴ<gray>."
+freeze-unfrozen:      "{prefix}<#0079FF>{name}</#0079FF> <gray>ɪꜱ ɴᴏᴡ <white>ᴜɴꜰʀᴏᴢᴇɴ<gray>."
+freeze-all-frozen:    "{prefix}<#66CCFF>❄</#66CCFF> <#0079FF>{count}</#0079FF> <gray>ʙᴏᴛ(ꜱ) ꜰʀᴏᴢᴇɴ<gray>."
+freeze-all-unfrozen:  "{prefix}<#0079FF>{count}</#0079FF> <gray>ʙᴏᴛ(ꜱ) ᴜɴꜰʀᴏᴢᴇɴ<gray>."
+
+
+# ── Spawn cooldown ────────────────────────────────────────────────────────────
+# {seconds} — seconds remaining on cooldown
+spawn-cooldown: "{prefix}<red>ᴘʟᴇᴀꜱᴇ ᴡᴀɪᴛ <white>{seconds}s<red> ʙᴇꜰᴏʀᴇ ꜱᴘᴀᴡɴɪɴɢ ᴀɡᴀɪɴ."
+
+# ── Rank (LuckPerms group assignment) ─────────────────────────────────────────
+# {bot}   — bot display name
+# {group} — LuckPerms group name
+# {count} — number of bots assigned
+rank-no-luckperms:     "{prefix}<red>ʟᴜᴄᴋᴘᴇʀᴍꜱ ɪꜱ ɴᴏᴛ ɪɴꜱᴛᴀʟʟᴇᴅ ᴏʀ ᴇɴᴀʙʟᴇᴅ."
+rank-usage:            "{prefix}<red>ᴜꜱᴀɢᴇ<gray>: <#0079FF>/fpp rank <bot> <group|clear></#0079FF><gray> <dark_gray>|</dark_gray> <#0079FF>/fpp rank random <group> [num]</#0079FF><gray> <dark_gray>|</dark_gray> <#0079FF>/fpp rank list</#0079FF><gray>."
+rank-bot-not-found:    "{prefix}<red>ɴᴏ ᴀᴄᴛɪᴠᴇ ʙᴏᴛ ɴᴀᴍᴇᴅ <white>{name}<red>."
+rank-group-not-found:  "{prefix}<red>ʟᴜᴄᴋᴘᴇʀᴍꜱ ɢʀᴏᴜᴘ <white>{group}<red> ᴅᴏᴇꜱ ɴᴏᴛ ᴇxɪꜱᴛ."
+
+# ── Alert (cross-server broadcast) ────────────────────────────────────────────
+# {message} — the alert text
+alert-received:    "{prefix}<red><bold>ᴀʟᴇʀᴛ<reset> <dark_gray>» <white>{message}"
+alert-sent:        "{prefix}<#66CC66>✓</#66CC66> <gray>ᴀʟᴇʀᴛ ʙʀᴏᴀᴅᴄᴀꜱᴛᴇᴅ ᴛᴏ <#0079FF>ᴀʟʟ ꜱᴇʀᴠᴇʀꜱ</#0079FF><gray>."
+alert-usage:       "{prefix}<red>ᴜꜱᴀɢᴇ<gray>: <#0079FF>/fpp alert <message></#0079FF><gray>."
+
+# ── Sync (config synchronization) ─────────────────────────────────────────────
+sync-not-available:      "{prefix}<red>Config sync is not available (NETWORK mode required)."
+sync-usage:              "{prefix}<red>Usage: <#0079FF>/fpp sync <push|pull|check> [file|all]</#0079FF>"
+sync-push-success:       "{prefix}<#66CC66>✓</#66CC66> <gray>Pushed <#0079FF>{file}</#0079FF> <gray>to database."
+sync-push-failed:        "{prefix}<red>Failed to push <white>{file}<red> to database."
+sync-push-all-success:   "{prefix}<#66CC66>✓</#66CC66> <gray>Pushed <#0079FF>all config files</#0079FF> <gray>to database."
+sync-pull-success:       "{prefix}<#66CC66>✓</#66CC66> <gray>Pulled <#0079FF>{file}</#0079FF> <gray>from database."
+sync-pull-failed:        "{prefix}<red>Failed to pull <white>{file}<red> from database."
+sync-pull-all-success:   "{prefix}<#66CC66>✓</#66CC66> <gray>Pulled <#0079FF>all config files</#0079FF> <gray>from database."
+sync-pull-no-updates:    "{prefix}<gray>No updates available for <#0079FF>{file}</#0079FF><gray>."
+sync-pull-reload-hint:   "{prefix}<gray>Run <#0079FF>/fpp reload</#0079FF> <gray>to apply the changes."
+sync-check-has-changes:  "{prefix}<yellow>⚠<reset> <#0079FF>{file}</#0079FF> <gray>has local changes (different from database)."
+sync-check-no-changes:   "{prefix}<#66CC66>✓</#66CC66> <#0079FF>{file}</#0079FF> <gray>is up to date with database."
+sync-check-all-clean:    "{prefix}<#66CC66>✓</#66CC66> <gray>All config files are synchronized with database."
+sync-check-summary:      "{prefix}<gray>Sync status: <#0079FF>{count}</#0079FF> <gray>file(s) with changes."
+sync-status-no-network:  "{prefix}<red>Sync is disabled (not in NETWORK mode)."
+

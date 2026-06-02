@@ -1,0 +1,25 @@
+location:
+  world: Lobby
+  x: 0.5
+  y: 166.0
+  z: 8.5
+
+enabled: true
+display-range: 64
+update-interval: 40
+pages:
+  - lines:
+      - content: '<gradient:#00AAFF:#AA00FF><bold>🏆 TIERSPACE</bold></gradient>'
+        height: 0.3
+      - content: '<dark_gray>──────────────</dark_gray>'
+        height: 0.28
+      - content: '<gray>PvP competitivo 1v1 · Elo ranking</gray>'
+        height: 0.28
+      - content: '<gray>Season:</gray> <white>%obm_tier_season%</white> <gray>(</gray><aqua>%obm_tier_season_days%</aqua><gray>d)</gray>'
+        height: 0.28
+      - content: '<dark_gray>──────────────</dark_gray>'
+        height: 0.28
+      - content: '<gradient:#00AAFF:#AA00FF><bold>🎯 Click to play</bold></gradient>'
+        height: 0.28
+      - content: '<aqua>⚡ Queue now — abre o menu!</aqua>'
+        height: 0.3

@@ -68,6 +68,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- OBM-TierSpace -->
+        <dependency>
+            <groupId>com.obm.network</groupId>
+            <artifactId>OBM-TierSpace</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- PlaceholderAPI -->
         <dependency>
             <groupId>me.clip</groupId>

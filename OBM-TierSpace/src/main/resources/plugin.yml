@@ -1,0 +1,24 @@
+name: OBM-TierSpace
+main: com.obm.network.tierspace.TierSpacePlugin
+version: 1.0
+api-version: 1.20
+author: Obmar
+description: Modo competitivo TierSpace com ranking Elo por tipo de PvP
+
+depend:
+  - OBM-Core
+
+softdepend:
+  - GrimAC
+  - Spartan
+  - LiteBans
+
+commands:
+  tierspace:
+    description: Menu e info do TierSpace
+    usage: /tierspace
+    aliases: [ts, tier]
+
+  queue:
+    description: Entrar ou sair da fila competitiva
+    usage: /queue <mode|leave|status>

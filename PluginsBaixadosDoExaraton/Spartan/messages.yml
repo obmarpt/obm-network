@@ -1,0 +1,53 @@
+console_name: Console
+no_permission: '&8[&2{prefix}&8]&c You don''t have permission to interact with this.'
+player_not_found_message: '&8[&2{prefix}&8]&c Player not found.'
+config_reload: '&8[&2{prefix}&8]&e Config successfully reloaded.'
+panic_mode_enable: '&8[&2{prefix}&8]&a Panic mode enabled, all checks are set to silent
+  and will not punish players.'
+panic_mode_disable: '&8[&2{prefix}&8]&c Panic mode disabled, all checks will now run
+  per configuration standards.'
+kick_reason: '&c {reason}'
+kick_broadcast_message: '&8[&2{prefix}&8]&c {player}&7 was kicked for&4 {reason}'
+player_ip_limit_kick_message: '&8[&2{prefix}&8]&c The player limit of your IP has
+  been reached.'
+player_violation_reset_message: '&8[&2{prefix}&8]&a Violations successfully reset
+  for player&8: &2{player}'
+player_stored_data_delete_message: '&8[&2{prefix}&8]&a Stored data successfully deleted
+  for player&8: &2{player}'
+detection_notification: '&8[&2{prefix}&8] &e{player} &7>> &c{detection:real}§8[{detection:level}§8]
+  &7(§f{info}§7)'
+check_stored_data_delete_message: '&8[&2{prefix}&8]&a Stored data successfully deleted
+  for check&8: &2{check}'
+check_enable_message: '&8[&2{prefix}&8] &aYou enabled the check&8:&7 {detection}'
+check_disable_message: '&8[&2{prefix}&8] &cYou disabled the check&8:&7 {detection}'
+check_silent_disable_message: '&8[&2{prefix}&8] &aYou enabled preventions for the
+  check&8:&7 {detection}'
+check_silent_enable_message: '&8[&2{prefix}&8] &cYou disabled preventions for the
+  check&8:&7 {detection}'
+check_punishment_enable_message: '&8[&2{prefix}&8] &aYou enabled punishments for the
+  check&8:&7 {detection}'
+check_punishment_disable_message: '&8[&2{prefix}&8] &cYou disabled punishments for
+  the check&8:&7 {detection}'
+non_existing_check: '&8[&2{prefix}&8] &cThis check doesn''t exist.'
+bypass_message: '&8[&2{prefix}&8] &c{player} &7is now bypassing the &4{detection}
+  &7check for &e{time} &7seconds.'
+warning_message: '&c {reason}'
+warning_feedback_message: '&8[&2{prefix}&8]&7 You warned &c{player} &7for&8: &4{reason}'
+verbose_enable: '&8[&2{prefix}&8] &aYou enabled verbose.'
+verbose_disable: '&8[&2{prefix}&8] &cYou disabled verbose.'
+notifications_enable: '&8[&2{prefix}&8] &aYou enabled notifications.'
+notifications_modified: '&8[&2{prefix}&8] &eYou modified notifications.'
+notifications_disable: '&8[&2{prefix}&8] &cYou disabled notifications.'
+awareness_notification: '&8[&2{prefix} Notification&8]&a {info}'
+wave_start_message: '&8[&2{prefix}&8]&c The wave is starting.'
+wave_end_message: '&8[&2{prefix}&8]&c The wave has ended with a total of {total} action(s).'
+wave_clear_message: '&8[&2{prefix}&8]&c The wave was cleared.'
+wave_add_message: '&8[&2{prefix}&8]&a {player} was added to the wave.'
+wave_remove_message: '&8[&2{prefix}&8]&c {player} was removed from the wave.'
+full_wave_list: '&8[&2{prefix}&8]&c The wave list is full.'
+wave_not_added_message: '&8[&2{prefix}&8]&c {player} is not added to the wave.'
+unknown_command: '&fUnknown command. Please type "/help" for help.'
+failed_command: '&8[&2{prefix}&8]&c Command failed ({command}). Please check your
+  arguments and try again.'
+successful_command: '&8[&2{prefix}&8]&a Command successful.'
+massive_command_reason: '&8[&2{prefix}&8]&c The length of the reason is too big.'

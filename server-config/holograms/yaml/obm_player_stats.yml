@@ -1,0 +1,25 @@
+location:
+  world: Lobby
+  x: -3.5
+  y: 165.5
+  z: 0.5
+
+enabled: true
+display-range: 48
+update-interval: 20
+pages:
+  - lines:
+      - content: '<gradient:#FFD700:#FFAA00><bold>📊 AS TUAS STATS</bold></gradient>'
+        height: 0.3
+      - content: '<dark_gray>──────────────</dark_gray>'
+        height: 0.28
+      - content: '<gray>💰 Coins:</gray> <yellow>%obm_coins%</yellow>'
+        height: 0.28
+      - content: '<gray>📈 Level:</gray> <white>%obm_level%</white> <gray>| Rank:</gray> <yellow>%obm_rank%</yellow>'
+        height: 0.28
+      - content: '<gray>🏆 Tier:</gray> <aqua>%obm_tier_rating_sword%</aqua> <gray>|</gray> <white>%obm_tier_rank_sword%</white>'
+        height: 0.28
+      - content: '<dark_gray>──────────────</dark_gray>'
+        height: 0.28
+      - content: '<gray>W/L:</gray> <green>%obm_tier_wins_sword%</green><gray>/</gray><red>%obm_tier_losses_sword%</red>'
+        height: 0.3

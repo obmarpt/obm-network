@@ -9,6 +9,7 @@ import com.obm.network.smp.progression.PlayerProgressionStore;
 import com.obm.network.smp.progression.ProgressionBonusService;
 import com.obm.network.smp.progression.RankCatalog;
 import com.obm.network.smp.service.EconomyService;
+import com.obm.network.smp.retention.RetentionFeedback;
 import com.obm.network.smp.service.KillFarmGuard;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -116,9 +117,8 @@ public class SMPManager {
 
         if (!blocked && reward > 0) {
             economyService.deposit(killerId, reward);
-
-            killer.sendMessage("§a+§e" + economyService.format(reward)
-                    + " §a| Mataste §f" + victim.getName());
+            RetentionFeedback.coinsGained(killer, reward);
+            killer.sendMessage("§7Mataste §f" + victim.getName());
         } else {
             killer.sendMessage("§7Sem recompensa (anti farm).");
         }
@@ -185,9 +185,8 @@ public class SMPManager {
         if (!isInSMP(player) || reward <= 0) return;
 
         economyService.deposit(player.getUniqueId(), reward);
-
-        player.sendMessage("§a+§e" + economyService.format(reward)
-                + " §a| Tempo jogado");
+        RetentionFeedback.coinsGained(player, reward);
+        RetentionFeedback.sendActionBar(player, "§a+§e" + economyService.format(reward) + " §7| tempo jogado");
 
         levelService.addPlaytimeXp(player);
     }

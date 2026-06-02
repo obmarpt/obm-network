@@ -1,0 +1,25 @@
+location:
+  world: Lobby
+  x: -8.5
+  y: 166.0
+  z: 4.5
+
+enabled: true
+display-range: 48
+update-interval: -1
+pages:
+  - lines:
+      - content: '<gradient:#FFAA00:#FF7700><bold>⚔ RUSH SMP</bold></gradient>'
+        height: 0.3
+      - content: '<dark_gray>──────────────</dark_gray>'
+        height: 0.28
+      - content: '<gray>Farm → Vender → Gear → PvP</gray>'
+        height: 0.28
+      - content: '<gray>Mundo:</gray> <white>world</white> <gray>+ nether/end</gray>'
+        height: 0.28
+      - content: '<gray>Economia:</gray> <yellow>💰 Activa</yellow>'
+        height: 0.28
+      - content: '<dark_gray>──────────────</dark_gray>'
+        height: 0.28
+      - content: '<gradient:#FFAA00:#FF7700><bold>▶ Entra pelo menu!</bold></gradient>'
+        height: 0.3

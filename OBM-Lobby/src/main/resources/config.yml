@@ -62,3 +62,15 @@ holograms:
     x: 96
     y: 65
     z: 35
+
+  tierspace_rating:
+    world: Lobby
+    x: 40
+    y: 65
+    z: 35
+
+  tierspace_streak:
+    world: Lobby
+    x: 44
+    y: 65
+    z: 35

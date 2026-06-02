@@ -16,7 +16,7 @@ public class MenuCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        player.openInventory(MainMenu.create());
+        player.openInventory(MainMenu.create(player));
 
         return true;
     }

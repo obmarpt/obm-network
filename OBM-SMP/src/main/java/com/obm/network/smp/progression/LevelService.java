@@ -1,5 +1,6 @@
 package com.obm.network.smp.progression;
 
+import com.obm.network.smp.retention.RetentionFeedback;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -111,17 +112,8 @@ public class LevelService {
         store.setXp(uuid, xp);
 
         if (leveled) {
-            String message = "§aSubiste para o §eNível " + level + "§a!";
-
-            if (totalCoins > 0) {
-                message += " Recebeste §e" + totalCoins + " coins§a.";
-            }
-
-            player.sendMessage(message);
-
-            // 🔥 opcional: título estilo servidor grande
-            player.sendTitle("§6LEVEL UP!", "§eNível " + level, 10, 40, 10);
-
+            RetentionFeedback.levelUp(player, level, totalCoins);
+            String message = "§aNível " + level;
             return new LevelUpResult(true, level, totalCoins, message);
         }
 

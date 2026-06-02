@@ -1,0 +1,152 @@
+# MineSpace — Vulcan overrides para TierSpace + GrimAC
+# NÃO substitui o config.yml completo do Vulcan (~4000 linhas).
+# Aplicar estas secções no config.yml do Vulcan OU usar os comandos no final.
+#
+# Filosofia:
+# - Grim = reach, knockback/velocity, simulation, timer, hitboxes (precisão)
+# - Vulcan = killaura heuristics, autoclicker, aim, scaffold, bad packets, client detection
+
+prefix: '&4&lVulcan &8»'
+
+connection:
+  other-anticheat-support: true
+
+violation-reset:
+  enabled: true
+  interval-in-minutes: 10
+
+ghost-blocks-fix:
+  enabled: true
+  minimum-tps: 19.5
+  setback: true
+
+# Global — checks só correm com TPS estável (crítico em PvP)
+# Aplicar minimum-tps: 19.5 em TODOS os checks activos abaixo
+
+# ============================================================
+# CHECKS A DESACTIVAR (Grim faz melhor — evita duplicar/falsos)
+# ============================================================
+# combat.reach.a          → enabled: false
+# combat.reach.b          → enabled: false
+# combat.velocity.a/b/c   → enabled: false
+# combat.hitbox.a/b       → enabled: false
+# movement.flight.*       → enabled: false
+# movement.speed.*        → enabled: false
+# movement.noslow.*       → enabled: false
+# movement.motion.*       → enabled: false
+# movement.timer.*        → enabled: false
+# movement.jesus.*        → enabled: false
+# movement.step.*         → enabled: false
+# movement.strafe.*       → enabled: false
+# movement.sprint.*       → enabled: false
+
+# ============================================================
+# CHECKS A MANTER ACTIVOS (complementares ao Grim)
+# ============================================================
+
+checks:
+  combat:
+    killaura:
+      a:
+        enabled: true
+        punishable: true
+        max-violations: 10
+        minimum-tps: 19.5
+        maximum-ping: 350
+        dont-alert-until: 2
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] KillAura'
+        buffer: { max: 4, multiple: 0.5, decay: 0.5 }
+      b:
+        enabled: true
+        punishable: true
+        max-violations: 12
+        minimum-tps: 19.5
+        maximum-ping: 350
+        buffer: { max: 6, multiple: 0.5, decay: 0.5 }
+      c:
+        enabled: true
+        punishable: true
+        max-violations: 8
+        minimum-tps: 19.5
+        maximum-ping: 350
+        buffer: { max: 3, multiple: 0.5, decay: 0.35 }
+      # d, f, h — demasiado agressivos para PvP legítimo; desactivar
+      d: { enabled: false }
+      f: { enabled: false }
+      h: { enabled: false }
+
+    autoclicker:
+      a:
+        enabled: true
+        punishable: false
+        max-violations: 999
+        max-cps: 22
+        minimum-tps: 19.5
+        maximum-ping: 350
+      b:
+        enabled: true
+        punishable: false
+        max-violations: 999
+        minimum-tps: 19.5
+      # Punir só CPS extremo sustentado
+      m:
+        enabled: true
+        punishable: true
+        max-violations: 8
+        minimum-tps: 19.5
+        maximum-ping: 300
+        punishment-commands:
+          - 'kick %player% &c[Vulcan] AutoClicker'
+
+    aim:
+      # Aim = muitos falsos em PvP jitter/wtap — alert only
+      a: { enabled: true, punishable: false, max-violations: 999, minimum-tps: 19.5 }
+      b: { enabled: true, punishable: false, max-violations: 999, minimum-tps: 19.5 }
+      c: { enabled: true, punishable: false, max-violations: 999, minimum-tps: 19.5 }
+
+    criticals:
+      a: { enabled: true, punishable: true, max-violations: 12, minimum-tps: 19.5, maximum-ping: 350 }
+      b: { enabled: true, punishable: true, max-violations: 12, minimum-tps: 19.5, maximum-ping: 350 }
+
+  player:
+    badpackets:
+      # Manter activo — detecta clients modificados / freecam packets
+      a: { enabled: true, punishable: true, max-violations: 15, minimum-tps: 19.5 }
+      b: { enabled: true, punishable: true, max-violations: 15, minimum-tps: 19.5 }
+
+    improbable:
+      a: { enabled: true, punishable: true, max-violations: 20, minimum-tps: 19.5 }
+
+    timer:
+      a: { enabled: true, punishable: false, max-violations: 999, minimum-tps: 19.5 }
+      b: { enabled: true, punishable: false, max-violations: 999, minimum-tps: 19.5 }
+
+    scaffold:
+      # Activo para Crystal/lobby — desactivar em mundo TierSpace se só 1v1 flat
+      a: { enabled: true, punishable: true, max-violations: 12, minimum-tps: 19.5 }
+      b: { enabled: true, punishable: true, max-violations: 15, minimum-tps: 19.5 }
+
+    fastbreak:
+      a: { enabled: true, punishable: true, max-violations: 10, minimum-tps: 19.5 }
+
+    fastplace:
+      a: { enabled: true, punishable: true, max-violations: 10, minimum-tps: 19.5 }
+
+    baritone:
+      a: { enabled: true, punishable: true, max-violations: 5, minimum-tps: 19.5 }
+
+# ============================================================
+# COMANDOS RÁPIDOS (in-game, após instalar ambos)
+# ============================================================
+# /vulcan disablecheck reach
+# /vulcan disablecheck velocity
+# /vulcan disablecheck hitbox
+# /vulcan disablecheck flight
+# /vulcan disablecheck speed
+# /vulcan disablecheck noslow
+# /vulcan disablecheck motion
+# /vulcan disablecheck timer
+# /vulcan disablecheck jesus
+# /vulcan disablecheck step
+# /vulcan disablecheck strafe

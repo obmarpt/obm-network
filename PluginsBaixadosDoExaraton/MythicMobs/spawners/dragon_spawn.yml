@@ -1,0 +1,13 @@
+LobbyDragonSpawn:
+  Mob: LobbyDragon
+  Worlds: Lobby
+  X: 56 # MUDA ISTO
+  Y: 280 # ALTURA BOA (15-25 acima do chão)
+  Z: 35 # MUDA ISTO
+  Radius: 0
+  MaxMobs: 1
+  Cooldown: 200
+  MobName: ''
+  CooldownTimer: 0
+  WarmupTimer: 0
+  ActiveMobs: 0

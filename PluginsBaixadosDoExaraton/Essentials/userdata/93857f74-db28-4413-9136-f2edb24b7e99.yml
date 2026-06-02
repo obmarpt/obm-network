@@ -1,0 +1,30 @@
+teleportenabled: true
+teleportauto: false
+godmode: false
+muted: false
+jailed: false
+ip-address: 127.0.0.1
+afk: false
+socialspy: false
+npc: false
+powertoolsenabled: true
+accepting-pay: true
+baltop-exempt: false
+timestamps:
+  lastteleport: 0
+  lastheal: 0
+  mute: 0
+  jail: 0
+  onlinejail: 0
+  logout: 1780161042402
+  login: 1780161036023
+money: '0'
+last-account-name: Pixel7936
+logoutlocation:
+  world: 767fabc4-f64f-4d33-92c2-9c0e9adc6c83
+  world-name: world
+  x: 35.90181350329982
+  y: 83.0
+  z: -135.0117202492714
+  yaw: 0.8762753009796143
+  pitch: 0.0

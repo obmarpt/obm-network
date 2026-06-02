@@ -6,6 +6,8 @@ import com.obm.network.lobby.gui.MenuManager;
 import com.obm.network.lobby.hologram.TopHologramManager;
 import com.obm.network.lobby.join.JoinHandler;
 import com.obm.network.lobby.listener.LobbyItemListener;
+import com.obm.network.lobby.retention.ProgressFeedbackTask;
+import com.obm.network.lobby.retention.RetentionJoinListener;
 
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,6 +36,10 @@ public class OBMLobbyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MenuManager(), this);
         registerCommand("menu", new MenuCommand());
         getServer().getPluginManager().registerEvents(new LobbyItemListener(), this);
+
+        ProgressFeedbackTask progressFeedback = new ProgressFeedbackTask();
+        progressFeedback.start(this);
+        getServer().getPluginManager().registerEvents(new RetentionJoinListener(progressFeedback), this);
 
         getLogger().info("✅ OBM-Lobby iniciado");
     }

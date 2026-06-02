@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import com.obm.network.lobby.OBMLobbyPlugin;
 import com.obm.network.core.OBMCorePlugin;
 import com.obm.network.core.storage.DataStore;
+import com.obm.network.core.tier.TierRankUtil;
 
 public class TopHologramManager {
 
@@ -28,36 +29,49 @@ public class TopHologramManager {
     public void createAll() {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 
-            createTop("top_smp_playtime", "§a§lTOP SMP PLAYTIME",
-                    getLocation("smp_playtime"), "playtime_smp");
+            createTop("top_smp_playtime", tierTitle("📊 TOP RUSH — PLAYTIME", "#FFAA00", "#FF7700"),
+                    getLocation("smp_playtime"), "playtime_smp", rushFooter());
 
-            createTop("top_smp_blocks", "§e§lTOP SMP BLOCKS",
-                    getLocation("smp_blocks"), "blocks_smp");
+            createTop("top_smp_blocks", tierTitle("⛏ TOP RUSH — BLOCKS", "#FFAA00", "#FF7700"),
+                    getLocation("smp_blocks"), "blocks_smp", rushFooter());
 
-            createTop("top_smp_kills", "§c§lTOP SMP KILLS",
-                    getLocation("smp_kills"), "kills_smp");
+            createTop("top_smp_kills", tierTitle("⚔ TOP RUSH — KILLS", "#FFAA00", "#FF7700"),
+                    getLocation("smp_kills"), "kills_smp", rushFooter());
 
-            createTop("top_smp_money", "§6§lTOP MONEY",
-                    getLocation("smp_money"), "money_smp");
+            createTop("top_smp_money", tierTitle("💰 TOP RUSH — COINS", "#FFAA00", "#FF7700"),
+                    getLocation("smp_money"), "money_smp", rushFooter());
 
-            createTop("top_uhc_kills", "§c§lTOP UHC KILLS",
-                    getLocation("uhc_kills"), "kills_uhc");
+            createTop("top_uhc_kills", tierTitle("⚔ TOP HARDCORE — KILLS", "#FF4444", "#880000"),
+                    getLocation("uhc_kills"), "kills_uhc", hardcoreFooter());
 
-            createTop("top_uhc_deaths", "§4§lTOP UHC DEATHS",
-                    getLocation("uhc_deaths"), "deaths_uhc");
+            createTop("top_uhc_deaths", tierTitle("💀 TOP HARDCORE — DEATHS", "#FF4444", "#880000"),
+                    getLocation("uhc_deaths"), "deaths_uhc", hardcoreFooter());
 
-            createTop("top_uhc_playtime", "§6§lTOP UHC PLAYTIME",
-                    getLocation("uhc_playtime"), "playtime_uhc");
+            createTop("top_uhc_playtime", tierTitle("⏳ TOP HARDCORE — PLAYTIME", "#FF4444", "#880000"),
+                    getLocation("uhc_playtime"), "playtime_uhc", hardcoreFooter());
 
-            createTop("top_uhc_lives", "§4§lTOP UHC LIVES",
-                    getLocation("uhc_lives"), "lives_uhc");
+            createTop("top_uhc_lives", tierTitle("❤ TOP HARDCORE — VIDAS", "#FF4444", "#880000"),
+                    getLocation("uhc_lives"), "lives_uhc", hardcoreFooter());
+
+            createTierTop("top_tierspace_rating",
+                    tierTitle("🏆 TIER TOP — RATING", "#00AAFF", "#AA00FF"),
+                    getLocation("tierspace_rating"), "tierspace_sword_rating", true,
+                    tierFooter());
+
+            createTierTop("top_tierspace_streak",
+                    tierTitle("🔥 TOP STREAK", "#AA00FF", "#FF4444"),
+                    getLocation("tierspace_streak"), "tierspace_sword_best_streak", false,
+                    streakFooter());
 
             createKDR("top_uhc_kdr", getLocation("uhc_kdr"));
 
         }, 0L, 200L);
     }
 
-    private void createTop(String id, String title, Location loc, String statKey) {
+    private static final int HOLO_LINES = 14;
+    private static final String SEPARATOR = "<dark_gray>──────────────</dark_gray>";
+
+    private void createTop(String id, String title, Location loc, String statKey, String footer) {
 
         if (loc == null || loc.getWorld() == null) return;
 
@@ -69,7 +83,7 @@ public class TopHologramManager {
             holograms.put(id, hologram);
 
             // estrutura fixa (12 linhas)
-            for (int i = 0; i < 12; i++) {
+            for (int i = 0; i < HOLO_LINES; i++) {
                 DHAPI.addHologramLine(hologram, "");
             }
         } else {
@@ -102,7 +116,7 @@ public class TopHologramManager {
 
         // ✅ atualizar linhas SEM recriar holograma
         updateLine(hologram, 0, title);
-        updateLine(hologram, 1, "§7━━━━━━━━━━━━");
+        updateLine(hologram, 1, SEPARATOR);
 
         int index = 2;
         int place = 1;
@@ -119,14 +133,99 @@ public class TopHologramManager {
                     : String.valueOf(value);
 
             updateLine(hologram, index,
-                    "§e#" + place + " §7" + name + " §8- §a" + formatted);
+                    formatPlaceLine(place, name, formatted));
 
             index++;
             place++;
         }
 
-        // limpar linhas restantes
-        for (int i = index; i < 12; i++) {
+        while (index < 12) {
+            updateLine(hologram, index, emptyPlaceLine(index - 1));
+            index++;
+        }
+
+        updateLine(hologram, 12, SEPARATOR);
+        updateLine(hologram, 13, footer);
+
+        for (int i = HOLO_LINES; i < hologram.getPage(0).getLines().size(); i++) {
+            updateLine(hologram, i, "");
+        }
+    }
+
+    private void createTierTop(String id, String title, Location loc, String statKey, boolean showRank,
+                               String footer) {
+
+        if (loc == null || loc.getWorld() == null) return;
+
+        Hologram hologram = holograms.get(id);
+
+        if (hologram == null) {
+            hologram = DHAPI.createHologram(id, loc);
+            holograms.put(id, hologram);
+
+            for (int i = 0; i < HOLO_LINES; i++) {
+                DHAPI.addHologramLine(hologram, "");
+            }
+        } else {
+            hologram.setLocation(loc);
+        }
+
+        DataStore ds = OBMCorePlugin.get().getDataStore();
+
+        Map<UUID, Integer> map = new HashMap<>();
+
+        if (ds.getYaml().getConfigurationSection("players") == null) return;
+
+        for (String key : ds.getYaml()
+                .getConfigurationSection("players")
+                .getKeys(false)) {
+
+            UUID uuid = UUID.fromString(key);
+            int value = ds.getInt(uuid, statKey);
+
+            if (value <= 0) continue;
+
+            map.put(uuid, value);
+        }
+
+        List<Map.Entry<UUID, Integer>> top = map.entrySet()
+                .stream()
+                .sorted(Map.Entry.<UUID, Integer>comparingByValue().reversed())
+                .limit(10)
+                .collect(Collectors.toList());
+
+        updateLine(hologram, 0, title);
+        updateLine(hologram, 1, SEPARATOR);
+
+        int index = 2;
+        int place = 1;
+
+        for (Map.Entry<UUID, Integer> entry : top) {
+
+            String name = Bukkit.getOfflinePlayer(entry.getKey()).getName();
+            if (name == null) name = "Unknown";
+
+            int value = entry.getValue();
+            String formatted = showRank
+                    ? TierRankUtil.fromRating(value).plainName() + " <gray>(</gray><yellow>" + value + "</yellow><gray>)</gray>"
+                    : String.valueOf(value);
+
+            updateLine(hologram, index,
+                    formatPlaceLine(place, name, formatted));
+
+            index++;
+            place++;
+        }
+
+        while (index < 12) {
+            updateLine(hologram, index, emptyPlaceLine(index - 1));
+            index++;
+        }
+
+        updateLine(hologram, 12, SEPARATOR);
+        updateLine(hologram, 13, footer);
+
+        for (int i = HOLO_LINES; i < hologram.getPage(0).getLines().size(); i++) {
             updateLine(hologram, i, "");
         }
     }
@@ -141,7 +240,7 @@ public class TopHologramManager {
             hologram = DHAPI.createHologram(id, loc);
             holograms.put(id, hologram);
 
-            for (int i = 0; i < 12; i++) {
+            for (int i = 0; i < HOLO_LINES; i++) {
                 DHAPI.addHologramLine(hologram, "");
             }
         } else {
@@ -176,8 +275,8 @@ public class TopHologramManager {
                 .limit(10)
                 .collect(Collectors.toList());
 
-        updateLine(hologram, 0, "§c§lTOP KDR");
-        updateLine(hologram, 1, "§7━━━━━━━━━━━━");
+        updateLine(hologram, 0, tierTitle("📊 TOP HARDCORE — K/D", "#FF4444", "#880000"));
+        updateLine(hologram, 1, SEPARATOR);
 
         int index = 2;
         int place = 1;
@@ -188,16 +287,19 @@ public class TopHologramManager {
             if (name == null) name = "Unknown";
 
             updateLine(hologram, index,
-                    "§e#" + place + " §7" + name + " §8- §c"
-                            + String.format("%.2f", entry.getValue()));
+                    formatPlaceLine(place, name, String.format("%.2f", entry.getValue())));
 
             index++;
             place++;
         }
 
-        for (int i = index; i < 12; i++) {
-            updateLine(hologram, i, "");
+        while (index < 12) {
+            updateLine(hologram, index, emptyPlaceLine(index - 1));
+            index++;
         }
+
+        updateLine(hologram, 12, SEPARATOR);
+        updateLine(hologram, 13, hardcoreFooter());
     }
 
    private void updateLine(Hologram hologram, int index, String text) {
@@ -222,6 +324,47 @@ public class TopHologramManager {
         if (world == null) return null;
 
         return new Location(world, x, y, z);
+    }
+
+    private String formatPlaceLine(int place, String name, String value) {
+        String prefix = switch (place) {
+            case 1 -> "<gold><bold>#1</bold></gold>";
+            case 2 -> "<gray><bold>#2</bold></gray>";
+            case 3 -> "<red><bold>#3</bold></red>";
+            default -> "<dark_gray>#" + place + "</dark_gray>";
+        };
+        return prefix + " <white>" + name + "</white> <dark_gray>—</dark_gray> <yellow>" + value + "</yellow>";
+    }
+
+    private String emptyPlaceLine(int rankIndex) {
+        int place = rankIndex + 1;
+        String prefix = switch (place) {
+            case 1 -> "<gold><bold>#1</bold></gold>";
+            case 2 -> "<gray><bold>#2</bold></gray>";
+            case 3 -> "<red><bold>#3</bold></red>";
+            default -> "<dark_gray>#" + place + "</dark_gray>";
+        };
+        return prefix + " <gray>—</gray> <dark_gray>—</dark_gray>";
+    }
+
+    private String tierTitle(String text, String from, String to) {
+        return "<gradient:" + from + ":" + to + "><bold>" + text + "</bold></gradient>";
+    }
+
+    private String tierFooter() {
+        return "<gradient:#00AAFF:#AA00FF>⚡ Sobe no ranking!</gradient>";
+    }
+
+    private String streakFooter() {
+        return "<gradient:#AA00FF:#FF4444>🔥 Mantém a streak!</gradient>";
+    }
+
+    private String rushFooter() {
+        return "<gradient:#FFAA00:#FF7700>💰 Domina a economia!</gradient>";
+    }
+
+    private String hardcoreFooter() {
+        return "<gradient:#FF4444:#880000>💀 Sobrevive ao Hardcore!</gradient>";
     }
 
     private String formatTime(int seconds) {
