@@ -1,5 +1,6 @@
 package com.obm.network.smp.listener;
 
+import com.obm.network.core.combat.CombatLogService;
 import com.obm.network.core.world.WorldModeService;
 import com.obm.network.smp.manager.SMPManager;
 import org.bukkit.entity.Player;
@@ -26,6 +27,7 @@ public class SMPListener implements Listener {
         if (!worldModeService.isSMP(victim.getWorld().getName())) {
             return;
         }
+        CombatLogService.clearCombat(victim);
         manager.handleDeath(victim, victim.getKiller());
     }
 

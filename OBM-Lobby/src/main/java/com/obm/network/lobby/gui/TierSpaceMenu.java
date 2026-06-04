@@ -80,7 +80,7 @@ public class TierSpaceMenu {
 
         swordLore.add("");
 
-        swordLore.add("§eClique para entrar na fila!");
+        swordLore.add("§7Menu legado — usa o hub TierSpace no lobby.");
 
 
 

@@ -3,10 +3,10 @@ package com.obm.network.lobby.gui;
 import com.obm.network.core.OBMCorePlugin;
 import com.obm.network.core.combat.CooldownService;
 import com.obm.network.core.hardcore.HardcoreUnlockService;
+import com.obm.network.core.location.RankedHubService;
 import com.obm.network.core.location.SafeSpawnService;
 import com.obm.network.core.storage.DataStore;
 import com.obm.network.smp.SMPPlugin;
-import com.obm.network.tierspace.TierSpacePlugin;
 import com.obm.network.smp.shop.ShopGui;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -43,7 +43,7 @@ public class MenuManager implements Listener {
                 player.openInventory(SMPMenu.create(player));
             } else if (slot == MainMenu.SLOT_TIERSPACE) {
                 playClick(player);
-                openTierSpaceMenu(player);
+                enterTierSpaceHub(player);
             } else if (slot == MainMenu.SLOT_HARDCORE) {
                 playClick(player);
                 player.openInventory(UHCMenu.create(player));
@@ -134,13 +134,14 @@ public class MenuManager implements Listener {
         player.closeInventory();
     }
 
-    private void openTierSpaceMenu(Player player) {
-        TierSpacePlugin tierSpace = TierSpacePlugin.get();
-        if (tierSpace == null || tierSpace.getTierGuiMenu() == null) {
-            player.sendMessage(MenuColors.error("TierSpace não está disponível."));
+    private void enterTierSpaceHub(Player player) {
+        if (!RankedHubService.teleport(player)) {
             return;
         }
-        player.openInventory(tierSpace.getTierGuiMenu().create(player));
+        resetPlayerState(player);
+        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.6f, 1.2f);
+        player.sendMessage(MenuColors.tier("Bem-vindo ao TierSpace! ") + MenuColors.neutral("Usa a bússola ou um NPC para escolher o modo."));
+        player.closeInventory();
     }
 
     private void playClick(Player player) {

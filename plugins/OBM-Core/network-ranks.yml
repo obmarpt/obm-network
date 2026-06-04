@@ -1,0 +1,12 @@
+ranks:
+  purchasable:
+    vip:
+      display-name: "§aVIP"
+      price: 500
+      luckperms-group: vip
+      permission: group.vip
+    mvp:
+      display-name: "§dMVP"
+      price: 1500
+      luckperms-group: mvp
+      permission: group.mvp

@@ -1,0 +1,17 @@
+daily-rewards:
+  enabled: true
+  feedback:
+    action-bar: true
+    chat: true
+  rewards:
+    day1: 10
+    day2: 15
+    day3: 20
+    day4: 30
+    day5: 50
+    day6: 75
+    day7: 100
+  smp-coins:
+    enabled: true
+    amount: 2000
+    only-in-smp-world: true

@@ -117,11 +117,28 @@ public class TierSpaceStore {
         return value == null ? "" : value.toString();
     }
 
-    public void saveGlobalSeason(int seasonNumber, long seasonEndMillis) {
+    public void saveGlobalSeason(int seasonNumber, long seasonEndMillis, int durationDays) {
         dataStore.getYaml().set("tierspace.season.number", seasonNumber);
         dataStore.getYaml().set("tierspace.season.end", seasonEndMillis);
         dataStore.getYaml().set("tierspace.season.initialized", true);
+        long started = seasonEndMillis - (Math.max(1, durationDays) * 86_400_000L);
+        com.obm.network.core.season.SeasonStorage.setRanked(dataStore, seasonNumber);
+        com.obm.network.core.season.SeasonStorage.setRankedSeasonWindow(
+                dataStore, started, seasonEndMillis, durationDays);
         dataStore.save();
+    }
+
+    /** Reset completo dos stats TierSpace de um modo (sem Emeralds / ranks network). */
+    public void resetModeProgress(UUID uuid, GameModeId mode, int defaultRating) {
+        ensureInitialized(uuid, mode);
+        setRating(uuid, mode, defaultRating);
+        dataStore.set(uuid, key(mode, "wins"), 0);
+        dataStore.set(uuid, key(mode, "losses"), 0);
+        dataStore.set(uuid, key(mode, "streak"), 0);
+        dataStore.set(uuid, key(mode, "best_streak"), 0);
+        dataStore.set(uuid, key(mode, "loss_streak"), 0);
+        resetPlacement(uuid, mode);
+        dataStore.save(uuid);
     }
 
     public boolean isSeasonPersisted() {

@@ -33,18 +33,32 @@ public class InventoryManager {
 
     public void saveInventory(Player p, String world) {
         String mode = getMode(world);
-        if (mode == null) return;
+        if (mode == null) {
+            return;
+        }
 
         UUID uuid = p.getUniqueId();
         ItemStack[] contents = p.getInventory().getContents();
+        ItemStack[] copy = clone(contents);
 
         switch (mode) {
-            case "uhc" -> uhcInv.put(uuid, contents);
-            case "smp" -> smpInv.put(uuid, contents);
+            case "uhc" -> uhcInv.put(uuid, copy);
+            case "smp" -> smpInv.put(uuid, copy);
         }
 
-        dataStore.setInventory(uuid, "mode." + mode, contents);
+        dataStore.setInventory(uuid, "mode." + mode, copy);
         dataStore.save(uuid);
+    }
+
+    private static ItemStack[] clone(ItemStack[] contents) {
+        if (contents == null) {
+            return new ItemStack[0];
+        }
+        ItemStack[] copy = new ItemStack[contents.length];
+        for (int i = 0; i < contents.length; i++) {
+            copy[i] = contents[i] == null ? null : contents[i].clone();
+        }
+        return copy;
     }
 
     public void loadInventory(Player p, String world) {

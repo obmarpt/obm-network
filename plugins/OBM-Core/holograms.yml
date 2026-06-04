@@ -12,9 +12,9 @@ holograms:
     welcome:
       type: static
       world: Lobby
-      x: 0.5
+      x: 6
       y: 168.0
-      z: -6.5
+      z: 0
       lines:
         - "&b&l✦ MineSpace ✦"
         - "&8──────────────"
@@ -38,7 +38,7 @@ holograms:
     player_stats:
       type: static
       world: Lobby
-      x: -3.5
+      x: 40
       y: 165.5
       z: 0.5
       refresh-ticks: 40
@@ -54,9 +54,9 @@ holograms:
     rush_info:
       type: static
       world: Lobby
-      x: -8.5
-      y: 166.0
-      z: 4.5
+      x: 36
+      y: 167.0
+      z: -6
       lines:
         - "&6&l⚔ RUSH SMP"
         - "&8──────────────"
@@ -69,9 +69,9 @@ holograms:
     hardcore_info:
       type: static
       world: Lobby
-      x: 8.5
-      y: 166.0
-      z: 4.5
+      x: 37
+      y: 167.0
+      z: 0
       lines:
         - "&c&l💀 HARDCORE"
         - "&8──────────────"
@@ -84,9 +84,9 @@ holograms:
     tierspace_info:
       type: static
       world: Lobby
-      x: 0.5
-      y: 166.0
-      z: 8.5
+      x: 36
+      y: 167.0
+      z: 7
       refresh-ticks: 40
       lines:
         - "&b&l🏆 TIERSPACE"
@@ -101,9 +101,9 @@ holograms:
       id: top_smp_playtime
       type: leaderboard
       world: Lobby
-      x: 56
-      y: 65
-      z: 35
+      x: 14
+      y: 165
+      z: 18
       stat: playtime_smp
       format: playtime
       title: "&6&l📊 TOP RUSH — PLAYTIME"
@@ -113,9 +113,9 @@ holograms:
       id: top_smp_blocks
       type: leaderboard
       world: Lobby
-      x: 60
-      y: 65
-      z: 35
+      x: 11
+      y: 163
+      z: 18
       stat: blocks_smp
       title: "&6&l⛏ TOP RUSH — BLOCKS"
       footer: "&6💰 &fDomina a economia!"
@@ -124,9 +124,9 @@ holograms:
       id: top_smp_kills
       type: leaderboard
       world: Lobby
-      x: 64
-      y: 65
-      z: 35
+      x: 30
+      y: 163
+      z: 18
       stat: kills_smp
       title: "&6&l⚔ TOP RUSH — KILLS"
       footer: "&6💰 &fDomina a economia!"
@@ -135,9 +135,9 @@ holograms:
       id: top_smp_money
       type: leaderboard
       world: Lobby
-      x: 68
-      y: 65
-      z: 35
+      x: 27
+      y: 163
+      z: 18
       stat: money_smp
       title: "&6&l💰 TOP RUSH — COINS"
       footer: "&6💰 &fDomina a economia!"

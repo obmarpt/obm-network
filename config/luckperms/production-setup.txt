@@ -1,0 +1,282 @@
+# MineSpace — LuckPerms produção
+# Aplicar na consola (ou importar por blocos). Sem wildcards (*).
+# Ordem: criar grupos → parents → permissões → negar perigosas no default
+#
+# Pré-requisito: OBM-* recompilados com permissões novas (obm.smp.money.pay, etc.)
+
+# =============================================================================
+# 1. GRUPOS E HIERARQUIA
+# =============================================================================
+
+lp creategroup default
+lp creategroup vip
+lp creategroup mvp
+lp creategroup builder
+lp creategroup helper
+lp creategroup mod
+lp creategroup admin
+lp creategroup owner
+
+lp group vip parent add default
+lp group mvp parent add vip
+lp group builder parent add default
+lp group helper parent add mvp
+lp group mod parent add helper
+lp group admin parent add mod
+lp group owner parent add admin
+
+lp createtrack player default vip mvp
+lp createtrack staff helper mod admin owner
+lp group default setweight 0
+lp group vip setweight 10
+lp group mvp setweight 20
+lp group builder setweight 15
+lp group helper setweight 30
+lp group mod setweight 40
+lp group admin setweight 50
+lp group owner setweight 100
+
+# =============================================================================
+# 2. DEFAULT — jogador base
+# =============================================================================
+
+# --- OBM Core (jogador) ---
+lp group default permission set obm.shop.global true
+lp group default permission set obm.daily true
+lp group default permission set obm.cosmetics true
+lp group default permission set obm.crate true
+lp group default permission set obm.battlepass true
+lp group default permission set obm.season.info true
+
+# --- OBM Lobby ---
+lp group default permission set obm.lobby true
+lp group default permission set obm.menu true
+
+# --- OBM SMP ---
+lp group default permission set obm.smp.enter true
+lp group default permission set obm.smp.shop true
+lp group default permission set obm.smp.sell true
+lp group default permission set obm.smp.auction true
+lp group default permission set obm.smp.rank true
+lp group default permission set obm.smp.money true
+lp group default permission set obm.smp.market true
+lp group default permission set obm.smp.top true
+
+# --- OBM TierSpace ---
+lp group default permission set obm.tierspace.use true
+lp group default permission set obm.tierspace.queue true
+
+# --- OBM UHC ---
+lp group default permission set obm.uhc.stats true
+
+# --- Essentials (básico; SEM economia Essentials) ---
+lp group default permission set essentials.spawn true
+lp group default permission set essentials.help true
+lp group default permission set essentials.list true
+lp group default permission set essentials.msg true
+lp group default permission set essentials.reply true
+lp group default permission set essentials.afk true
+lp group default permission set essentials.sethome true
+lp group default permission set essentials.home true
+lp group default permission set essentials.delhome true
+lp group default permission set essentials.tpa true
+lp group default permission set essentials.tpaccept true
+lp group default permission set essentials.tpdeny true
+lp group default permission set essentials.tpahere true
+lp group default permission set essentials.back true
+lp group default permission set essentials.ignore true
+lp group default permission set essentials.mail true
+lp group default permission set essentials.mail.send true
+lp group default permission set essentials.mail.read true
+
+# --- Pay SMP (opcional para todos; MVP+ pode herdar) ---
+lp group default permission set obm.smp.money.pay true
+
+# --- TAB ---
+lp group default permission set tab.see.other.groups true
+
+# --- Negar (segurança) ---
+lp group default permission set essentials.pay false
+lp group default permission set essentials.balance false
+lp group default permission set essentials.bal false
+lp group default permission set essentials.eco false
+lp group default permission set essentials.give false
+lp group default permission set essentials.fly false
+lp group default permission set essentials.god false
+lp group default permission set essentials.vanish false
+lp group default permission set essentials.tp false
+lp group default permission set essentials.tp.others false
+lp group default permission set essentials.kick false
+lp group default permission set essentials.ban false
+lp group default permission set obm.admin.panel false
+lp group default permission set obm.admin.season false
+lp group default permission set obm.smp.admin false
+lp group default permission set tierspace.admin.season false
+lp group default permission set uhc.revive false
+lp group default permission set obm.stats false
+lp group default permission set spartan.bypass false
+lp group default permission set grim.exempt false
+lp group default permission set grim.alerts false
+lp group default permission set worldedit.wand false
+lp group default permission set worldedit.limit.unrestricted false
+lp group default permission set luckperms.user.info false
+
+# =============================================================================
+# 3. VIP
+# =============================================================================
+
+lp group vip permission set group.vip true
+lp group vip permission set obm.smp.vip true
+lp group vip permission set obm.chat.color true
+lp group vip permission set essentials.hat true
+lp group vip permission set essentials.sethome.multiple true
+lp group vip permission set essentials.sethome.multiple.vip true
+lp group vip meta setprefix 100 "&a&lVIP &r"
+
+# =============================================================================
+# 4. MVP
+# =============================================================================
+
+lp group mvp permission set group.mvp true
+lp group mvp permission set essentials.sethome.multiple.mvp true
+lp group mvp permission set essentials.workbench true
+lp group mvp meta setprefix 110 "&d&lMVP &r"
+
+# =============================================================================
+# 5. BUILDER (construção — NÃO staff)
+# =============================================================================
+
+lp group builder permission set obm.rank.builder true
+lp group builder permission set essentials.build true
+lp group builder permission set essentials.build.break true
+lp group builder permission set essentials.build.place true
+
+# WorldEdit (lista fechada)
+lp group builder permission set worldedit.wand true
+lp group builder permission set worldedit.selection.pos true
+lp group builder permission set worldedit.selection.hpos true
+lp group builder permission set worldedit.selection.expand true
+lp group builder permission set worldedit.selection.contract true
+lp group builder permission set worldedit.selection.shift true
+lp group builder permission set worldedit.region.set true
+lp group builder permission set worldedit.region.replace true
+lp group builder permission set worldedit.clipboard.copy true
+lp group builder permission set worldedit.clipboard.paste true
+lp group builder permission set worldedit.clipboard.rotate true
+lp group builder permission set worldedit.undo true
+lp group builder permission set worldedit.redo true
+lp group builder permission set worldedit.limit.unrestricted false
+lp group builder permission set worldedit.limit.50000 true
+
+# VoxelSniper
+lp group builder permission set voxelsniper.sniper true
+lp group builder permission set voxelsniper.brush.ink true
+lp group builder permission set voxelsniper.brush.ball true
+lp group builder permission set voxelsniper.brush.cylinder true
+lp group builder permission set voxelsniper.brush.voxel true
+
+# Citizens (NPCs mapa)
+lp group builder permission set citizens.npc.create true
+lp group builder permission set citizens.npc.edit true
+lp group builder permission set citizens.npc.use true
+
+lp group builder meta setprefix 90 "&2&lBUILDER &r"
+
+# =============================================================================
+# 6. HELPER — suporte
+# =============================================================================
+
+lp group helper permission set obm.rank.helper true
+lp group helper permission set tab.staff true
+lp group helper permission set essentials.kick true
+lp group helper permission set essentials.mute true
+lp group helper permission set essentials.tempmute true
+lp group helper permission set essentials.unmute true
+lp group helper permission set essentials.tp true
+lp group helper permission set essentials.tphere true
+lp group helper permission set essentials.tpoffline true
+lp group helper permission set essentials.vanish true
+lp group helper permission set essentials.vanish.see true
+lp group helper permission set essentials.socialspy true
+lp group helper permission set essentials.chat.color true
+lp group helper permission set essentials.nick true
+lp group helper permission set obm.chat.staff true
+lp group helper meta setprefix 120 "&b&lHELPER &r"
+
+# =============================================================================
+# 7. MOD — moderação completa
+# =============================================================================
+
+lp group mod permission set obm.rank.mod true
+lp group mod permission set essentials.ban true
+lp group mod permission set essentials.tempban true
+lp group mod permission set essentials.unban true
+lp group mod permission set essentials.banip true
+lp group mod permission set essentials.unbanip true
+lp group mod permission set essentials.invsee true
+lp group mod permission set essentials.enderchest.others true
+lp group mod permission set essentials.fly false
+lp group mod permission set essentials.speed true
+lp group mod permission set essentials.heal true
+lp group mod permission set essentials.feed true
+lp group mod permission set grim.alerts true
+lp group mod meta setprefix 130 "&9&lMOD &r"
+
+# =============================================================================
+# 8. ADMIN — gestão servidor
+# =============================================================================
+
+lp group admin permission set obm.rank.admin true
+lp group admin permission set obm.admin.panel true
+lp group admin permission set obm.admin.season true
+lp group admin permission set tierspace.admin.season true
+lp group admin permission set obm.smp.admin true
+lp group admin permission set obm.stats true
+lp group admin permission set uhc.revive true
+lp group admin permission set essentials.gamemode true
+lp group admin permission set essentials.gamemode.others true
+lp group admin permission set essentials.time true
+lp group admin permission set essentials.weather true
+lp group admin permission set essentials.clearinventory true
+lp group admin permission set essentials.give true
+lp group admin permission set citizens.admin true
+lp group admin permission set multiverse.core.access.list true
+lp group admin permission set multiverse.core.access.info true
+lp group admin permission set multiverse.core.access.tp true
+lp group admin permission set essentials.fly true
+lp group admin permission set grim.exempt false
+lp group admin permission set spartan.bypass false
+lp group admin permission set luckperms.user.info true
+lp group admin permission set luckperms.group.info true
+lp group admin meta setprefix 140 "&c&lADMIN &r"
+
+# WorldEdit extra (ainda sem worldedit.*)
+lp group admin permission set worldedit.clipboard.clear true
+lp group admin permission set worldedit.region.clear true
+lp group admin permission set worldedit.biome.info true
+lp group admin permission set worldedit.biome.set true
+
+# =============================================================================
+# 9. OWNER
+# =============================================================================
+
+lp group owner permission set obm.rank.owner true
+# Bypass AC só OWNER (investigações); não dar a ADMIN/MOD
+lp group owner permission set grim.exempt true
+lp group owner permission set spartan.bypass true
+lp group owner permission set luckperms.user.edit true
+lp group owner permission set luckperms.group.edit true
+lp group owner permission set luckperms.track.edit true
+lp group owner permission set luckperms.reloadconfig true
+lp group owner permission set tab.reload true
+lp group owner permission set papi.reload true
+lp group owner meta setprefix 200 "&4&lOWNER &r"
+
+# =============================================================================
+# 10. APLICAR JOGADORES
+# =============================================================================
+# lp user <nick> parent set default
+# lp user <nick> parent add vip
+# lp user <nick> parent add builder
+
+lp sync

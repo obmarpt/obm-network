@@ -12,18 +12,36 @@ softdepend:
   - LuckPerms
 
 permissions:
+  obm.smp.enter:
+    description: Entrar no mundo RushSMP (/smp)
+    default: false
   obm.smp.shop:
     description: Abrir loja SMP e categorias base
-    default: true
+    default: false
   obm.smp.sell:
     description: Vender itens no SMP
-    default: true
+    default: false
   obm.smp.auction:
     description: Usar leilão /ah
-    default: true
+    default: false
   obm.smp.rank:
     description: Ver e comprar ranks SMP
-    default: true
+    default: false
+  obm.smp.money:
+    description: Ver saldo SMP (/money)
+    default: false
+  obm.smp.money.pay:
+    description: Pagar outros jogadores (/money pay)
+    default: false
+  obm.smp.market:
+    description: Mercado de jogadores (/market)
+    default: false
+  obm.smp.top:
+    description: Ver leaderboards RushSMP (/top)
+    default: false
+  obm.stats:
+    description: Consultar stats de outros jogadores (/stats)
+    default: op
   obm.smp.vip:
     description: Perks VIP (+coins, itens exclusivos na loja)
     default: false
@@ -68,3 +86,8 @@ commands:
   top:
     description: Ver leaderboards
     usage: /top
+
+  stats:
+    description: Consultar estatísticas de um jogador (staff)
+    usage: /stats <modo> <stat> <player>
+    permission: obm.stats

@@ -14,11 +14,21 @@ softdepend:
   - OBM-SMP
   - OBM-TierSpace
 
+permissions:
+  obm.lobby:
+    description: Voltar ao lobby (/lobby)
+    default: false
+  obm.menu:
+    description: Abrir menu principal (/menu)
+    default: false
+
 commands:
   lobby:
     description: Voltar para o lobby
     usage: /lobby
+    permission: obm.lobby
 
   menu:
     description: Abrir menu principal
     usage: /menu
+    permission: obm.menu

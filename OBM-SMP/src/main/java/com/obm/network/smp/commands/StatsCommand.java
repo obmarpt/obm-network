@@ -1,6 +1,7 @@
 package com.obm.network.smp.commands;
 
 import com.obm.network.core.OBMCorePlugin;
+import com.obm.network.smp.permission.SmpPermissions;
 import com.obm.network.core.storage.DataStore;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -19,6 +20,9 @@ public class StatsCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (SmpPermissions.deny(sender, SmpPermissions.STATS, "Permissão: obm.stats (staff)")) {
+            return true;
+        }
 
         if (args.length < 3) {
             sender.sendMessage("§cUso: /stats <modo> <stat> <player>");

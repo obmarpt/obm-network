@@ -1,5 +1,7 @@
 package com.obm.network.smp.commands;
 
+import com.obm.network.smp.permission.SmpPermissions;
+import com.obm.network.smp.util.SmpRateLimits;
 import com.obm.network.smp.market.MarketGui;
 import com.obm.network.smp.service.EconomyService;
 import com.obm.network.smp.service.MarketService;
@@ -30,6 +32,9 @@ public class MarketCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage("Apenas jogadores podem usar este comando.");
+            return true;
+        }
+        if (SmpPermissions.deny(player, SmpPermissions.MARKET, "Permissão: obm.smp.market")) {
             return true;
         }
 
@@ -68,12 +73,18 @@ public class MarketCommand implements CommandExecutor {
     }
 
     private boolean handleSell(Player player, String argPrice) {
+        SmpRateLimits.MarketCheckResult rate = SmpRateLimits.checkMarketListing(player);
+        if (!rate.allowed()) {
+            player.sendMessage(rate.message());
+            return true;
+        }
         try {
             int price = Integer.parseInt(argPrice);
             MarketSaleResult result = marketService.createListing(
                     player, player.getInventory().getItemInMainHand(), price,
                     maxListingsPerPlayer, minPrice, maxPrice);
             if (result.isSuccess()) {
+                SmpRateLimits.recordMarketListing(player);
                 player.getInventory().setItemInMainHand(null);
                 player.sendMessage(result.getMessage());
                 marketGui.open(player);

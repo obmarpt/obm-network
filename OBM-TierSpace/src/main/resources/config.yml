@@ -2,6 +2,13 @@
 
 world: TierSpace
 
+# Hub de entrada (rankedSpawn) — bússola abre menu; fila só pelo menu/comando/NPC "fila"
+ranked-spawn:
+  selector:
+    enabled: true
+    slot: 4
+    name: "§b§lTierSpace §8| §7Modos"
+
 rating:
   default: 600
   k-factor-new: 32

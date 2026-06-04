@@ -16,18 +16,18 @@ timestamps:
   mute: 0
   jail: 0
   onlinejail: 0
-  logout: 1780507951383
-  login: 1780506456435
-money: '-4171.0'
+  logout: 1780574001202
+  login: 1780574010402
+money: '1600.0'
 last-account-name: Obmarr
 logoutlocation:
-  world: 280e415b-f704-465f-b8b3-b4c51c5cf2cb
-  world-name: Lobby
-  x: 23.676139111884485
-  y: 160.0
-  z: 5.223425093918758
-  yaw: 97.71099853515625
-  pitch: 7.918566703796387
+  world: 767fabc4-f64f-4d33-92c2-9c0e9adc6c83
+  world-name: world
+  x: -71.43580558236391
+  y: 72.04289683901332
+  z: 47.488038214394415
+  yaw: 67.5501708984375
+  pitch: 25.766889572143555
 lastlocation:
   world: 280e415b-f704-465f-b8b3-b4c51c5cf2cb
   world-name: Lobby
@@ -36,3 +36,4 @@ lastlocation:
   z: -0.6973315918426
   yaw: -79.59573364257812
   pitch: -0.8799811005592346
+flymode: false

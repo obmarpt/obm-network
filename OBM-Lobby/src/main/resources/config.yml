@@ -1,4 +1,7 @@
 lobby:
+  # force-always: true → /lobby ignora combat, cooldown e estado bugado (recomendado produção)
+  command:
+    force-always: true
   world: Lobby
   spawn:
     x: 0.5

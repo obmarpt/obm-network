@@ -1,0 +1,16 @@
+# Copiar para plugins/MythicMobs/randomspawns/ExampleRandomSpawns.yml
+# Desactiva Skeleton King no SMP (world). Usar spawners manuais só em mundos de dungeon.
+
+RandomSkeletonKing:
+  Type: SkeletonKing
+  Worlds: __disabled_no_smp__
+  Chance: 0
+  Priority: 1
+  Action: REPLACE
+
+RandomSkeletalKnight:
+  Type: SkeletalKnight
+  Worlds: __disabled_no_smp__
+  Chance: 0
+  Priority: 1
+  Action: REPLACE

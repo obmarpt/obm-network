@@ -12,16 +12,9 @@ uhc-worlds:
   - UHC_nether
   - UHC_the_end
 
-rush-worlds:
-  - rush
-  - rush_nether
-  - rush_the_end
-
 combatlog:
   timeout: 15000
   blocked-commands:
-    - lobby
-    - spawn
     - home
     - warp
     - teleport
@@ -29,7 +22,37 @@ combatlog:
 lobby:
   world: Lobby
   day-time: 1000
+  spawn:
+    x: 0.5
+    y: 164.0
+    z: 0.5
+    yaw: -90
+    pitch: 0
 
+player-state-reset:
+  enabled: true
+  join-delay-ticks: 3
+  join-followup-ticks: 10
+  respawn-delay-ticks: 2
+  hard-reset-lobby: true
+  prefer-lobby-when-unstable: true
+  teleport-if-airborne: true
+  double-resync: true
+  spartan-grace-enabled: true
+  spartan-grace-ticks: 40
+
+join-stabilize:
+  enabled: true
+  delay-ticks: 3
+  invalid-teleport-lobby: true
+  teleport-if-airborne: true
+  spartan-grace-enabled: true
+  spartan-grace-ticks: 40
+
+admin:
+  default-smp-balance: 100
+
+# Desbloqueio do Hardcore (level + coins do Rush/SMP — %obm_level% / %obm_coins%)
 hardcore:
   unlock:
     enabled: true

@@ -1,6 +1,8 @@
 package com.obm.network.smp.commands;
 
+import com.obm.network.smp.permission.SmpPermissions;
 import com.obm.network.smp.service.EconomyService;
+import com.obm.network.smp.util.SmpRateLimits;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -24,12 +26,18 @@ public class MoneyCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
+            if (SmpPermissions.deny(player, SmpPermissions.MONEY, "Permissão: obm.smp.money")) {
+                return true;
+            }
             int balance = economyService.getBalance(player.getUniqueId());
             player.sendMessage("§aSeu saldo SMP: §e" + balance + " coins");
             return true;
         }
 
         if (args.length == 3 && args[0].equalsIgnoreCase("pay")) {
+            if (SmpPermissions.deny(player, SmpPermissions.MONEY_PAY, "Permissão: obm.smp.money.pay")) {
+                return true;
+            }
             Player target = Bukkit.getPlayerExact(args[1]);
             if (target == null) {
                 player.sendMessage("§cJogador não encontrado.");
@@ -43,11 +51,18 @@ public class MoneyCommand implements CommandExecutor {
                     return true;
                 }
 
+                SmpRateLimits.PayCheckResult rate = SmpRateLimits.checkPay(player, amount);
+                if (!rate.allowed()) {
+                    player.sendMessage(rate.message());
+                    return true;
+                }
+
                 if (!economyService.transfer(player.getUniqueId(), target.getUniqueId(), amount)) {
                     player.sendMessage("§cSaldo insuficiente.");
                     return true;
                 }
 
+                SmpRateLimits.recordPay(player, amount);
                 player.sendMessage("§aVocê pagou §e" + amount + " coins §apara §f" + target.getName() + "§a.");
                 target.sendMessage("§aVocê recebeu §e" + amount + " coins §ade §f" + player.getName() + "§a.");
             } catch (NumberFormatException ex) {

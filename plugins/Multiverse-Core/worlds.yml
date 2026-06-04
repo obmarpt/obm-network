@@ -106,11 +106,11 @@ rankedSpawn:
   seed: 7471439582239559594
   spawn-location:
     ==: MVSpawnLocation
-    x: 42.07976744536045
-    y: 118.0
-    z: -19.57144501388423
-    pitch: -4.119519
-    yaw: 50.804108
+    x: 0.5
+    y: 65.0
+    z: 0.5
+    pitch: 0.0
+    yaw: 0.0
   spawning:
     monster:
       spawn: true

@@ -1,0 +1,43 @@
+# Seasons por modo — SEM reset global
+# Ranked → OBM-TierSpace TierSeasonManager (ELO)
+# RushSMP → reset coins/level/stats (Emeralds/cosmetics/ranks network preservados)
+# Hardcore → sempre desactivado (persistente)
+
+season:
+  enabled: true
+  modes:
+    ranked:
+      enabled: true
+      broadcast: true
+      # Reset ELO: /season ranked start → TierSeasonManager.startNewSeason
+    smp:
+      enabled: true
+      duration-days: 30
+      auto-rotate: false
+      broadcast: true
+      default-rank-id: bronze
+      reset:
+        balance: true
+        level: true
+        stats: true
+        rank: true
+      end-rewards:
+        kills_smp:
+          top1:
+            position: 1
+            reward:
+              type: EMERALDS
+              amount: 500
+          top3:
+            position: 3
+            reward:
+              type: CRATE
+              id: rare
+        playtime_smp:
+          top1:
+            position: 1
+            reward:
+              type: EMERALDS
+              amount: 300
+    hardcore:
+      enabled: false

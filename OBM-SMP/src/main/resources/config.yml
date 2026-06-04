@@ -1,5 +1,13 @@
 starting-balance: 100
 
+# Estabilização após morte (anti falsos positivos Spartan / movimento)
+respawn:
+  use-safe-spawn: true
+  stabilize-delay-ticks: 2
+  teleport-if-airborne: true
+  spartan-grace-enabled: true
+  spartan-grace-ticks: 60
+
 spawn:
   protection-radius: 100
   center:
@@ -9,6 +17,16 @@ economy:
   kill-reward: 150
   death-penalty: 50
   death-penalty-enabled: true
+  pay:
+    cooldown-seconds: 30
+    daily-send-limit: 50000
+    log-amount-threshold: 10000
+
+market:
+  max-listings-per-player: 8
+  min-price: 1
+  max-price: 1000000
+  listing-cooldown-seconds: 45
 
 exploits:
   kill-cooldown-minutes: 30

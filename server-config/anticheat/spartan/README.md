@@ -1,53 +1,70 @@
-# Spartan + GrimAC — MineSpace
+# Spartan — OMD Network (movimento / false positives)
 
-## Conflito (causa dos falsos positivos)
+## Problema (logs)
 
-| Área | Spartan | GrimAC |
-|------|---------|--------|
-| Queda / gravidade | `gravity-simulation` | `Simulation`, `NoFall` |
-| Velocidade | `speed-simulation` | `Simulation`, `Timer` |
-| Knockback | `velocity` | `Knockback`, `Explosion` |
-| Reach | `hit-reach`, `block-reach` | `Reach` |
+`gravity-simulation` com `Punish: true` e `Punishment-Level: 40` expulsava jogadores legítimos (saltos, água, wind charge, knockback). O valor `minimum_gravity_difference: 0.0` no `advanced.yml` era sensibilidade máxima.
 
-**Dois anticheats a simular movimento ao mesmo tempo** geram flags em jogadores legítimos (lobby, escadas, blocos parciais, ping, 1.21).
+## Filosofia aplicada
 
-## Configuração aplicada (recomendada)
+| Objetivo | Config Spartan |
+|----------|----------------|
+| Check activo | `enabled.java: true` |
+| Corrigir movimento | `cancelled_event: true` |
+| Sem kick | `punishments.enabled: false` + comandos vazios |
+| Menos FP | `minimum_gravity_difference` / `minimum_speed_difference` elevados |
+| Sem rubber-band extra | `ground_teleport_on_detection: false` |
 
-1. **Spartan `checks.yml`**
-   - Punishments **desactivados** em todos os checks (`enabled: false`, sem `spartan kick`).
-   - `gravity-simulation` e `speed-simulation` **desactivados** (Java + Bedrock) — Grim cobre movimento.
-   - `detection_details` mantém **logs** em `plugins/Spartan/logs/`.
+## 1. gravity-simulation (principal)
 
-2. **Spartan `advanced.yml`**
-   - `minimum_gravity_difference: 0.12` (antes `0.0` = máxima sensibilidade).
-   - `minimum_speed_difference: 0.05`.
+```yaml
+# checks.yml
+cancelled_event: true      # cancel: true
+punishments.enabled: false # punish: false
+enabled.java: true
+commands: (todos vazios)
 
-3. **Spartan `settings.yml`**
-   - `ground_teleport_on_detection: false` (evita rubber-band / FP).
-
-4. **GrimAC `punishments.yml`**
-   - Movimento: só `[alert]` + `[log]` (sem kick automático na fase actual).
-
-## Deploy
-
-Copiar para o servidor:
-
-```
-server-config/anticheat/spartan/checks.yml     → plugins/Spartan/checks.yml
-server-config/anticheat/spartan/advanced.yml   → plugins/Spartan/advanced.yml
-server-config/anticheat/spartan/settings.yml   → plugins/Spartan/settings.yml
+# advanced.yml
+minimum_gravity_difference: 0.15
 ```
 
-Depois: `/spartan reload` ou reinício.
+**Kick eliminado:** com `punishments.enabled: false`, o Spartan deixa de aplicar punição automática ao nível 40 (`Punish: false` nos logs). Detecções continuam; movimento inválido é **cancelado**, não expulso.
 
-Staff com notificações: `/spartan notifications` (ver flags sem kick).
+## 2. Outros checks de movimento
 
-## Alternativa: só Grim
+| Check | Papel | checks.yml |
+|-------|--------|------------|
+| `speed-simulation` | speed / sprint anómalo | `cancelled_event: true`, punish off, enabled |
+| `velocity` | knockback, explosões, wind charge | `cancelled_event: true`, punish off |
+| `irregular-movements` | fly-like / movimento irregular | `cancelled_event: true`, punish off |
 
-- Remover `Spartan.jar` do `plugins/`.
-- Manter Grim para movimento, reach, timer, knockback.
-- Spartan útil para: kill-aura heuristics, fast-clicks, x-ray — se precisares, mantém Spartan **sem** checks de simulação.
+Todos os restantes checks: **punish desactivado** (sem `spartan kick` em nenhum nível 1–10).
 
-## Confirmação
+## 3. Compatibilidade gameplay
 
-Com esta config, **Spartan não executa `spartan kick`** em nenhum check. `gravity-simulation` não corre em Java — o kick `gravity-simulation` deixa de ocorrer.
+- **Água / slime:** tolerância via `minimum_gravity_difference: 0.15` e cancel em vez de kick.
+- **Wind charge / velocity PvP:** `velocity` com cancel, sem punish.
+- **GrimAC:** evitar kicks duplos em movimento — ver `server-config/anticheat/grim/punishments.yml` (alert/log apenas na fase actual).
+
+## 4. Deploy
+
+```
+server-config/anticheat/spartan/checks.yml   → plugins/Spartan/checks.yml
+server-config/anticheat/spartan/advanced.yml → plugins/Spartan/advanced.yml
+server-config/anticheat/spartan/settings.yml → plugins/Spartan/settings.yml
+```
+
+Depois: `/spartan reload` ou reinício do servidor.
+
+## 5. Teste in-game
+
+1. Saltar em loop + entrar em água + usar wind charge.
+2. Verificar: **sem kick**; possível correção suave de posição (cancel).
+3. Logs: `(Punish: false)` em `plugins/Spartan/logs/`.
+4. Staff: `/spartan notifications` para ver flags.
+
+## 6. Se ainda houver FP
+
+- Subir `minimum_gravity_difference` para `0.18`–`0.22`.
+- Subir `minimum_speed_difference` para `0.10`–`0.12`.
+- Desactivar só `gravity-simulation` ou `speed-simulation` no Spartan e deixar Grim tratar movimento (último recurso).
+- Não dar `spartan.bypass` a jogadores normais; só OWNER se necessário.

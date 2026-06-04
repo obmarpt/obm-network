@@ -117,7 +117,7 @@ npc:
         pitch: -3.2216
         yaw: -21.0604
       type: PLAYER
-    traitnames: owner,scoreboardtrait,spawned,skintrait,location,type,inventory
+    traitnames: owner,scoreboardtrait,spawned,skintrait,location,type,inventory,targetable
     name: rewards
     navigator:
       usedefaultstuckaction: false

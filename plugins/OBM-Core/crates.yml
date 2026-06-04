@@ -1,0 +1,78 @@
+crates:
+  enabled: true
+  cooldown-ms: 3000
+  duplicate-emerald-compensation: 25
+  animation-ticks: 45
+  animation-interval-ticks: 3
+  common:
+    price: 50
+    rewards:
+      - type: EMERALDS
+        amount: 20
+        chance: 50
+      - type: EMERALDS
+        amount: 35
+        chance: 25
+      - type: COSMETIC
+        id: HEART_TRAIL
+        chance: 15
+      - type: COSMETIC
+        id: CLOUD_PARTICLE
+        chance: 8
+      - type: RANK
+        id: vip
+        chance: 2
+  rare:
+    price: 150
+    rewards:
+      - type: EMERALDS
+        amount: 50
+        chance: 40
+      - type: COSMETIC
+        id: FLAME_TRAIL
+        chance: 25
+      - type: COSMETIC
+        id: ENDER_TRAIL
+        chance: 20
+      - type: COSMETIC
+        id: SPARKLE_PARTICLE
+        chance: 10
+      - type: RANK
+        id: vip
+        chance: 5
+  epic:
+    price: 350
+    rewards:
+      - type: EMERALDS
+        amount: 100
+        chance: 35
+      - type: COSMETIC
+        id: FIRE_AURA
+        chance: 25
+      - type: COSMETIC
+        id: MAGIC_AURA
+        chance: 25
+      - type: COSMETIC
+        id: DIAMOND_AURA
+        chance: 10
+      - type: RANK
+        id: mvp
+        chance: 5
+  legendary:
+    price: 750
+    rewards:
+      - type: EMERALDS
+        amount: 200
+        chance: 30
+      - type: COSMETIC
+        id: DIAMOND_AURA
+        chance: 30
+      - type: COSMETIC
+        id: MAGIC_AURA
+        chance: 20
+      - type: RANK
+        id: mvp
+        chance: 15
+      - type: RANK
+        id: vip
+        chance: 5

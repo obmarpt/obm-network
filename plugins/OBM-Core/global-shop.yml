@@ -1,0 +1,58 @@
+global-shop:
+  enabled: true
+  categories:
+    cosmetics: "§dCosmetics"
+    tags: "§bTags"
+    titles: "§eTitles"
+    ranks: "§6Ranks"
+  items:
+    tag_vip:
+      category: tags
+      material: NAME_TAG
+      display-name: "§bTag VIP"
+      price: 250
+      lore:
+        - "§7Tag exclusiva na network"
+      luckperms-group: vip_tag
+      single-purchase: true
+    prefix_hero:
+      category: titles
+      material: WRITABLE_BOOK
+      display-name: "§ePrefixo Hero"
+      price: 150
+      lore:
+        - "§7Prefixo no chat"
+      console-commands:
+        - "lp user %player% meta setsuffix 100 \" §e[Hero]\""
+      single-purchase: true
+    particles_flame:
+      category: cosmetics
+      material: BLAZE_POWDER
+      display-name: "§6Partículas Flame"
+      price: 300
+      lore:
+        - "§7Cosmético (placeholder)"
+        - "§8Ativa via outro plugin"
+      single-purchase: true
+    pet_wolf:
+      category: cosmetics
+      material: BONE
+      display-name: "§fPet Lobo"
+      price: 400
+      lore:
+        - "§7Pet cosmético (placeholder)"
+      single-purchase: true
+    rank_vip:
+      category: ranks
+      material: GOLD_INGOT
+      display-name: "§aRank VIP"
+      price: 500
+      rank-id: vip
+      single-purchase: true
+    rank_mvp:
+      category: ranks
+      material: DIAMOND
+      display-name: "§dRank MVP"
+      price: 1500
+      rank-id: mvp
+      single-purchase: true

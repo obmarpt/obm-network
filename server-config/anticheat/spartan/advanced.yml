@@ -91,6 +91,6 @@ fast-eat:
   check_interact: true
   check_eat: true
 speed-simulation:
-  minimum_speed_difference: 0.05
+  minimum_speed_difference: 0.08
 gravity-simulation:
-  minimum_gravity_difference: 0.12
+  minimum_gravity_difference: 0.15

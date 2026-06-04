@@ -1,6 +1,7 @@
 package com.obm.network.smp.manager;
 
 import com.obm.network.core.OBMCorePlugin;
+import com.obm.network.core.integration.AltDetectionBridge;
 import com.obm.network.core.integration.EmeraldRewardBridge;
 import com.obm.network.core.integration.EconomyBridge;
 import com.obm.network.core.integration.SMPBridge;
@@ -116,7 +117,9 @@ public class SMPManager {
         UUID killerId = killer.getUniqueId();
         UUID victimId = victim.getUniqueId();
 
-        boolean blocked = !killFarmGuard.canRewardKill(killerId, victimId);
+        boolean altBlocked = AltDetectionBridge.shouldBlockKillReward(killer, victim);
+        boolean farmBlocked = !killFarmGuard.canRewardKill(killerId, victimId);
+        boolean blocked = altBlocked || farmBlocked;
 
         int reward = bonusService.applyKillReward(killerId, killReward);
 
@@ -126,6 +129,8 @@ public class SMPManager {
             EmeraldRewardBridge.smpKill(killer, victim);
             com.obm.network.core.integration.BattlePassBridge.smpKill(killer);
             killer.sendMessage("§7Mataste §f" + victim.getName());
+        } else if (altBlocked) {
+            killer.sendMessage("§7Sem recompensa (mesmo IP — anti-alt).");
         } else {
             killer.sendMessage("§7Sem recompensa (anti farm).");
         }

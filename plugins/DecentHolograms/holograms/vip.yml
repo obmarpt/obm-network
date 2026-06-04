@@ -1,0 +1,21 @@
+# MineSpace — Lobby | Zona VIP
+# Local: Lobby -4.137 / 166.704 / 0.508
+# Recarregar: /dh reload
+
+location: Lobby:-4.137:166.704:0.508
+enabled: false
+display-range: 48
+update-range: 48
+update-interval: 20
+facing: 0.0
+down-origin: false
+
+pages:
+  - lines:
+      - content: '&6&l✦ VIP'
+        height: 0.3
+      - content: '&7Área exclusiva · &bMineSpace'
+        height: 0.3
+      #- content: '&6» &eCompra VIP para entrar'
+       # height: 0.3
+    actions: {}

@@ -1,0 +1,14 @@
+cosmetics:
+  enabled: true
+  particle-interval-ticks: 5
+  max-particles-per-spawn: 3
+  disabled-worlds: []
+  prices:
+    FLAME_TRAIL: 100
+    HEART_TRAIL: 150
+    ENDER_TRAIL: 200
+    FIRE_AURA: 300
+    MAGIC_AURA: 350
+    DIAMOND_AURA: 500
+    SPARKLE_PARTICLE: 120
+    CLOUD_PARTICLE: 80

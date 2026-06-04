@@ -18,6 +18,7 @@ import com.obm.network.smp.commands.SellCommand;
 import com.obm.network.smp.commands.ShopCommand;
 import com.obm.network.smp.listener.PlayerConnectionListener;
 import com.obm.network.smp.listener.SMPListener;
+import com.obm.network.smp.listener.SmpRespawnListener;
 import com.obm.network.smp.listener.SmpGuiListener;
 import com.obm.network.smp.listener.SpawnProtectionListener;
 import com.obm.network.smp.manager.SMPManager;
@@ -127,7 +128,7 @@ public class SMPPlugin extends JavaPlugin {
         shopGui = new ShopGui(shopCatalog, shopService);
 
         sellCatalog = new SellCatalog();
-        sellCatalog.reload(this, getConfig());
+        sellCatalog.reload(this, getConfig(), shopCatalog);
         sellService = new SellService(sellCatalog, economyService, bonusService, levelService);
         sellGui = new SellGui(sellService);
 
@@ -149,6 +150,8 @@ public class SMPPlugin extends JavaPlugin {
         );
 
         getServer().getPluginManager().registerEvents(new SMPListener(smpManager, worldModeService), this);
+        getServer().getPluginManager().registerEvents(
+                new SmpRespawnListener(this, worldModeService, shopGui), this);
         getServer().getPluginManager().registerEvents(new SpawnProtectionListener(spawnProtectionService), this);
         getServer().getPluginManager().registerEvents(
                 new ShopListener(shopGui, shopService, shopCatalog), this);

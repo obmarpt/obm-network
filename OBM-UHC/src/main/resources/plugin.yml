@@ -7,9 +7,15 @@ depend: [OBM-Core]
 softdepend:
   - OBM-Lobby
 
+permissions:
+  obm.uhc.stats:
+    description: Ver as próprias estatísticas UHC
+    default: false
+
 commands:
   uhcstats:
     description: Vê as tuas estatísticas do UHC.
+    permission: obm.uhc.stats
   revive:
     description: Revive um jogador com 2 vidas.
     permission: uhc.revive

@@ -1,0 +1,69 @@
+battlepass:
+  enabled: true
+  max-level: 30
+  premium-price: 2000
+  xp:
+    smp-kill: 10
+    hardcore-alive-interval-seconds: 60
+    hardcore-alive: 20
+    ranked-win: 30
+  level-xp:
+    base: 100
+    multiplier: 2.0
+  rewards:
+    1:
+      free:
+        type: EMERALDS
+        amount: 10
+      premium:
+        type: EMERALDS
+        amount: 25
+    2:
+      free:
+        type: COSMETIC
+        id: HEART_TRAIL
+      premium:
+        type: COSMETIC
+        id: FLAME_TRAIL
+    3:
+      free:
+        type: EMERALDS
+        amount: 30
+      premium:
+        type: CRATE
+        id: common
+    5:
+      free:
+        type: CRATE
+        id: rare
+      premium:
+        type: COSMETIC
+        id: FIRE_AURA
+    10:
+      free:
+        type: RANK
+        id: vip
+      premium:
+        type: CRATE
+        id: epic
+    15:
+      free:
+        type: EMERALDS
+        amount: 100
+      premium:
+        type: COSMETIC
+        id: DIAMOND_AURA
+    20:
+      free:
+        type: CRATE
+        id: epic
+      premium:
+        type: CRATE
+        id: legendary
+    30:
+      free:
+        type: EMERALDS
+        amount: 250
+      premium:
+        type: RANK
+        id: mvp

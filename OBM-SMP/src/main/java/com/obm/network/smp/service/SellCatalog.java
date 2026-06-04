@@ -4,8 +4,13 @@ import com.obm.network.smp.util.MaterialKeys;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -13,17 +18,26 @@ import java.util.Map;
 
 public class SellCatalog {
 
+    private static final String SELL_CATALOG_FILE = "sell-catalog.yml";
+
     private final Map<Material, Integer> prices = new HashMap<>();
 
-    public void reload(JavaPlugin plugin, FileConfiguration config) {
+    public void reload(JavaPlugin plugin, FileConfiguration fallbackConfig, ShopCatalog shopCatalog) {
         prices.clear();
-        ConfigurationSection section = config.getConfigurationSection("sell.prices");
+        FileConfiguration sellConfig = loadSellConfig(plugin, fallbackConfig);
+        ConfigurationSection section = sellConfig.getConfigurationSection("sell.prices");
         if (section == null) {
-            plugin.getLogger().warning("sell.prices em falta no config.yml — nenhum item vendável.");
+            plugin.getLogger().warning("sell.prices em falta — coloca sell-catalog.yml ou sell.prices no config.yml.");
             return;
         }
 
+        Map<Material, Integer> shopPrices = shopCatalog != null
+                ? shopCatalog.getAllItemsFlat()
+                : Collections.emptyMap();
+
         int skipped = 0;
+        int clamped = 0;
+        int blocked = 0;
         for (String materialName : section.getKeys(false)) {
             Material material = MaterialKeys.resolve(materialName);
             if (material == null) {
@@ -31,15 +45,47 @@ public class SellCatalog {
                 plugin.getLogger().warning("sell.prices: material inválido '" + materialName + "'");
                 continue;
             }
-            int price = section.getInt(materialName, 0);
-            if (price > 0) {
-                prices.put(material, price);
+            if (shopCatalog != null && shopCatalog.isBlocked(material)) {
+                blocked++;
+                continue;
             }
+            int price = section.getInt(materialName, 0);
+            if (price <= 0) {
+                continue;
+            }
+            Integer shopPrice = shopPrices.get(material);
+            if (shopPrice != null && shopPrice > 0 && price >= shopPrice) {
+                int capped = shopPrice - 1;
+                if (capped <= 0) {
+                    continue;
+                }
+                price = capped;
+                clamped++;
+            }
+            prices.put(material, price);
         }
 
         applyLogVariants();
         plugin.getLogger().info("Sell catalog: " + prices.size() + " materiais"
-                + (skipped > 0 ? " (" + skipped + " ignorados)" : ""));
+                + (skipped > 0 ? " (" + skipped + " inválidos)" : "")
+                + (blocked > 0 ? " (" + blocked + " bloqueados shop)" : "")
+                + (clamped > 0 ? " (" + clamped + " capped sell<shop)" : ""));
+    }
+
+    private FileConfiguration loadSellConfig(JavaPlugin plugin, FileConfiguration fallbackConfig) {
+        File dataFile = new File(plugin.getDataFolder(), SELL_CATALOG_FILE);
+        if (!dataFile.exists()) {
+            plugin.saveResource(SELL_CATALOG_FILE, false);
+        }
+        if (dataFile.exists()) {
+            return YamlConfiguration.loadConfiguration(dataFile);
+        }
+        InputStream embedded = plugin.getResource(SELL_CATALOG_FILE);
+        if (embedded != null) {
+            return YamlConfiguration.loadConfiguration(
+                    new InputStreamReader(embedded, StandardCharsets.UTF_8));
+        }
+        return fallbackConfig;
     }
 
     /** Troncos/variantes comuns herdam preço do carvalho quando existir. */

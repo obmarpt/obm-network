@@ -1,0 +1,23 @@
+bots:
+- name: CoreBoy
+  uuid: 7cad3a0a-dd11-41c8-8192-3acdce72a6c7
+  display-name: CoreBoy
+  spawned-by: Obmarr
+  spawned-by-uuid: 0181db56-0dac-4766-9b8a-3ed9743cbfb7
+  world: world
+  x: -1.692956607830681
+  y: 66.0
+  z: -0.3288621576536406
+  yaw: 4.147958755493164
+  pitch: 0.0
+- name: NinjaMine
+  uuid: eb8c1c71-9a77-4902-b53a-bf0760ed4412
+  display-name: NinjaMine
+  spawned-by: Obmarr
+  spawned-by-uuid: 0181db56-0dac-4766-9b8a-3ed9743cbfb7
+  world: world
+  x: -47.80834977032699
+  y: 91.0
+  z: 40.59713869583921
+  yaw: 2.154094934463501
+  pitch: 0.0

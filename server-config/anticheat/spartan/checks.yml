@@ -86,7 +86,7 @@ fast-clicks:
     java: true
     bedrock: true
 velocity:
-  cancelled_event: false
+  cancelled_event: true
   name: velocity
   disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
   silent_worlds: exampleSilentWorld1, exampleSilentWorld2
@@ -144,7 +144,7 @@ kill-aura:
     java: true
     bedrock: true
 irregular-movements:
-  cancelled_event: false
+  cancelled_event: true
   name: irregular-movements
   disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
   silent_worlds: exampleSilentWorld1, exampleSilentWorld2
@@ -173,13 +173,13 @@ irregular-movements:
     java: true
     bedrock: true
 gravity-simulation:
-  cancelled_event: false
+  cancelled_event: true
   name: gravity-simulation
   disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
   silent_worlds: exampleSilentWorld1, exampleSilentWorld2
   enabled:
-    java: false
-    bedrock: false
+    java: true
+    bedrock: true
   silent:
     java: false
     bedrock: false
@@ -202,13 +202,13 @@ gravity-simulation:
     java: true
     bedrock: true
 speed-simulation:
-  cancelled_event: false
+  cancelled_event: true
   name: speed-simulation
   disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
   silent_worlds: exampleSilentWorld1, exampleSilentWorld2
   enabled:
-    java: false
-    bedrock: false
+    java: true
+    bedrock: true
   silent:
     java: false
     bedrock: false

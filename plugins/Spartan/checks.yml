@@ -11,10 +11,10 @@ hit-reach:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -40,10 +40,10 @@ criticals:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -69,10 +69,10 @@ fast-clicks:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -86,7 +86,7 @@ fast-clicks:
     java: true
     bedrock: true
 velocity:
-  cancelled_event: false
+  cancelled_event: true
   name: velocity
   disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
   silent_worlds: exampleSilentWorld1, exampleSilentWorld2
@@ -98,10 +98,10 @@ velocity:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -127,10 +127,10 @@ kill-aura:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -144,7 +144,7 @@ kill-aura:
     java: true
     bedrock: true
 irregular-movements:
-  cancelled_event: false
+  cancelled_event: true
   name: irregular-movements
   disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
   silent_worlds: exampleSilentWorld1, exampleSilentWorld2
@@ -156,10 +156,10 @@ irregular-movements:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -173,7 +173,7 @@ irregular-movements:
     java: true
     bedrock: true
 gravity-simulation:
-  cancelled_event: false
+  cancelled_event: true
   name: gravity-simulation
   disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
   silent_worlds: exampleSilentWorld1, exampleSilentWorld2
@@ -185,10 +185,10 @@ gravity-simulation:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -202,7 +202,7 @@ gravity-simulation:
     java: true
     bedrock: true
 speed-simulation:
-  cancelled_event: false
+  cancelled_event: true
   name: speed-simulation
   disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
   silent_worlds: exampleSilentWorld1, exampleSilentWorld2
@@ -214,10 +214,10 @@ speed-simulation:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -243,10 +243,10 @@ exploits:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -272,10 +272,10 @@ more-packets:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -301,10 +301,10 @@ x-ray:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -330,10 +330,10 @@ impossible-actions:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -359,10 +359,10 @@ fast-break:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -388,10 +388,10 @@ fast-place:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -417,10 +417,10 @@ block-reach:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -446,10 +446,10 @@ no-swing:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -475,10 +475,10 @@ inventory-clicks:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -504,10 +504,10 @@ fast-heal:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -533,10 +533,10 @@ impossible-inventory:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''
@@ -562,10 +562,10 @@ fast-eat:
     bedrock: false
   punishments:
     enabled:
-      java: true
-      bedrock: true
+      java: false
+      bedrock: false
     commands:
-      '1': spartan kick {player} {detections}
+      '1': ''
       '2': ''
       '3': ''
       '4': ''

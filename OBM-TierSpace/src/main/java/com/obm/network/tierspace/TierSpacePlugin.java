@@ -10,7 +10,9 @@ import com.obm.network.tierspace.feedback.MatchFeedbackService;
 import com.obm.network.tierspace.kit.KitService;
 import com.obm.network.tierspace.listener.MatchListener;
 import com.obm.network.tierspace.listener.TierGuiListener;
+import com.obm.network.tierspace.listener.RankedSpawnListener;
 import com.obm.network.tierspace.listener.TierSpaceJoinListener;
+import com.obm.network.tierspace.listener.TierSpaceNpcListener;
 import com.obm.network.tierspace.match.MatchService;
 import com.obm.network.tierspace.match.RematchService;
 import com.obm.network.tierspace.mode.ModeRegistry;
@@ -152,6 +154,14 @@ public class TierSpacePlugin extends JavaPlugin {
                 new TierGuiListener(tierGuiMenu, modeRegistry, matchService, rematchService), this);
         getServer().getPluginManager().registerEvents(
                 new TierSpaceJoinListener(tabService, seasonManager, rankRewardService), this);
+        getServer().getPluginManager().registerEvents(
+                new RankedSpawnListener(this, tierGuiMenu), this);
+        if (getServer().getPluginManager().isPluginEnabled("Citizens")) {
+            getServer().getPluginManager().registerEvents(
+                    new TierSpaceNpcListener(tierGuiMenu, matchService), this);
+        } else {
+            getLogger().warning("Citizens não encontrado — NPCs TierSpace desativados.");
+        }
         startMatchmakingTask();
 
         if (arenaService.getArenaCount() == 0) {

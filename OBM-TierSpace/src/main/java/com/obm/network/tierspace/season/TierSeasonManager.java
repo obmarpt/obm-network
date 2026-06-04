@@ -49,7 +49,7 @@ public class TierSeasonManager {
             seasonEndMillis = store.getGlobalSeasonEndMillis();
             if (seasonEndMillis <= 0) {
                 seasonEndMillis = computeEndMillisFromConfig(config);
-                store.saveGlobalSeason(seasonNumber, seasonEndMillis);
+                store.saveGlobalSeason(seasonNumber, seasonEndMillis, durationDays);
             }
             syncConfigSeasonNumber();
             return;
@@ -57,7 +57,7 @@ public class TierSeasonManager {
 
         seasonNumber = Math.max(1, config.getInt("season.number", 1));
         seasonEndMillis = computeEndMillisFromConfig(config);
-        store.saveGlobalSeason(seasonNumber, seasonEndMillis);
+        store.saveGlobalSeason(seasonNumber, seasonEndMillis, durationDays);
         syncConfigSeasonNumber();
         plugin.getLogger().info("TierSpace season inicializada: " + seasonNumber + " (manual-only)");
     }
@@ -116,16 +116,19 @@ public class TierSeasonManager {
     }
 
     public boolean setSeasonNumberManually(int target, CommandSender initiator) {
-        if (target < 1) {
+        if (target < 0) {
             if (initiator != null) {
-                initiator.sendMessage("§cSeason tem de ser >= 1.");
+                initiator.sendMessage("§cSeason inválida. Usa §f/season ranked reset 0 confirm§c.");
             }
             return false;
+        }
+        if (target == 0) {
+            return resetToSeasonZero(initiator);
         }
         seasonNumber = target;
         seasonEndMillis = LocalDate.now().plusDays(durationDays)
                 .atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
-        store.saveGlobalSeason(seasonNumber, seasonEndMillis);
+        store.saveGlobalSeason(seasonNumber, seasonEndMillis, durationDays);
         syncConfigSeasonNumber();
         plugin.getConfig().set("season.start-date", LocalDate.now().toString());
         plugin.saveConfig();
@@ -142,6 +145,45 @@ public class TierSeasonManager {
         Bukkit.broadcastMessage(msg);
         if (initiator != null) {
             initiator.sendMessage("§aAnúncio de fim de season enviado.");
+        }
+    }
+
+    /**
+     * Season 0 — reset completo de dados ranked (ELO/stats por modo).
+     * Não altera Emeralds, cosmetics nem ranks da network.
+     */
+    public boolean resetToSeasonZero(CommandSender initiator) {
+        seasonNumber = 0;
+        seasonEndMillis = System.currentTimeMillis();
+        saveSeason();
+
+        ConfigurationSection players = playersSection();
+        int count = 0;
+        if (players != null) {
+            for (String key : players.getKeys(false)) {
+                try {
+                    UUID uuid = UUID.fromString(key);
+                    hardResetPlayer(uuid);
+                    store.setPlayerSeason(uuid, 0);
+                    count++;
+                } catch (IllegalArgumentException ignored) {
+                }
+            }
+        }
+
+        String log = "[OBM] TierSpace season reset to 0 — " + count + " players hard-reset";
+        plugin.getLogger().warning(log);
+        Bukkit.broadcastMessage("§c§l⚠ §7TierSpace reposto para §fSeason #0§7 (dados ranked resetados).");
+        if (initiator != null) {
+            initiator.sendMessage("§aSeason Ranked §f#0§a. §7Jogadores afectados: §f" + count);
+            initiator.sendMessage("§7Emeralds, cosmetics e ranks network §anão§7 foram alterados.");
+        }
+        return true;
+    }
+
+    private void hardResetPlayer(UUID uuid) {
+        for (GameModeId mode : modeRegistry.enabledModes()) {
+            store.resetModeProgress(uuid, mode, resetBase);
         }
     }
 
@@ -205,7 +247,7 @@ public class TierSeasonManager {
     }
 
     private void saveSeason() {
-        store.saveGlobalSeason(seasonNumber, seasonEndMillis);
+        store.saveGlobalSeason(seasonNumber, seasonEndMillis, durationDays);
     }
 
     private void applySeasonReset(UUID uuid) {

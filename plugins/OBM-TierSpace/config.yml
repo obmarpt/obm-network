@@ -26,9 +26,12 @@ daily-quests:
   streak-required: 3
 
 season:
-  number: 13
-  start-date: '2026-06-03'
+  number: 10
+  # Só usado na primeira inicialização (depois persiste em data.yml → tierspace.season.*)
+  start-date: '2026-06-04'
   duration-days: 45
+  # Ignorado — seasons são sempre manuais (adminpanel / comando)
+  auto-advance: false
   reset-base: 600
   reset-factor: 0.3
 

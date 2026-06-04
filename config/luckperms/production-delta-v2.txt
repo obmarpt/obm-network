@@ -1,0 +1,33 @@
+# MineSpace — DELTA v2 (servidor já configurado)
+# Aplicar apenas estas linhas na consola. Não recriar grupos.
+
+# --- MOD: remover fly ---
+lp group mod permission unset essentials.fly
+lp group mod permission set essentials.fly false
+
+# --- ADMIN: fly staff; sem bypass AC por defeito ---
+lp group admin permission set essentials.fly true
+lp group admin permission unset grim.exempt
+lp group admin permission set grim.exempt false
+lp group admin permission unset spartan.bypass
+lp group admin permission set spartan.bypass false
+
+# --- OWNER: bypass AC (opcional; remover se não quiseres) ---
+lp group owner permission set grim.exempt true
+lp group owner permission set spartan.bypass true
+
+# --- HELPER+: chat staff ---
+lp group helper permission set obm.chat.staff true
+lp group helper permission set obm.staff.alt.alert true
+
+# --- BUILDER: limite WE (requer config WorldEdit + perm WE 7.x) ---
+lp group builder permission set worldedit.limit.50000 true
+lp group builder permission set worldedit.limit.unrestricted false
+
+# --- Reforço negativas (se herdaram algo errado) ---
+lp group mod permission set grim.exempt false
+lp group mod permission set spartan.bypass false
+lp group builder permission set worldedit.limit.unrestricted false
+lp group default permission set worldedit.limit.unrestricted false
+
+lp sync

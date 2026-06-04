@@ -1,0 +1,302 @@
+2026/06/03 20:39:18:997+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.0), (Amplitude: 1.0),(Level: 0),(Notification-Level:
+  33),(Prevention-Level: 44),(Punishment-Level: 66),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 58ms), (W-XYZ:
+  Lobby 10 163 1), (Data: y: .182702, ry: 0.18270138966203528)'
+2026/06/03 20:39:19:694+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.015151515151515152), (Amplitude:
+  1.0),(Level: 1),(Notification-Level: 33),(Prevention-Level: 44),(Punishment-Level:
+  66),(Server-Version: 1.21), (Plugin-Version: 4.0.8.6), (Silent: false), (Punish:
+  true), (Packets: false), (Ping: 56ms), (W-XYZ: Lobby 14 161 0), (Data: y: .579699,
+  ry: 0.5796985436761304)'
+2026/06/03 20:39:19:743+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.025), (Amplitude: 1.0),(Level: 1),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 15 161 0), (Data: y: .226505, ry: 0.22650459849838078)'
+2026/06/03 20:39:20:398+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.05), (Amplitude: 1.0),(Level: 2),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 19 160 -1), (Data: y: .162142, ry: 0.1621414210270018)'
+2026/06/03 20:39:20:445+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.075), (Amplitude: 1.0),(Level: 3),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 19 160 -2), (Data: y: .182702, ry: 0.18270138966203528)'
+2026/06/03 20:39:20:991+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.075), (Amplitude: 1.0),(Level: 3),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 23 160 -3), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:39:21:042+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.1), (Amplitude: 1.0),(Level: 4),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 23 160 -3), (Data: y: .22273, ry: 0.22272907931912778)'
+2026/06/03 20:39:21:597+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.125), (Amplitude: 1.0),(Level: 5),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 27 160 -3), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:39:29:822+01:00: 'Obmarr was active for: 3'
+2026/06/03 20:39:31:345+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.0), (Amplitude: 1.0),(Level: 0),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 55ms), (W-XYZ:
+  Lobby 24 160 3), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:39:31:403+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.025), (Amplitude: 1.0),(Level: 1),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 55ms), (W-XYZ:
+  Lobby 23 160 2), (Data: y: .22273, ry: 0.22272907931912778)'
+2026/06/03 20:39:31:946+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.025), (Amplitude: 1.0),(Level: 1),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 55ms), (W-XYZ:
+  Lobby 20 160 0), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:39:32:791+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.05), (Amplitude: 1.0),(Level: 2),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 55ms), (W-XYZ:
+  Lobby 15 161 0), (Data: y: .024425, ry: 0.02442408821366371)'
+2026/06/03 20:39:32:896+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.075), (Amplitude: 1.0),(Level: 3),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 55ms), (W-XYZ:
+  Lobby 14 161 0), (Data: y: .080001, ry: 0.08000001311302185)'
+2026/06/03 20:39:32:990+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.075), (Amplitude: 1.0),(Level: 3),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 55ms), (W-XYZ:
+  Lobby 13 162 0), (Data: y: .5, ry: 0.5)'
+2026/06/03 20:39:33:293+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.1), (Amplitude: 1.0),(Level: 4),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 55ms), (W-XYZ:
+  Lobby 11 162 0), (Data: y: .5, ry: 0.5)'
+2026/06/03 20:39:33:395+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.125), (Amplitude: 1.0),(Level: 5),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 55ms), (W-XYZ:
+  Lobby 10 163 0), (Data: y: .080001, ry: 0.08000001311302185)'
+2026/06/03 20:39:33:693+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.15), (Amplitude: 1.0),(Level: 6),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 55ms), (W-XYZ:
+  Lobby 8 163 0), (Data: y: .5, ry: 0.5)'
+2026/06/03 20:39:33:847+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.175), (Amplitude: 1.0),(Level: 7),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 55ms), (W-XYZ:
+  Lobby 6 164 0), (Data: y: .5, ry: 0.5)'
+2026/06/03 20:39:34:442+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.175), (Amplitude: 1.0),(Level: 7),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 3 164 0), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:39:35:845+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.175), (Amplitude: 1.0),(Level: 7),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 1 164 -6), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:39:35:897+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.2), (Amplitude: 1.0),(Level: 8),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 1 164 -7), (Data: y: .22273, ry: 0.22272907931912778)'
+2026/06/03 20:39:36:445+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.225), (Amplitude: 1.0),(Level: 9),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 55ms), (W-XYZ:
+  Lobby 0 164 -10), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:39:52:225+01:00: 'Obmarr was active for: 52'
+2026/06/03 20:40:24:498+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.0), (Amplitude: 1.0),(Level: 0),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 54ms), (W-XYZ:
+  Lobby 9 163 1), (Data: y: .035841, ry: 0.03584062504455687)'
+2026/06/03 20:40:25:652+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.025), (Amplitude: 1.0),(Level: 1),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 54ms), (W-XYZ:
+  Lobby 16 160 2), (Data: y: .579699, ry: 0.5796985436761304)'
+2026/06/03 20:40:25:697+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.025), (Amplitude: 1.0),(Level: 1),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 54ms), (W-XYZ:
+  Lobby 16 160 2), (Data: y: .226505, ry: 0.22650459849838078)'
+2026/06/03 20:40:26:295+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.05), (Amplitude: 1.0),(Level: 2),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 54ms), (W-XYZ:
+  Lobby 20 160 2), (Data: y: .176471, ry: 0.17647087614429324)'
+2026/06/03 20:40:46:272+01:00: 'Obmarr was active for: -1'
+2026/06/03 20:46:39:514+01:00: 'Obmarr was active for: 0'
+2026/06/03 20:46:42:465+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.0), (Amplitude: 1.0),(Level: 0),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 10 163 0), (Data: y: .5, ry: 0.5)'
+2026/06/03 20:46:43:155+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.025), (Amplitude: 1.0),(Level: 1),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 12 162 2), (Data: y: .035841, ry: 0.03584062504455687)'
+2026/06/03 20:46:43:204+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.05), (Amplitude: 1.0),(Level: 2),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 12 162 2), (Data: y: .306477, ry: 0.30647617213382783)'
+2026/06/03 20:46:43:906+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.05), (Amplitude: 1.0),(Level: 2),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 16 160 2), (Data: y: .579699, ry: 0.5796985436761304)'
+2026/06/03 20:46:43:949+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.075), (Amplitude: 1.0),(Level: 3),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 17 160 2), (Data: y: .226505, ry: 0.22650459849838078)'
+2026/06/03 20:46:44:090+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.1), (Amplitude: 1.0),(Level: 4),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 18 161 2), (Data: y: .248136, ry: 0.2481359985909541)'
+2026/06/03 20:46:44:091+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.125), (Amplitude: 1.0),(Level: 5),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 18 161 2), (Data: y: .243174, ry: 0.24317328335194593)'
+2026/06/03 20:46:44:503+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.15), (Amplitude: 1.0),(Level: 6),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 21 160 2), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:46:44:558+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.175), (Amplitude: 1.0),(Level: 7),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 21 160 2), (Data: y: .22273, ry: 0.22272907931912778)'
+2026/06/03 20:46:45:105+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.2), (Amplitude: 1.0),(Level: 8),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 25 160 2), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:46:45:149+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.2), (Amplitude: 1.0),(Level: 8),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 25 160 1), (Data: y: .22273, ry: 0.22272907931912778)'
+2026/06/03 20:46:45:550+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.225), (Amplitude: 1.0),(Level: 9),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 28 160 1), (Data: y: .075354, ry: 0.07535330069442386)'
+2026/06/03 20:46:45:704+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.25), (Amplitude: 1.0),(Level: 10),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 56ms), (W-XYZ:
+  Lobby 28 160 1), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:47:06:214+01:00: 'Obmarr was active for: 3020'
+2026/06/03 20:47:16:754+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.0), (Amplitude: 1.0),(Level: 0),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 54ms), (W-XYZ:
+  Lobby 27 160 9), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:47:19:106+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.0), (Amplitude: 1.0),(Level: 0),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 54ms), (W-XYZ:
+  Lobby 33 160 12), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:47:19:149+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.025), (Amplitude: 1.0),(Level: 1),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 54ms), (W-XYZ:
+  Lobby 33 160 12), (Data: y: .22273, ry: 0.22272907931912778)'
+2026/06/03 20:47:19:704+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.05), (Amplitude: 1.0),(Level: 2),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 54ms), (W-XYZ:
+  Lobby 35 160 9), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:47:19:754+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.075), (Amplitude: 1.0),(Level: 3),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 35 160 8), (Data: y: .22273, ry: 0.22272907931912778)'
+2026/06/03 20:47:20:153+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.075), (Amplitude: 1.0),(Level: 3),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 34 161 7), (Data: y: .024425, ry: 0.02442408821366371)'
+2026/06/03 20:47:20:898+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.1), (Amplitude: 1.0),(Level: 4),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 32 160 4), (Data: y: .162142, ry: 0.1621414210270018)'
+2026/06/03 20:47:20:951+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.125), (Amplitude: 1.0),(Level: 5),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 31 160 3), (Data: y: .182702, ry: 0.18270138966203528)'
+2026/06/03 20:47:22:515+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.15), (Amplitude: 1.0),(Level: 6),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 31 161 3), (Data: y: .161478, ry: 0.16147781933235383)'
+2026/06/03 20:47:22:516+01:00: '(Player: Obmarr), (Check: speed-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.008333333333333333), (Amplitude:
+  1.0),(Level: 1),(Notification-Level: 60),(Prevention-Level: 80),(Punishment-Level:
+  120),(Server-Version: 1.21), (Plugin-Version: 4.0.8.6), (Silent: false), (Punish:
+  true), (Packets: false), (Ping: 53ms), (W-XYZ: Lobby 30 160 1), (Data: diff: 0.2626278370042634)'
+2026/06/03 20:47:22:528+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.2), (Amplitude: 1.0),(Level: 8),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 30 160 1), (Data: y: .313601, ry: 0.3136000061034948)'
+2026/06/03 20:47:22:529+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.25), (Amplitude: 1.0),(Level: 10),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 30 160 1), (Data: y: 1.024425, ry: 1.0244240882136637)'
+2026/06/03 20:47:22:530+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.325), (Amplitude: 1.0),(Level: 13),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 30 160 1), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:47:25:399+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.275), (Amplitude: 1.0),(Level: 11),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 28 160 -3), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:47:25:450+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.3), (Amplitude: 1.0),(Level: 12),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 28 160 -3), (Data: y: .22273, ry: 0.22272907931912778)'
+2026/06/03 20:47:26:002+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.325), (Amplitude: 1.0),(Level: 13),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 27 160 -5), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:47:26:057+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.35), (Amplitude: 1.0),(Level: 14),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 26 160 -5), (Data: y: .22273, ry: 0.22272907931912778)'
+2026/06/03 20:47:26:603+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.375), (Amplitude: 1.0),(Level: 15),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 25 160 -6), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:47:26:655+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.4), (Amplitude: 1.0),(Level: 16),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 25 160 -6), (Data: y: .22273, ry: 0.22272907931912778)'
+2026/06/03 20:47:27:205+01:00: '(Player: Obmarr), (Check: gravity-simulation), (Java:
+  true), (Detection: -775763332), (Level-Ratio: 0.4), (Amplitude: 1.0),(Level: 16),(Notification-Level:
+  20),(Prevention-Level: 27),(Punishment-Level: 40),(Server-Version: 1.21), (Plugin-Version:
+  4.0.8.6), (Silent: false), (Punish: true), (Packets: false), (Ping: 53ms), (W-XYZ:
+  Lobby 24 160 -5), (Data: y: .121297, ry: 0.12129684053920187)'
+2026/06/03 20:48:22:864+01:00: 'Obmarr was active for: 35761'

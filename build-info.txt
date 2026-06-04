@@ -1,0 +1,22 @@
+===============================
+MineSpace Build Info
+===============================
+
+Date: Thu Jun  4 15:55:21 HVGMT 2026
+Branch: main
+Commit: 4830e9a
+
+Modules:
+- OBM-Core
+- OBM-SMP
+- OBM-TierSpace
+- OBM-Lobby
+- OBM-UHC
+- OBM-Inventory
+
+Status: SUCCESS ✅
+
+JAR Location:
+/d/PluginsMinecraft/OMD Network/PluginsCompilados
+
+===============================

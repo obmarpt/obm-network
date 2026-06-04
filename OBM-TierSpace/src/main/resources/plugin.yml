@@ -14,6 +14,12 @@ softdepend:
   - LiteBans
 
 permissions:
+  obm.tierspace.use:
+    description: Menu e estatísticas TierSpace (/tierspace)
+    default: false
+  obm.tierspace.queue:
+    description: Entrar na fila competitiva (/queue)
+    default: false
   tierspace.admin.season:
     description: Avançar ou corrigir temporada TierSpace manualmente
     default: op
@@ -23,7 +29,9 @@ commands:
     description: Menu e info do TierSpace
     usage: /tierspace [menu|stats|season]
     aliases: [ts, tier]
+    permission: obm.tierspace.use
 
   queue:
     description: Entrar ou sair da fila competitiva
     usage: /queue <mode|leave|status>
+    permission: obm.tierspace.queue
