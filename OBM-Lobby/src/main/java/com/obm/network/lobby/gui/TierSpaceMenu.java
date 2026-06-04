@@ -154,7 +154,11 @@ public class TierSpaceMenu {
 
         Inventory inv = Bukkit.createInventory(null, 54, TOP_RATING_TITLE);
 
-        LeaderboardService leaderboard = new LeaderboardService();
+        LeaderboardService leaderboard = resolveLeaderboard();
+        if (leaderboard == null) {
+            inv.setItem(49, createItem(Material.ARROW, "§bVoltar", List.of("§7TierSpace menu")));
+            return inv;
+        }
 
         String statKey = "tierspace_sword_rating";
 
@@ -206,7 +210,11 @@ public class TierSpaceMenu {
 
         Inventory inv = Bukkit.createInventory(null, 54, TOP_STREAK_TITLE);
 
-        LeaderboardService leaderboard = new LeaderboardService();
+        LeaderboardService leaderboard = resolveLeaderboard();
+        if (leaderboard == null) {
+            inv.setItem(49, createItem(Material.ARROW, "§bVoltar", List.of("§7TierSpace menu")));
+            return inv;
+        }
 
         String statKey = "tierspace_sword_best_streak";
 
@@ -287,6 +295,11 @@ public class TierSpaceMenu {
     }
 
 
+
+    private static LeaderboardService resolveLeaderboard() {
+        var core = com.obm.network.core.OBMCorePlugin.get();
+        return core == null ? null : core.getLeaderboardService();
+    }
 
     private static ItemStack createItem(Material mat, String name, List<String> lore) {
 

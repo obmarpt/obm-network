@@ -1,6 +1,7 @@
 package com.obm.network.smp.commands;
 
 import com.obm.network.core.world.WorldModeService;
+import com.obm.network.smp.permission.SmpPermissions;
 import com.obm.network.smp.sell.SellGui;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,6 +27,9 @@ public class SellCommand implements CommandExecutor {
 
         if (!worldModeService.isSMP(player.getWorld().getName())) {
             player.sendMessage("§cEste comando só funciona dentro do SMP.");
+            return true;
+        }
+        if (SmpPermissions.deny(player, SmpPermissions.SELL, "Permissão: obm.smp.sell")) {
             return true;
         }
 

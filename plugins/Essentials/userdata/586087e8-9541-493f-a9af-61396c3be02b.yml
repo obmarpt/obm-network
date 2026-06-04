@@ -1,0 +1,30 @@
+teleportenabled: true
+teleportauto: false
+godmode: false
+muted: false
+jailed: false
+ip-address: 127.0.0.1
+afk: false
+socialspy: false
+npc: false
+powertoolsenabled: true
+accepting-pay: true
+baltop-exempt: false
+timestamps:
+  lastteleport: 0
+  lastheal: 0
+  mute: 0
+  jail: 0
+  onlinejail: 0
+  logout: 1780507217878
+  login: 1780507200302
+money: '0'
+last-account-name: Cosmic_FPS
+logoutlocation:
+  world: 767fabc4-f64f-4d33-92c2-9c0e9adc6c83
+  world-name: world
+  x: 10.507497388478427
+  y: 69.0
+  z: -1.6797838415590103
+  yaw: 1.1804155111312866
+  pitch: 0.0

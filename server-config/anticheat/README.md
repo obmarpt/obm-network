@@ -3,11 +3,16 @@
 ## Instalação
 
 1. `GrimAC.jar` → `plugins/`
-2. `Vulcan.jar` → `plugins/`
-3. Copiar `grim/config.yml` e `grim/punishments.yml`
-4. Aplicar overrides do Vulcan (secção `connection.other-anticheat-support: true`)
-5. Reiniciar servidor
-6. Executar comandos `/vulcan disablecheck` listados no overrides
+2. `Spartan.jar` → `plugins/` (opcional; ver `spartan/README.md`)
+3. `Vulcan.jar` → `plugins/` (opcional)
+4. Copiar `grim/config.yml` e `grim/punishments.yml`
+5. Copiar `spartan/checks.yml`, `advanced.yml`, `settings.yml`
+6. Aplicar overrides do Vulcan se usado
+7. Reiniciar servidor
+
+## Spartan + Grim (falsos positivos movimento)
+
+Ver **`spartan/README.md`**: punishments off, `gravity-simulation`/`speed-simulation` off, Grim trata simulação.
 
 ## Grim + Vulcan juntos
 

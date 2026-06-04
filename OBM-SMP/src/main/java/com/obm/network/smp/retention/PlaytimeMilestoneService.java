@@ -66,7 +66,10 @@ public class PlaytimeMilestoneService {
                     continue;
                 }
 
-                economy.deposit(uuid, coins);
+                var deposit = economy.deposit(uuid, coins);
+                if (!deposit.transactionSuccess()) {
+                    continue;
+                }
                 ds.setBoolean(uuid, claimKey, true);
                 ds.save(uuid);
                 RetentionFeedback.playtimeMilestone(player, minutes, coins);

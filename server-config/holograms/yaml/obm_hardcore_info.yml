@@ -1,25 +1,26 @@
-location:
-  world: Lobby
-  x: 8.5
-  y: 166.0
-  z: 4.5
+# plugins/DecentHolograms/holograms/obm_hardcore_info.yml — legacy (&)
 
+location: Lobby:8.500:166.000:4.500
 enabled: true
 display-range: 48
-update-interval: -1
+update-range: 48
+update-interval: 20
+facing: 0.0
+down-origin: false
 pages:
   - lines:
-      - content: '<gradient:#FF4444:#880000><bold>💀 HARDCORE</bold></gradient>'
+      - content: '&c&l💀 HARDCORE'
         height: 0.3
-      - content: '<dark_gray>──────────────</dark_gray>'
+      - content: '&8──────────────'
         height: 0.28
-      - content: '<gray>Sobrevive. Evolui. Morre.</gray>'
+      - content: '&7Sobrevive. Evolui. Morre.'
         height: 0.28
-      - content: '<gray>Mundo:</gray> <white>uhc</white> <gray>+ nether/end</gray>'
+      - content: '&7Mundo: &fuhc &7+ nether/end'
         height: 0.28
-      - content: '<red>⚠ Vidas limitadas</red>'
+      - content: '&c⚠ Vidas limitadas'
         height: 0.28
-      - content: '<dark_gray>──────────────</dark_gray>'
+      - content: '&8──────────────'
         height: 0.28
-      - content: '<gradient:#FF4444:#880000><bold>▶ Entra pelo menu!</bold></gradient>'
+      - content: '&c&l▶ Entra pelo menu!'
         height: 0.3
+    actions: {}

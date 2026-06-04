@@ -1,18 +1,14 @@
 package com.obm.network.smp.service;
 
+import com.obm.network.smp.permission.SmpPermissions;
 import com.obm.network.smp.progression.ProgressionBonusService;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ShopService {
-
-    public record ShopSession(String category, Material material, int quantity) {
-    }
 
     public record PurchaseResult(boolean success, String message) {
         public static PurchaseResult ok(String message) {
@@ -27,7 +23,6 @@ public class ShopService {
     private final ShopCatalog catalog;
     private final EconomyService economyService;
     private final ProgressionBonusService bonusService;
-    private final Map<UUID, ShopSession> sessions = new ConcurrentHashMap<>();
 
     public ShopService(ShopCatalog catalog, EconomyService economyService, ProgressionBonusService bonusService) {
         this.catalog = catalog;
@@ -37,22 +32,6 @@ public class ShopService {
 
     public ShopCatalog getCatalog() {
         return catalog;
-    }
-
-    public void setSession(UUID uuid, ShopSession session) {
-        if (session == null) {
-            sessions.remove(uuid);
-        } else {
-            sessions.put(uuid, session);
-        }
-    }
-
-    public ShopSession getSession(UUID uuid) {
-        return sessions.get(uuid);
-    }
-
-    public void clearSession(UUID uuid) {
-        sessions.remove(uuid);
     }
 
     public int getUnitPrice(Player player, String category, Material material) {
@@ -66,6 +45,9 @@ public class ShopService {
         }
         if (!catalog.canPurchase(material)) {
             return PurchaseResult.fail("§cEste item não está disponível para compra.");
+        }
+        if (catalog.isVipItem(material) && !SmpPermissions.hasVip(player)) {
+            return PurchaseResult.fail("§cItem exclusivo VIP. §7Precisas de §6obm.smp.vip§c.");
         }
 
         int baseUnit = catalog.getPrice(category, material);
@@ -96,7 +78,6 @@ public class ShopService {
             return PurchaseResult.fail("§cInventário cheio. Compra cancelada.");
         }
 
-        clearSession(uuid);
         String discountInfo = unitPrice < baseUnit
                 ? " §7(§a-" + (baseUnit - unitPrice) + " desconto§7)" : "";
         return PurchaseResult.ok("§aCompra confirmada: §e" + quantity + "x "

@@ -1,6 +1,7 @@
 package com.obm.network.smp;
 
 import com.obm.network.smp.commands.StatsCommand;
+import com.obm.network.smp.commands.TopCommand;
 
 import com.obm.network.smp.listener.StatsListener;
 
@@ -9,6 +10,7 @@ import com.obm.network.core.world.WorldModeService;
 import com.obm.network.smp.auction.AuctionGui;
 import com.obm.network.smp.commands.AuctionCommand;
 import com.obm.network.smp.commands.MarketCommand;
+import com.obm.network.smp.market.MarketGui;
 import com.obm.network.smp.commands.MoneyCommand;
 import com.obm.network.smp.commands.RankCommand;
 import com.obm.network.smp.commands.SMPCommand;
@@ -33,10 +35,11 @@ import com.obm.network.smp.service.SellCatalog;
 import com.obm.network.smp.service.SellService;
 import com.obm.network.smp.service.ShopCatalog;
 import com.obm.network.smp.service.ShopService;
-import com.obm.network.smp.retention.DailyRewardCommand;
 import com.obm.network.smp.retention.PlaytimeMilestoneService;
 import com.obm.network.smp.service.SpawnProtectionService;
 import com.obm.network.smp.shop.ShopGui;
+import com.obm.network.smp.shop.ShopListener;
+import com.obm.network.smp.shop.ShopSearchListener;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -59,6 +62,7 @@ public class SMPPlugin extends JavaPlugin {
     private SellGui sellGui;
     private AuctionService auctionService;
     private AuctionGui auctionGui;
+    private MarketGui marketGui;
     private PlayerProgressionStore progressionStore;
     private RankCatalog rankCatalog;
     private RankService rankService;
@@ -79,7 +83,31 @@ public class SMPPlugin extends JavaPlugin {
             return;
         }
 
-        worldModeService = OBMCorePlugin.get().getWorldModeService();
+        OBMCorePlugin core = OBMCorePlugin.get();
+        if (core == null) {
+            getLogger().severe("OBM-Core ainda não está pronto! A aguardar...");
+
+            getServer().getScheduler().runTaskLater(this, () -> {
+                if (!isEnabled()) {
+                    return;
+                }
+                OBMCorePlugin retryCore = OBMCorePlugin.get();
+                if (retryCore == null) {
+                    getLogger().severe("OBM-Core não disponível. A desativar SMP.");
+                    getServer().getPluginManager().disablePlugin(this);
+                    return;
+                }
+                initSMP(retryCore);
+            }, 40L);
+
+            return;
+        }
+
+        initSMP(core);
+    }
+
+    private void initSMP(OBMCorePlugin core) {
+        worldModeService = core.getWorldModeService();
         economyService = new EconomyService(getEconomy(), getConfig().getInt("starting-balance", 100));
         marketService = new MarketService(this, economyService);
         spawnProtectionService = new SpawnProtectionService(getConfig(), worldModeService);
@@ -99,12 +127,13 @@ public class SMPPlugin extends JavaPlugin {
         shopGui = new ShopGui(shopCatalog, shopService);
 
         sellCatalog = new SellCatalog();
-        sellCatalog.reload(getConfig());
+        sellCatalog.reload(this, getConfig());
         sellService = new SellService(sellCatalog, economyService, bonusService, levelService);
         sellGui = new SellGui(sellService);
 
         auctionService = new AuctionService(this, marketService, economyService);
         auctionGui = new AuctionGui(auctionService);
+        marketGui = new MarketGui(marketService);
 
         smpManager = new SMPManager(
                 economyService,
@@ -122,14 +151,18 @@ public class SMPPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SMPListener(smpManager, worldModeService), this);
         getServer().getPluginManager().registerEvents(new SpawnProtectionListener(spawnProtectionService), this);
         getServer().getPluginManager().registerEvents(
-                new SmpGuiListener(shopGui, shopService, shopCatalog, sellGui, sellService, auctionGui, auctionService),
+                new ShopListener(shopGui, shopService, shopCatalog), this);
+        getServer().getPluginManager().registerEvents(new ShopSearchListener(shopGui), this);
+        getServer().getPluginManager().registerEvents(
+                new SmpGuiListener(sellGui, sellService,
+                        auctionGui, auctionService, marketGui, marketService),
                 this
         );
 
         schedulePlaytimeRewards();
 
         new PlaytimeMilestoneService(this, economyService, worldModeService).start();
-        registerCommand("daily", new DailyRewardCommand(this, economyService));
+        // /daily — apenas OBM-Core (Emeralds + opcional smp-coins em daily-rewards.yml)
 
         Bukkit.getPluginManager().registerEvents(new StatsListener(), this);
         
@@ -145,18 +178,9 @@ public class SMPPlugin extends JavaPlugin {
         registerCommand("auction", auctionCommand);
 
         registerCommand("money", new MoneyCommand(economyService));
-        registerCommand("market", new MarketCommand(this, marketService, economyService));
+        registerCommand("market", new MarketCommand(this, marketGui, marketService, economyService));
         registerCommand("rank", new RankCommand(rankService, levelService, rankCatalog, progressionStore));
-
-      
-
-        // ✅ AUTOSAVE
-        Bukkit.getScheduler().runTaskTimer(
-                this,
-                () -> OBMCorePlugin.get().getDataStore().save(),
-                20 * 60,
-                20 * 60
-        );
+        registerCommand("top", new TopCommand());
 
         getLogger().info("OBM-SMP iniciado");
     }

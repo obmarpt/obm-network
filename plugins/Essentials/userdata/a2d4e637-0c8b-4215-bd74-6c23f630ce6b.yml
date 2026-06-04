@@ -1,0 +1,30 @@
+teleportenabled: true
+teleportauto: false
+godmode: false
+muted: false
+jailed: false
+ip-address: 127.0.0.1
+afk: false
+socialspy: false
+npc: false
+powertoolsenabled: true
+accepting-pay: true
+baltop-exempt: false
+timestamps:
+  lastteleport: 0
+  lastheal: 0
+  mute: 0
+  jail: 0
+  onlinejail: 0
+  logout: 1780507303277
+  login: 1780507292504
+money: '0'
+last-account-name: ObsidianShadow10
+logoutlocation:
+  world: 767fabc4-f64f-4d33-92c2-9c0e9adc6c83
+  world-name: world
+  x: 4.965547433805811
+  y: 71.0
+  z: 0.42828537315300064
+  yaw: 1.5620999336242676
+  pitch: 0.0

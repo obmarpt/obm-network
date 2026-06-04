@@ -1,5 +1,6 @@
 package com.obm.network.tierspace.ui;
 
+import com.obm.network.core.OBMCorePlugin;
 import com.obm.network.core.leaderboard.LeaderboardService;
 import com.obm.network.core.tier.TierRankUtil;
 import com.obm.network.tierspace.mode.GameModeId;
@@ -22,7 +23,10 @@ public class TierTopMenu {
 
     public static Inventory createTopRating(GameModeId mode) {
         Inventory inv = Bukkit.createInventory(null, 54, TOP_RATING_TITLE + " (" + mode.id() + ")");
-        LeaderboardService leaderboard = new LeaderboardService();
+        LeaderboardService leaderboard = resolveLeaderboard();
+        if (leaderboard == null) {
+            return inv;
+        }
         String statKey = "tierspace_" + mode.id() + "_rating";
         List<UUID> top = leaderboard.getTop(statKey, 10);
 
@@ -47,7 +51,10 @@ public class TierTopMenu {
 
     public static Inventory createTopStreak(GameModeId mode) {
         Inventory inv = Bukkit.createInventory(null, 54, TOP_STREAK_TITLE + " (" + mode.id() + ")");
-        LeaderboardService leaderboard = new LeaderboardService();
+        LeaderboardService leaderboard = resolveLeaderboard();
+        if (leaderboard == null) {
+            return inv;
+        }
         String statKey = "tierspace_" + mode.id() + "_best_streak";
         List<UUID> top = leaderboard.getTop(statKey, 10);
 
@@ -65,6 +72,11 @@ public class TierTopMenu {
 
         inv.setItem(49, createItem(Material.ARROW, "§bVoltar", List.of("§7TierSpace menu")));
         return inv;
+    }
+
+    private static LeaderboardService resolveLeaderboard() {
+        OBMCorePlugin core = OBMCorePlugin.get();
+        return core == null ? null : core.getLeaderboardService();
     }
 
     private static ItemStack createItem(Material material, String name, List<String> lore) {

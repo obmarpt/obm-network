@@ -1,5 +1,6 @@
 package com.obm.network.smp.commands;
 
+import com.obm.network.smp.permission.SmpPermissions;
 import com.obm.network.smp.progression.RankDefinition;
 import com.obm.network.smp.progression.RankService;
 import com.obm.network.smp.progression.LevelService;
@@ -29,6 +30,9 @@ public class RankCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage("Apenas jogadores podem usar este comando.");
+            return true;
+        }
+        if (SmpPermissions.deny(player, SmpPermissions.RANK, "Permissão: obm.smp.rank")) {
             return true;
         }
 

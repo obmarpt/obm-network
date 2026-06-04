@@ -1,12 +1,7 @@
 # Copiar para: plugins/DecentHolograms/holograms/obm_welcome.yml
-# Ajustar location ao teu lobby
+# Formato legacy (&) — compatível com DecentHolograms
 
-location:
-  world: Lobby
-  x: 0.5
-  y: 168.0
-  z: -6.5
-
+location: Lobby:0.500:168.000:-6.500
 enabled: true
 display-range: 64
 update-range: 64
@@ -15,17 +10,18 @@ facing: 0.0
 down-origin: false
 pages:
   - lines:
-      - content: '<gradient:#00AAFF:#AA00FF><bold>✦ MineSpace ✦</bold></gradient>'
+      - content: '&b&l✦ MineSpace ✦'
         height: 0.3
-      - content: '<dark_gray>──────────────</dark_gray>'
+      - content: '&8──────────────'
         height: 0.28
-      - content: '<gray>Bem-vindo, </gray><white>%player_name%</white>'
+      - content: '&7Bem-vindo, &f%player_name%'
         height: 0.28
-      - content: '<gray>Escolhe o teu modo abaixo</gray>'
+      - content: '&7Escolhe o teu modo abaixo'
         height: 0.28
-      - content: '<yellow>⚔ Rush</yellow> <gray>·</gray> <red>💀 Hardcore</red> <gray>·</gray> <aqua>🏆 TierSpace</aqua>'
+      - content: '&6⚔ Rush &8· &c💀 Hardcore &8· &b🏆 TierSpace'
         height: 0.28
-      - content: '<dark_gray>──────────────</dark_gray>'
+      - content: '&8──────────────'
         height: 0.28
-      - content: '<gradient:#FFAA00:#FF7700>🎯 Domina o ranking!</gradient>'
+      - content: '&6🎯 &eDomina o ranking!'
         height: 0.3
+    actions: {}

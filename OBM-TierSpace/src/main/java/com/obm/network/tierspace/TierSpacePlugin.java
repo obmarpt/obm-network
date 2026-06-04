@@ -178,6 +178,9 @@ public class TierSpacePlugin extends JavaPlugin {
         if (rankRewardService != null) {
             rankRewardService.stop();
         }
+        if (seasonManager != null) {
+            seasonManager.stop();
+        }
         instance = null;
     }
 

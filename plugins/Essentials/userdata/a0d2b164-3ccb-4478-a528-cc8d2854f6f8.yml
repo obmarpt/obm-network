@@ -1,0 +1,30 @@
+teleportenabled: true
+teleportauto: false
+godmode: false
+muted: false
+jailed: false
+ip-address: 127.0.0.1
+afk: false
+socialspy: false
+npc: false
+powertoolsenabled: true
+accepting-pay: true
+baltop-exempt: false
+timestamps:
+  lastteleport: 0
+  lastheal: 0
+  mute: 0
+  jail: 0
+  onlinejail: 0
+  logout: 1780507300272
+  login: 1780507292537
+money: '0'
+last-account-name: iduatyav
+logoutlocation:
+  world: 767fabc4-f64f-4d33-92c2-9c0e9adc6c83
+  world-name: world
+  x: 5.936948075207066
+  y: 71.0
+  z: 0.9275895140896173
+  yaw: 3.2547900676727295
+  pitch: 0.0

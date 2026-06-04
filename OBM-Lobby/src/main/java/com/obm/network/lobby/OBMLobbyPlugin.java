@@ -3,7 +3,7 @@ package com.obm.network.lobby;
 import com.obm.network.lobby.commands.MenuCommand;
 import com.obm.network.lobby.commands.LobbyCommand;
 import com.obm.network.lobby.gui.MenuManager;
-import com.obm.network.lobby.hologram.TopHologramManager;
+import com.obm.network.core.OBMCorePlugin;
 import com.obm.network.lobby.join.JoinHandler;
 import com.obm.network.lobby.listener.LobbyItemListener;
 import com.obm.network.lobby.retention.ProgressFeedbackTask;
@@ -22,9 +22,14 @@ public class OBMLobbyPlugin extends JavaPlugin {
 
         saveDefaultConfig();
 
-        // 🏆 HOLOGRAMAS
-        TopHologramManager hologramManager = new TopHologramManager(this);
-        hologramManager.createAll();
+        // Hologramas: OBM-Core → plugins/OBM-Core/holograms.yml (HologramService)
+        OBMCorePlugin core = OBMCorePlugin.get();
+        if (core != null && core.getHologramService() != null) {
+            core.getHologramService().reload();
+            getLogger().info("Hologramas do lobby geridos pelo OBM-Core (holograms.yml)");
+        } else {
+            getLogger().warning("HologramService indisponível — verifica OBM-Core + DecentHolograms");
+        }
 
         // 👋 JOIN HANDLER
         new JoinHandler(this);
@@ -38,7 +43,6 @@ public class OBMLobbyPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new LobbyItemListener(), this);
 
         ProgressFeedbackTask progressFeedback = new ProgressFeedbackTask();
-        progressFeedback.start(this);
         getServer().getPluginManager().registerEvents(new RetentionJoinListener(progressFeedback), this);
 
         getLogger().info("✅ OBM-Lobby iniciado");

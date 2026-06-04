@@ -1,6 +1,7 @@
 package com.obm.network.smp.service;
 
 import com.obm.network.core.OBMCorePlugin;
+import com.obm.network.core.integration.EconomyBridge;
 import com.obm.network.core.storage.DataStore;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -32,16 +33,57 @@ public class EconomyService {
         return Bukkit.getOfflinePlayer(uuid);
     }
 
-    private void ensureAccount(UUID uuid) {
+    private void ensureVaultAccount(UUID uuid) {
+        if (!isEnabled()) {
+            return;
+        }
         OfflinePlayer player = getOfflinePlayer(uuid);
         if (!economy.hasAccount(player)) {
             economy.createPlayerAccount(player);
         }
     }
 
-    public int getBalance(UUID uuid) {
-        ensureAccount(uuid);
+    /**
+     * Garante chave {@link EconomyBridge#BALANCE_KEY} no DataStore (migra Vault legado se existir).
+     */
+    private void ensureBalanceInitialized(UUID uuid) {
+        if (dataStore.has(uuid, EconomyBridge.BALANCE_KEY)) {
+            return;
+        }
+
+        ensureVaultAccount(uuid);
+        int vaultBalance = readVaultBalance(uuid);
+        int initial = vaultBalance > 0 ? vaultBalance : startingBalance;
+        dataStore.set(uuid, EconomyBridge.BALANCE_KEY, initial);
+        syncVaultToMatch(uuid, initial);
+    }
+
+    private int readVaultBalance(UUID uuid) {
+        if (!isEnabled()) {
+            return 0;
+        }
+        ensureVaultAccount(uuid);
         return Math.max(0, (int) Math.floor(economy.getBalance(getOfflinePlayer(uuid))));
+    }
+
+    /** Alinha Vault com o saldo interno (best-effort). */
+    private void syncVaultToMatch(UUID uuid, int targetBalance) {
+        if (!isEnabled()) {
+            return;
+        }
+        ensureVaultAccount(uuid);
+        OfflinePlayer player = getOfflinePlayer(uuid);
+        int vault = Math.max(0, (int) Math.floor(economy.getBalance(player)));
+        if (vault < targetBalance) {
+            economy.depositPlayer(player, targetBalance - vault);
+        } else if (vault > targetBalance) {
+            economy.withdrawPlayer(player, vault - targetBalance);
+        }
+    }
+
+    public int getBalance(UUID uuid) {
+        ensureBalanceInitialized(uuid);
+        return Math.max(0, dataStore.getInt(uuid, EconomyBridge.BALANCE_KEY));
     }
 
     public boolean canAfford(UUID uuid, int amount) {
@@ -53,12 +95,14 @@ public class EconomyService {
             return new EconomyResponse(0, getBalance(uuid), EconomyResponse.ResponseType.SUCCESS, "No deposit needed");
         }
 
-        ensureAccount(uuid);
-        EconomyResponse response = economy.depositPlayer(getOfflinePlayer(uuid), amount);
-        if (response.transactionSuccess()) {
-            trackEarned(uuid, amount);
-        }
-        return response;
+        ensureBalanceInitialized(uuid);
+        int newBalance = getBalance(uuid) + amount;
+        dataStore.set(uuid, EconomyBridge.BALANCE_KEY, newBalance);
+        trackEarned(uuid, amount);
+        syncVaultToMatch(uuid, newBalance);
+        dataStore.save(uuid);
+
+        return new EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null);
     }
 
     public EconomyResponse withdraw(UUID uuid, int amount) {
@@ -66,15 +110,19 @@ public class EconomyService {
             return new EconomyResponse(0, getBalance(uuid), EconomyResponse.ResponseType.SUCCESS, "No withdraw needed");
         }
 
-        ensureAccount(uuid);
-        if (!canAfford(uuid, amount)) {
-            return new EconomyResponse(0, getBalance(uuid), EconomyResponse.ResponseType.FAILURE, "Insufficient funds");
+        ensureBalanceInitialized(uuid);
+        int balance = getBalance(uuid);
+        if (balance < amount) {
+            return new EconomyResponse(0, balance, EconomyResponse.ResponseType.FAILURE, "Insufficient funds");
         }
-        EconomyResponse response = economy.withdrawPlayer(getOfflinePlayer(uuid), amount);
-        if (response.transactionSuccess()) {
-            trackSpent(uuid, amount);
-        }
-        return response;
+
+        int newBalance = balance - amount;
+        dataStore.set(uuid, EconomyBridge.BALANCE_KEY, newBalance);
+        trackSpent(uuid, amount);
+        syncVaultToMatch(uuid, newBalance);
+        dataStore.save(uuid);
+
+        return new EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null);
     }
 
     public boolean safeWithdraw(UUID uuid, int amount) {
@@ -94,7 +142,6 @@ public class EconomyService {
             return false;
         }
 
-        ensureAccount(target);
         EconomyResponse withdrawResponse = withdraw(source, amount);
         if (!withdrawResponse.transactionSuccess()) {
             return false;

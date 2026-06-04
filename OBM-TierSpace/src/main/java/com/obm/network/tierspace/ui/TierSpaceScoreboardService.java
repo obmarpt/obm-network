@@ -1,5 +1,6 @@
 package com.obm.network.tierspace.ui;
 
+import com.obm.network.core.OBMCorePlugin;
 import com.obm.network.core.tier.TierRankUtil;
 import com.obm.network.tierspace.mode.GameModeId;
 import com.obm.network.tierspace.mode.ModeRegistry;
@@ -64,9 +65,15 @@ public class TierSpaceScoreboardService {
     public void untrack(UUID uuid) {
         activeModes.remove(uuid);
         Player player = Bukkit.getPlayer(uuid);
-        if (player != null) {
-            player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+        if (player == null) {
+            return;
         }
+        OBMCorePlugin core = OBMCorePlugin.get();
+        if (core != null && core.getScoreboardManager() != null) {
+            core.getScoreboardManager().updateScoreboard(player);
+            return;
+        }
+        player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
     }
 
     private void refreshAll() {

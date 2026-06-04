@@ -103,7 +103,7 @@ public class MarketService {
         config.set(base + "created_at", System.currentTimeMillis());
         save();
 
-        return MarketSaleResult.success(listingId);
+        return MarketSaleResult.success("§aAnúncio criado! §7ID: §f" + listingId);
     }
 
     public MarketSaleResult buyListing(Player buyer, String id) {

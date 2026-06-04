@@ -1,5 +1,8 @@
 package com.obm.network.smp.progression;
 
+/**
+ * Ranks de <b>progressão gameplay SMP</b> (Bronze → …). Separado dos ranks network (OBM-Core {@code ranks.purchasable}).
+ */
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 

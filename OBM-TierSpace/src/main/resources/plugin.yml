@@ -13,10 +13,15 @@ softdepend:
   - Spartan
   - LiteBans
 
+permissions:
+  tierspace.admin.season:
+    description: Avançar ou corrigir temporada TierSpace manualmente
+    default: op
+
 commands:
   tierspace:
     description: Menu e info do TierSpace
-    usage: /tierspace
+    usage: /tierspace [menu|stats|season]
     aliases: [ts, tier]
 
   queue:

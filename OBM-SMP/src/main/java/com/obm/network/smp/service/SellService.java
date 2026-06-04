@@ -6,8 +6,6 @@ import com.obm.network.smp.retention.RetentionFeedback;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class SellService {
 
@@ -60,23 +58,19 @@ public class SellService {
     }
 
     public SellResult sellItems(Player player, ItemStack[] items) {
-        int baseTotal = calculateBaseValue(items);
-        if (baseTotal <= 0) {
-            return SellResult.fail("§cNão há itens vendáveis.");
-        }
-
-        List<ItemStack> unsellable = new ArrayList<>();
+        int baseTotal = 0;
         for (ItemStack item : items) {
             if (item == null || item.getType().isAir()) {
                 continue;
             }
-            if (!catalog.isSellable(item.getType())) {
-                unsellable.add(item.clone());
+            int unit = catalog.getPrice(item.getType());
+            if (unit > 0) {
+                baseTotal += unit * item.getAmount();
             }
         }
 
-        if (!unsellable.isEmpty()) {
-            return SellResult.fail("§cRemove os itens invendáveis antes de confirmar.");
+        if (baseTotal <= 0) {
+            return SellResult.fail("§cNão há itens vendáveis. Consulta §e/sell §ce coloca materiais com preço.");
         }
 
         int total = bonusService.applySellPayout(player.getUniqueId(), baseTotal);

@@ -2,13 +2,12 @@ package com.obm.network.smp.listener;
 
 import com.obm.network.smp.auction.AuctionGui;
 import com.obm.network.smp.auction.AuctionGui.AuctionSession;
+import com.obm.network.smp.market.MarketGui;
 import com.obm.network.smp.sell.SellGui;
 import com.obm.network.smp.service.AuctionService;
 import com.obm.network.smp.service.MarketListing;
-import com.obm.network.smp.service.ShopCatalog;
-import com.obm.network.smp.service.ShopService;
+import com.obm.network.smp.service.MarketService;
 import com.obm.network.smp.service.SellService;
-import com.obm.network.smp.shop.ShopGui;
 import com.obm.network.smp.util.GuiTitles;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,24 +22,22 @@ import java.util.UUID;
 
 public class SmpGuiListener implements Listener {
 
-    private final ShopGui shopGui;
-    private final ShopService shopService;
-    private final ShopCatalog shopCatalog;
     private final SellGui sellGui;
     private final SellService sellService;
     private final AuctionGui auctionGui;
     private final AuctionService auctionService;
+    private final MarketGui marketGui;
+    private final MarketService marketService;
 
-    public SmpGuiListener(ShopGui shopGui, ShopService shopService, ShopCatalog shopCatalog,
-                          SellGui sellGui, SellService sellService,
-                          AuctionGui auctionGui, AuctionService auctionService) {
-        this.shopGui = shopGui;
-        this.shopService = shopService;
-        this.shopCatalog = shopCatalog;
+    public SmpGuiListener(SellGui sellGui, SellService sellService,
+                          AuctionGui auctionGui, AuctionService auctionService,
+                          MarketGui marketGui, MarketService marketService) {
         this.sellGui = sellGui;
         this.sellService = sellService;
         this.auctionGui = auctionGui;
         this.auctionService = auctionService;
+        this.marketGui = marketGui;
+        this.marketService = marketService;
     }
 
     @EventHandler
@@ -54,15 +51,7 @@ public class SmpGuiListener implements Listener {
             return;
         }
 
-        if (title.equals(GuiTitles.SHOP_CATEGORIES)) {
-            handleShopCategories(event, player);
-        } else if (GuiTitles.isShopCategory(title)) {
-            handleShopCategory(event, player, GuiTitles.categoryFromTitle(title));
-        } else if (title.equals(GuiTitles.SHOP_QUANTITY)) {
-            handleShopQuantity(event, player);
-        } else if (title.equals(GuiTitles.SHOP_CONFIRM)) {
-            handleShopConfirm(event, player);
-        } else if (title.equals(GuiTitles.SELL)) {
+        if (title.equals(GuiTitles.SELL)) {
             handleSell(event, player);
         } else if (title.equals(GuiTitles.AUCTION_MAIN)) {
             handleAuctionMain(event, player);
@@ -70,6 +59,8 @@ public class SmpGuiListener implements Listener {
             handleAuctionBrowse(event, player);
         } else if (title.equals(GuiTitles.AUCTION_SELL)) {
             handleAuctionSell(event, player);
+        } else if (marketGui.isMarketTitle(title)) {
+            handleMarket(event, player);
         }
     }
 
@@ -89,97 +80,53 @@ public class SmpGuiListener implements Listener {
             }
             auctionGui.clearSellSession(player.getUniqueId());
         }
-        if (title != null && (title.startsWith("§6Loja") || title.startsWith("§dLeilão"))) {
-            shopService.clearSession(player.getUniqueId());
+        if (marketGui.isMarketTitle(title)) {
+            marketGui.clearPage(player);
         }
     }
 
-    private void handleShopCategories(InventoryClickEvent event, Player player) {
+    private void handleMarket(InventoryClickEvent event, Player player) {
         event.setCancelled(true);
         ItemStack clicked = event.getCurrentItem();
-        if (clicked == null || !clicked.hasItemMeta()) {
+        if (clicked == null || clicked.getType().isAir()) {
             return;
         }
-        if (clicked.getType() == Material.BARRIER) {
+
+        int slot = event.getRawSlot();
+        if (slot == MarketGui.SLOT_CLOSE || slot == MarketGui.SLOT_BACK) {
             player.closeInventory();
             return;
         }
-        for (String category : shopCatalog.getCategories()) {
-            if (clicked.getItemMeta().getDisplayName().equalsIgnoreCase("§e" + capitalize(category))) {
-                shopGui.openCategory(player, category);
+
+        int page = 0; // resolved via reopen
+        String title = event.getView().getTitle();
+        if (title != null && title.contains("(")) {
+            try {
+                String part = title.substring(title.indexOf('(') + 1, title.indexOf('/'));
+                page = Integer.parseInt(part.trim()) - 1;
+            } catch (Exception ignored) {
+            }
+        }
+
+        if (slot == MarketGui.SLOT_PREV && page > 0) {
+            marketGui.open(player, page - 1);
+            return;
+        }
+        if (slot == MarketGui.SLOT_NEXT) {
+            marketGui.open(player, page + 1);
+            return;
+        }
+
+        if (slot >= MarketGui.LISTING_START && slot <= MarketGui.LISTING_END) {
+            String listingId = marketGui.extractListingId(clicked);
+            if (listingId == null) {
                 return;
             }
-        }
-    }
-
-    private void handleShopCategory(InventoryClickEvent event, Player player, String category) {
-        event.setCancelled(true);
-        ItemStack clicked = event.getCurrentItem();
-        if (clicked == null) {
-            return;
-        }
-        if (clicked.getType() == Material.ARROW) {
-            shopGui.openCategories(player);
-            return;
-        }
-        Material material = clicked.getType();
-        if (material.isAir() || !shopCatalog.getItems(category).containsKey(material)) {
-            return;
-        }
-        if (!shopCatalog.canPurchase(material)) {
-            player.sendMessage("§cEste item não está disponível para compra.");
-            return;
-        }
-        shopGui.openQuantity(player, category, material);
-    }
-
-    private void handleShopQuantity(InventoryClickEvent event, Player player) {
-        event.setCancelled(true);
-        ItemStack clicked = event.getCurrentItem();
-        if (clicked == null) {
-            return;
-        }
-        var session = shopService.getSession(player.getUniqueId());
-        if (session == null) {
-            player.closeInventory();
-            return;
-        }
-        if (clicked.getType() == Material.ARROW) {
-            shopGui.openCategory(player, session.category());
-            return;
-        }
-        if (clicked.getType() == Material.LIME_CONCRETE) {
-            shopGui.openConfirm(player, session.category(), session.material(), session.quantity());
-            return;
-        }
-        if (clicked.getType() == Material.PAPER && clicked.hasItemMeta()) {
-            String name = clicked.getItemMeta().getDisplayName();
-            int quantity = parseQuantity(name);
-            if (quantity > 0) {
-                shopGui.openConfirm(player, session.category(), session.material(), quantity);
+            var result = marketService.buyListing(player, listingId);
+            player.sendMessage(result.getMessage());
+            if (result.isSuccess()) {
+                marketGui.open(player, page);
             }
-        }
-    }
-
-    private void handleShopConfirm(InventoryClickEvent event, Player player) {
-        event.setCancelled(true);
-        ItemStack clicked = event.getCurrentItem();
-        if (clicked == null) {
-            return;
-        }
-        var session = shopService.getSession(player.getUniqueId());
-        if (session == null) {
-            player.closeInventory();
-            return;
-        }
-        if (clicked.getType() == Material.RED_CONCRETE) {
-            shopGui.openQuantity(player, session.category(), session.material());
-            return;
-        }
-        if (clicked.getType() == Material.LIME_CONCRETE) {
-            var result = shopService.purchase(player, session.category(), session.material(), session.quantity());
-            player.sendMessage(result.message());
-            player.closeInventory();
         }
     }
 
@@ -203,10 +150,16 @@ public class SmpGuiListener implements Listener {
             var result = sellService.sellItems(player, items);
             player.sendMessage(result.message());
             if (result.success()) {
-            for (int i = SellGui.INPUT_START; i <= SellGui.INPUT_END; i++) {
-                top.setItem(i, null);
+                for (int i = SellGui.INPUT_START; i <= SellGui.INPUT_END; i++) {
+                    ItemStack slot = top.getItem(i);
+                    if (slot == null || slot.getType().isAir()) {
+                        continue;
+                    }
+                    if (sellService.getCatalog().isSellable(slot.getType())) {
+                        top.setItem(i, null);
+                    }
+                }
             }
-        }
             sellGui.refreshFooter(player, top, collectSellItems(top));
             return;
         }
@@ -397,4 +350,5 @@ public class SmpGuiListener implements Listener {
         }
         return Character.toUpperCase(value.charAt(0)) + value.substring(1);
     }
+
 }

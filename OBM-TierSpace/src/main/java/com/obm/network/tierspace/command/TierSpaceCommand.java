@@ -11,9 +11,14 @@ import com.obm.network.tierspace.ui.TierGuiMenu;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-public class TierSpaceCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+public class TierSpaceCommand implements CommandExecutor, TabCompleter {
 
     private final TierSpaceStore store;
     private final TierGuiMenu tierGuiMenu;
@@ -35,6 +40,10 @@ public class TierSpaceCommand implements CommandExecutor {
         if (!(sender instanceof Player player)) {
             sender.sendMessage("§cApenas jogadores.");
             return true;
+        }
+
+        if (args.length >= 1 && args[0].equalsIgnoreCase("season")) {
+            return handleSeason(sender, args);
         }
 
         if (args.length == 0 || args[0].equalsIgnoreCase("menu")) {
@@ -84,5 +93,58 @@ public class TierSpaceCommand implements CommandExecutor {
         }
 
         player.sendMessage("§7Menu: §f/tierspace menu §7| Fila: §f/queue " + mode.id());
+    }
+
+    private boolean handleSeason(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("tierspace.admin.season")) {
+            sender.sendMessage("§cSem permissão.");
+            return true;
+        }
+        if (args.length < 2) {
+            sender.sendMessage("§e/tierspace season advance §7— nova temporada + reset suave");
+            sender.sendMessage("§e/tierspace season set <n> §7— corrigir número (sem reset)");
+            sender.sendMessage("§7Atual: §f" + seasonManager.getSeasonDisplayLine());
+            return true;
+        }
+        if (args[1].equalsIgnoreCase("advance") || args[1].equalsIgnoreCase("start")) {
+            seasonManager.startNewSeason(true, sender);
+            return true;
+        }
+        if (args[1].equalsIgnoreCase("set") && args.length >= 3) {
+            try {
+                int n = Integer.parseInt(args[2]);
+                seasonManager.setSeasonNumberManually(n, sender);
+            } catch (NumberFormatException ex) {
+                sender.sendMessage("§cNúmero inválido.");
+            }
+            return true;
+        }
+        sender.sendMessage("§cUso: /tierspace season <advance|set <n>>");
+        return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (!sender.hasPermission("tierspace.admin.season")) {
+            return List.of();
+        }
+        if (args.length == 1) {
+            return filter(List.of("season", "menu", "stats"), args[0]);
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("season")) {
+            return filter(List.of("advance", "set"), args[1]);
+        }
+        return List.of();
+    }
+
+    private List<String> filter(List<String> options, String prefix) {
+        String lower = prefix.toLowerCase(Locale.ROOT);
+        List<String> out = new ArrayList<>();
+        for (String option : options) {
+            if (option.toLowerCase(Locale.ROOT).startsWith(lower)) {
+                out.add(option);
+            }
+        }
+        return out;
     }
 }

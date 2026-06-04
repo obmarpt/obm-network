@@ -2,6 +2,7 @@ package com.obm.network.smp.commands;
 
 import com.obm.network.core.world.WorldModeService;
 import com.obm.network.smp.auction.AuctionGui;
+import com.obm.network.smp.permission.SmpPermissions;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -26,6 +27,9 @@ public class AuctionCommand implements CommandExecutor {
 
         if (!worldModeService.isSMP(player.getWorld().getName())) {
             player.sendMessage("§cEste comando só funciona dentro do SMP.");
+            return true;
+        }
+        if (SmpPermissions.deny(player, SmpPermissions.AUCTION, "Permissão: obm.smp.auction")) {
             return true;
         }
 

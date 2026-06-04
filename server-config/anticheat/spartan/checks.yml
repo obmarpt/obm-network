@@ -1,0 +1,580 @@
+hit-reach:
+  cancelled_event: false
+  name: hit-reach
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+criticals:
+  cancelled_event: false
+  name: criticals
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+fast-clicks:
+  cancelled_event: false
+  name: fast-clicks
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+velocity:
+  cancelled_event: false
+  name: velocity
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+kill-aura:
+  cancelled_event: false
+  name: kill-aura
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+irregular-movements:
+  cancelled_event: false
+  name: irregular-movements
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+gravity-simulation:
+  cancelled_event: false
+  name: gravity-simulation
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: false
+    bedrock: false
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+speed-simulation:
+  cancelled_event: false
+  name: speed-simulation
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: false
+    bedrock: false
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+exploits:
+  cancelled_event: false
+  name: exploits
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+more-packets:
+  cancelled_event: false
+  name: more-packets
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+x-ray:
+  cancelled_event: false
+  name: x-ray
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+impossible-actions:
+  cancelled_event: false
+  name: impossible-actions
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+fast-break:
+  cancelled_event: false
+  name: fast-break
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+fast-place:
+  cancelled_event: false
+  name: fast-place
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+block-reach:
+  cancelled_event: false
+  name: block-reach
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+no-swing:
+  cancelled_event: false
+  name: no-swing
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+inventory-clicks:
+  cancelled_event: false
+  name: inventory-clicks
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+fast-heal:
+  cancelled_event: false
+  name: fast-heal
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+impossible-inventory:
+  cancelled_event: false
+  name: impossible-inventory
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true
+fast-eat:
+  cancelled_event: false
+  name: fast-eat
+  disabled_worlds: exampleDisabledWorld1, exampleDisabledWorld2
+  silent_worlds: exampleSilentWorld1, exampleSilentWorld2
+  enabled:
+    java: true
+    bedrock: true
+  silent:
+    java: false
+    bedrock: false
+  punishments:
+    enabled:
+      java: false
+      bedrock: false
+    commands:
+      '1': ''
+      '2': ''
+      '3': ''
+      '4': ''
+      '5': ''
+      '6': ''
+      '7': ''
+      '8': ''
+      '9': ''
+      '10': ''
+  detection_details:
+    java: true
+    bedrock: true

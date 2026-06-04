@@ -84,7 +84,7 @@ public class TierGuiMenu {
                 List.of(
                         seasonManager.getSeasonDisplayLine(),
                         "",
-                        TierMenuColors.neutral("Reset suave a cada season")
+                        TierMenuColors.neutral("Reset suave só quando a staff avançar a season")
                 )
         ));
 

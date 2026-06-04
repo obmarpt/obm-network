@@ -2,6 +2,7 @@ package com.obm.network.smp.listener;
 
 import com.obm.network.core.OBMCorePlugin;
 import com.obm.network.core.storage.DataStore;
+import com.obm.network.core.storage.PlayerStatsKeys;
 import com.obm.network.core.world.WorldModeService;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,7 +33,7 @@ public class StatsListener implements Listener {
 
         if (!isRush(player)) return;
 
-        dataStore.increment(player.getUniqueId(), "blocks_broken_rush");
+        dataStore.increment(player.getUniqueId(), PlayerStatsKeys.BLOCKS_BROKEN_SMP);
     }
 
     /*

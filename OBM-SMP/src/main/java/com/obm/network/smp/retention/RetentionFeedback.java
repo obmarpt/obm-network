@@ -1,5 +1,6 @@
 package com.obm.network.smp.retention;
 
+import com.obm.network.smp.SMPPlugin;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
@@ -19,7 +20,7 @@ public final class RetentionFeedback {
         }
         String formatted = formatCoins(amount);
         player.sendMessage("§a+§e" + formatted + " coins§a!");
-        sendActionBar(player, "§a+§e" + formatted + " coins");
+        showTemporary(player, "§a+§e" + formatted + " coins", TemporaryActionBar.DEFAULT_TICKS);
     }
 
     public static void dailySuccess(Player player, int amount) {
@@ -29,7 +30,7 @@ public final class RetentionFeedback {
         player.sendMessage("");
         player.sendTitle("§a§l✅ DAILY", "§e+" + formatCoins(amount) + " coins", 5, 40, 10);
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1.2f);
-        sendActionBar(player, "§a✅ Daily reward collected!");
+        showTemporary(player, "§a✅ Daily reward collected!", 100);
     }
 
     public static void dailyAlreadyClaimed(Player player, String timeLeft) {
@@ -42,7 +43,7 @@ public final class RetentionFeedback {
         player.sendMessage("§a§l🎁 " + minutes + " min jogados!");
         player.sendMessage("§7Recebeste §e" + formatCoins(coins) + " coins§7.");
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.9f, 1.0f);
-        sendActionBar(player, "§6+" + formatCoins(coins) + " coins §7| §e" + minutes + "min playtime");
+        showTemporary(player, "§6+" + formatCoins(coins) + " coins §7| §e" + minutes + "min playtime", 100);
     }
 
     public static void levelUp(Player player, int level, int coinsReward) {
@@ -52,7 +53,20 @@ public final class RetentionFeedback {
         }
         player.sendTitle("§6§lLEVEL UP", "§eNível " + level, 10, 50, 10);
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-        sendActionBar(player, "§6§lLEVEL UP §8| §eNível " + level);
+        showTemporary(player, "§6§lLEVEL UP §8| §eNível " + level, 100);
+    }
+
+    public static void xpGained(Player player, int amount) {
+        if (amount <= 0) {
+            return;
+        }
+        showTemporary(player, "§a+§f" + amount + " XP", 60);
+    }
+
+    public static void smpWelcome(Player player, int coins, int level) {
+        showTemporary(player,
+                "§6" + formatCoins(coins) + " coins §8| §eLv " + level + " §8| §7Bem-vindo ao Rush",
+                100);
     }
 
     public static void sendActionBar(Player player, String message) {
@@ -60,6 +74,15 @@ public final class RetentionFeedback {
             player.sendActionBar(message);
         } catch (NoSuchMethodError ignored) {
             player.sendMessage(message);
+        }
+    }
+
+    private static void showTemporary(Player player, String message, int ticks) {
+        SMPPlugin plugin = SMPPlugin.get();
+        if (plugin != null && plugin.isEnabled()) {
+            TemporaryActionBar.show(plugin, player, message, ticks);
+        } else {
+            sendActionBar(player, message);
         }
     }
 

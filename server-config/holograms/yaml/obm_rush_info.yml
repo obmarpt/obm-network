@@ -1,25 +1,26 @@
-location:
-  world: Lobby
-  x: -8.5
-  y: 166.0
-  z: 4.5
+# plugins/DecentHolograms/holograms/obm_rush_info.yml — legacy (&)
 
+location: Lobby:-8.500:166.000:4.500
 enabled: true
 display-range: 48
-update-interval: -1
+update-range: 48
+update-interval: 20
+facing: 0.0
+down-origin: false
 pages:
   - lines:
-      - content: '<gradient:#FFAA00:#FF7700><bold>⚔ RUSH SMP</bold></gradient>'
+      - content: '&6&l⚔ RUSH SMP'
         height: 0.3
-      - content: '<dark_gray>──────────────</dark_gray>'
+      - content: '&8──────────────'
         height: 0.28
-      - content: '<gray>Farm → Vender → Gear → PvP</gray>'
+      - content: '&7Farm → Vender → Gear → PvP'
         height: 0.28
-      - content: '<gray>Mundo:</gray> <white>world</white> <gray>+ nether/end</gray>'
+      - content: '&7Mundo: &fworld &7+ nether/end'
         height: 0.28
-      - content: '<gray>Economia:</gray> <yellow>💰 Activa</yellow>'
+      - content: '&7Economia: &e💰 Activa'
         height: 0.28
-      - content: '<dark_gray>──────────────</dark_gray>'
+      - content: '&8──────────────'
         height: 0.28
-      - content: '<gradient:#FFAA00:#FF7700><bold>▶ Entra pelo menu!</bold></gradient>'
+      - content: '&6&l▶ Entra pelo menu!'
         height: 0.3
+    actions: {}

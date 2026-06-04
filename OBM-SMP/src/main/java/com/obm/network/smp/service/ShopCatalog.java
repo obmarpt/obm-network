@@ -15,15 +15,24 @@ public class ShopCatalog {
 
     private final Map<String, Map<Material, Integer>> categories = new LinkedHashMap<>();
     private final Set<Material> blockedItems = EnumSet.noneOf(Material.class);
+    private final Set<Material> vipItems = EnumSet.noneOf(Material.class);
 
     public void reload(FileConfiguration config) {
         categories.clear();
         blockedItems.clear();
+        vipItems.clear();
 
         for (String materialName : config.getStringList("shop.blocked-items")) {
             Material material = Material.matchMaterial(materialName);
             if (material != null) {
                 blockedItems.add(material);
+            }
+        }
+
+        for (String materialName : config.getStringList("shop.vip-items")) {
+            Material material = Material.matchMaterial(materialName);
+            if (material != null && !material.isAir()) {
+                vipItems.add(material);
             }
         }
 
@@ -65,6 +74,10 @@ public class ShopCatalog {
 
     public boolean canPurchase(Material material) {
         return !isBlocked(material);
+    }
+
+    public boolean isVipItem(Material material) {
+        return vipItems.contains(material);
     }
 
     public int getPrice(String category, Material material) {

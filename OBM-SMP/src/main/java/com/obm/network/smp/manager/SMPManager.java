@@ -1,6 +1,9 @@
 package com.obm.network.smp.manager;
 
 import com.obm.network.core.OBMCorePlugin;
+import com.obm.network.core.integration.EmeraldRewardBridge;
+import com.obm.network.core.integration.EconomyBridge;
+import com.obm.network.core.integration.SMPBridge;
 import com.obm.network.core.location.SafeSpawnService;
 import com.obm.network.core.storage.DataStore;
 import com.obm.network.core.world.WorldModeService;
@@ -97,7 +100,9 @@ public class SMPManager {
                 rankCatalog.getDefaultRankId()
         );
 
-        economyService.getBalance(player.getUniqueId());
+        int coins = EconomyBridge.getBalance(player.getUniqueId());
+        int level = SMPBridge.getProgression(player.getUniqueId()).level();
+        RetentionFeedback.smpWelcome(player, coins, level);
     }
 
     /*
@@ -118,6 +123,8 @@ public class SMPManager {
         if (!blocked && reward > 0) {
             economyService.deposit(killerId, reward);
             RetentionFeedback.coinsGained(killer, reward);
+            EmeraldRewardBridge.smpKill(killer, victim);
+            com.obm.network.core.integration.BattlePassBridge.smpKill(killer);
             killer.sendMessage("§7Mataste §f" + victim.getName());
         } else {
             killer.sendMessage("§7Sem recompensa (anti farm).");
@@ -184,9 +191,10 @@ public class SMPManager {
 
         if (!isInSMP(player) || reward <= 0) return;
 
-        economyService.deposit(player.getUniqueId(), reward);
-        RetentionFeedback.coinsGained(player, reward);
-        RetentionFeedback.sendActionBar(player, "§a+§e" + economyService.format(reward) + " §7| tempo jogado");
+        int payout = bonusService.applyPlaytimeReward(player.getUniqueId(), reward);
+        economyService.deposit(player.getUniqueId(), payout);
+        RetentionFeedback.coinsGained(player, payout);
+        EmeraldRewardBridge.smpPlaytime(player);
 
         levelService.addPlaytimeXp(player);
     }

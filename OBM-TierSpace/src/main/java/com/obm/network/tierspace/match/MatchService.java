@@ -1,6 +1,7 @@
 package com.obm.network.tierspace.match;
 
 import com.obm.network.core.OBMCorePlugin;
+import com.obm.network.core.integration.EmeraldRewardBridge;
 import com.obm.network.core.tier.TierRankUtil;
 import com.obm.network.tierspace.TierSpacePlugin;
 import com.obm.network.tierspace.anticheat.AnticheatExemptionService;
@@ -306,6 +307,8 @@ public class MatchService {
         String loserOpponent = winner != null ? winner.getName() : "oponente";
 
         if (winner != null) {
+            EmeraldRewardBridge.rankedWin(winner);
+            com.obm.network.core.integration.BattlePassBridge.rankedWin(winner);
             postMatchSnapshots.put(winnerId, PostMatchSnapshot.win(winChange, winnerInPlacement));
             feedbackService.sendWin(winner, winChange, winnerOpponent, winnerInPlacement);
             if (winnerPlaced) {

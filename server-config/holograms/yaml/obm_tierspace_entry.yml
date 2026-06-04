@@ -1,25 +1,26 @@
-location:
-  world: Lobby
-  x: 0.5
-  y: 166.0
-  z: 8.5
+# plugins/DecentHolograms/holograms/obm_tierspace_entry.yml — legacy (&)
 
+location: Lobby:0.500:166.000:8.500
 enabled: true
 display-range: 64
+update-range: 64
 update-interval: 40
+facing: 0.0
+down-origin: false
 pages:
   - lines:
-      - content: '<gradient:#00AAFF:#AA00FF><bold>🏆 TIERSPACE</bold></gradient>'
+      - content: '&b&l🏆 TIERSPACE'
         height: 0.3
-      - content: '<dark_gray>──────────────</dark_gray>'
+      - content: '&8──────────────'
         height: 0.28
-      - content: '<gray>PvP competitivo 1v1 · Elo ranking</gray>'
+      - content: '&7PvP competitivo 1v1 · Elo ranking'
         height: 0.28
-      - content: '<gray>Season:</gray> <white>%obm_tier_season%</white> <gray>(</gray><aqua>%obm_tier_season_days%</aqua><gray>d)</gray>'
+      - content: '&7Season: &f%obm_tier_season% &7(&b%obm_tier_season_days%&7d)'
         height: 0.28
-      - content: '<dark_gray>──────────────</dark_gray>'
+      - content: '&8──────────────'
         height: 0.28
-      - content: '<gradient:#00AAFF:#AA00FF><bold>🎯 Click to play</bold></gradient>'
+      - content: '&b&l🎯 Click to play'
         height: 0.28
-      - content: '<aqua>⚡ Queue now — abre o menu!</aqua>'
+      - content: '&3⚡ Queue now — abre o menu!'
         height: 0.3
+    actions: {}

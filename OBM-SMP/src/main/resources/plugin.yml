@@ -9,6 +9,27 @@ depend:
   - OBM-Core
 softdepend:
   - Vault
+  - LuckPerms
+
+permissions:
+  obm.smp.shop:
+    description: Abrir loja SMP e categorias base
+    default: true
+  obm.smp.sell:
+    description: Vender itens no SMP
+    default: true
+  obm.smp.auction:
+    description: Usar leilão /ah
+    default: true
+  obm.smp.rank:
+    description: Ver e comprar ranks SMP
+    default: true
+  obm.smp.vip:
+    description: Perks VIP (+coins, itens exclusivos na loja)
+    default: false
+  obm.smp.admin:
+    description: Bypass de restrições SMP e mensagens debug
+    default: op
 
 commands:
   smp:
@@ -44,11 +65,6 @@ commands:
     description: Ver rank, comprar rank ou listar ranks
     usage: /rank [buy|list]
 
-  daily:
-    description: Recompensa diária de coins
-    usage: /daily
-  
-  
   top:
     description: Ver leaderboards
     usage: /top

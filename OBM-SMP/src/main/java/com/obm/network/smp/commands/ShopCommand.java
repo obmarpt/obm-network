@@ -1,6 +1,7 @@
 package com.obm.network.smp.commands;
 
 import com.obm.network.core.world.WorldModeService;
+import com.obm.network.smp.permission.SmpPermissions;
 import com.obm.network.smp.shop.ShopGui;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -28,7 +29,11 @@ public class ShopCommand implements CommandExecutor {
             player.sendMessage("§cEste comando só funciona dentro do SMP.");
             return true;
         }
+        if (SmpPermissions.deny(player, SmpPermissions.SHOP, "Permissão: obm.smp.shop")) {
+            return true;
+        }
 
+        SmpPermissions.debug(player, "A abrir loja (/shop)");
         shopGui.openCategories(player);
         return true;
     }

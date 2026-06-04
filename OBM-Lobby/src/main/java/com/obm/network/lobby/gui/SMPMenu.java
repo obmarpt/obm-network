@@ -36,7 +36,7 @@ public class SMPMenu {
         SMPBridge.ProgressionSnapshot progression = SMPBridge.getProgression(uuid);
 
         int time = ds.getInt(uuid, "playtime_smp");
-        int blocks = ds.getInt(uuid, "blocks_smp");
+        int blocks = ds.getInt(uuid, com.obm.network.core.storage.PlayerStatsKeys.BLOCKS_BROKEN_SMP);
         int kills = ds.getInt(uuid, "kills_smp");
         int deaths = ds.getInt(uuid, "deaths_smp");
         int money = EconomyBridge.getBalance(uuid);

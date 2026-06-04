@@ -1,37 +1,27 @@
 #!/bin/bash
 
-echo "===== COPY JARS ====="
+PROJECT_DIR="/d/PluginsMinecraft/OMD Network"
+SERVER_PLUGIN_DIR="/d/PluginsMinecraft/OMD Network/PluginsCompilados"
 
-BASE_DIR="$(pwd)"
-OUTPUT_DIR="$BASE_DIR/PluginsCompilados"
+echo "🧹 Limpando build..."
+cd "$PROJECT_DIR" || exit
+mvn clean
 
-mkdir -p "$OUTPUT_DIR"
+echo "📦 Compilando TODOS os módulos..."
+mvn clean install || exit
 
-echo ""
-echo "👉 A copiar JARs..."
+echo "🧹 Limpando pasta PluginsCompilados..."
+mkdir -p "$SERVER_PLUGIN_DIR"
+rm -f "$SERVER_PLUGIN_DIR"/*.jar
 
-MODULES=("OBM-Core" "OBM-SMP" "OBM-Lobby" "OBM-Inventory" "OBM-UHC")
+echo "📂 Copiando JARs..."
 
-for module in "${MODULES[@]}"
-do
-    echo "👉 $module"
+cp OBM-Core/target/OBM-Core-*.jar "$SERVER_PLUGIN_DIR/OBM-Core.jar"
+cp OBM-Lobby/target/OBM-Lobby-*.jar "$SERVER_PLUGIN_DIR/OBM-Lobby.jar"
+cp OBM-SMP/target/OBM-SMP-*.jar "$SERVER_PLUGIN_DIR/OBM-SMP.jar"
+cp OBM-TierSpace/target/OBM-TierSpace-*.jar "$SERVER_PLUGIN_DIR/OBM-TierSpace.jar"
+cp OBM-UHC/target/OBM-UHC-*.jar "$SERVER_PLUGIN_DIR/OBM-UHC.jar"
+cp OBM-Inventory/target/OBM-Inventory-*.jar "$SERVER_PLUGIN_DIR/OBM-Inventory.jar"
 
-    JAR_FILE=$(find "$BASE_DIR/$module/target" -name "*.jar" ! -name "*original*")
-
-    if [ -z "$JAR_FILE" ]; then
-        echo "❌ JAR não encontrado para $module (compila primeiro!)"
-        continue
-    fi
-
-    echo "✔ Copiado $module"
-    cp "$JAR_FILE" "$OUTPUT_DIR"
-done
-
-echo ""
-echo "✅ TODOS OS JARS COPIADOS"
-
-echo "👉 Abrir pasta"
-explorer.exe "$(cygpath -w "$OUTPUT_DIR")"
-
-echo ""
-echo "📂 Pasta aberta: $OUTPUT_DIR"
+echo "✅ Build completo + todos os módulos!"
+echo "📦 Local: $SERVER_PLUGIN_DIR"

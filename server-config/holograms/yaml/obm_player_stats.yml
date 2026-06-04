@@ -1,25 +1,26 @@
-location:
-  world: Lobby
-  x: -3.5
-  y: 165.5
-  z: 0.5
+# plugins/DecentHolograms/holograms/obm_player_stats.yml — legacy (&)
 
+location: Lobby:-3.500:165.500:0.500
 enabled: true
 display-range: 48
+update-range: 48
 update-interval: 20
+facing: 0.0
+down-origin: false
 pages:
   - lines:
-      - content: '<gradient:#FFD700:#FFAA00><bold>📊 AS TUAS STATS</bold></gradient>'
+      - content: '&6&l📊 AS TUAS STATS'
         height: 0.3
-      - content: '<dark_gray>──────────────</dark_gray>'
+      - content: '&8──────────────'
         height: 0.28
-      - content: '<gray>💰 Coins:</gray> <yellow>%obm_coins%</yellow>'
+      - content: '&7💰 Coins: &e%obm_coins%'
         height: 0.28
-      - content: '<gray>📈 Level:</gray> <white>%obm_level%</white> <gray>| Rank:</gray> <yellow>%obm_rank%</yellow>'
+      - content: '&7📈 Level: &f%obm_level% &8| &7Rank: &e%obm_rank%'
         height: 0.28
-      - content: '<gray>🏆 Tier:</gray> <aqua>%obm_tier_rating_sword%</aqua> <gray>|</gray> <white>%obm_tier_rank_sword%</white>'
+      - content: '&7🏆 Tier: &b%obm_tier_rating_sword% &8| &f%obm_tier_rank_sword%'
         height: 0.28
-      - content: '<dark_gray>──────────────</dark_gray>'
+      - content: '&8──────────────'
         height: 0.28
-      - content: '<gray>W/L:</gray> <green>%obm_tier_wins_sword%</green><gray>/</gray><red>%obm_tier_losses_sword%</red>'
+      - content: '&7W/L: &a%obm_tier_wins_sword%&8/&c%obm_tier_losses_sword%'
         height: 0.3
+    actions: {}

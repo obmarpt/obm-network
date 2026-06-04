@@ -120,7 +120,13 @@ public class TierSpaceStore {
     public void saveGlobalSeason(int seasonNumber, long seasonEndMillis) {
         dataStore.getYaml().set("tierspace.season.number", seasonNumber);
         dataStore.getYaml().set("tierspace.season.end", seasonEndMillis);
+        dataStore.getYaml().set("tierspace.season.initialized", true);
         dataStore.save();
+    }
+
+    public boolean isSeasonPersisted() {
+        return dataStore.getYaml().getBoolean("tierspace.season.initialized", false)
+                && dataStore.getYaml().contains("tierspace.season.number");
     }
 
     public int getGlobalSeasonNumber() {

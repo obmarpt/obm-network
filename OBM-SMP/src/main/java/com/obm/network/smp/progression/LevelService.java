@@ -117,6 +117,10 @@ public class LevelService {
             return new LevelUpResult(true, level, totalCoins, message);
         }
 
+        if (amount > 0) {
+            RetentionFeedback.xpGained(player, amount);
+        }
+
         return new LevelUpResult(false, level, 0, null);
     }
 

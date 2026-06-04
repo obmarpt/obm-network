@@ -1,0 +1,38 @@
+teleportenabled: true
+teleportauto: false
+godmode: false
+muted: false
+jailed: false
+ip-address: 188.250.250.186
+afk: false
+socialspy: false
+npc: false
+powertoolsenabled: true
+accepting-pay: true
+baltop-exempt: false
+timestamps:
+  lastteleport: 1780174527716
+  lastheal: 0
+  mute: 0
+  jail: 0
+  onlinejail: 0
+  logout: 1780507951383
+  login: 1780506456435
+money: '-4171.0'
+last-account-name: Obmarr
+logoutlocation:
+  world: 280e415b-f704-465f-b8b3-b4c51c5cf2cb
+  world-name: Lobby
+  x: 23.676139111884485
+  y: 160.0
+  z: 5.223425093918758
+  yaw: 97.71099853515625
+  pitch: 7.918566703796387
+lastlocation:
+  world: 280e415b-f704-465f-b8b3-b4c51c5cf2cb
+  world-name: Lobby
+  x: 5.71949790429861
+  y: 164.0
+  z: -0.6973315918426
+  yaw: -79.59573364257812
+  pitch: -0.8799811005592346
