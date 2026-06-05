@@ -1,6 +1,7 @@
 package com.obm.network.uhc.gui;
 
 import com.obm.network.core.OBMCorePlugin;
+import com.obm.network.core.progression.ProgressionLevelService;
 import com.obm.network.core.storage.DataStore;
 import com.obm.network.uhc.util.UHCUtils;
 
@@ -127,7 +128,14 @@ public final class UHCStatsMenu {
                 "§e§l▶ Clique para fechar"
         ));
 
-        inv.setItem(SLOT_SUMMARY, buildSummaryHead(player, lives, kills, deaths, wins, mobs, kdr, playtimeSec, timeAliveSec));
+        ProgressionLevelService levels = OBMCorePlugin.get().getProgressionLevelService();
+        if (levels != null) {
+            levels.ensureInitialized(uuid);
+        }
+        int hcLevel = levels != null ? levels.getHcLevel(uuid) : 1;
+        int globalLevel = levels != null ? levels.getGlobalLevel(uuid) : 1;
+        inv.setItem(SLOT_SUMMARY, buildSummaryHead(player, lives, kills, deaths, wins, mobs, kdr,
+                playtimeSec, timeAliveSec, hcLevel, globalLevel));
 
         return inv;
     }
@@ -141,7 +149,9 @@ public final class UHCStatsMenu {
             int mobs,
             String kdr,
             int playtimeSec,
-            int timeAliveSec
+            int timeAliveSec,
+            int hcLevel,
+            int globalLevel
     ) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
@@ -157,6 +167,7 @@ public final class UHCStatsMenu {
         lore.add("§7Resumo Hardcore");
         lore.add("");
         lore.add("§7K/D §f§l" + kdr + " §8(§f" + kills + "§8/§f" + deaths + "§8)");
+        lore.add("§cHC Level §f" + hcLevel + " §8· §bGlobal §f" + globalLevel);
         lore.add("§7Wins §f" + wins + " §8· §7Mobs §f" + mobs);
         lore.add("§7Vidas §c§l" + lives);
         lore.add("§7Playtime §f" + formatTime(playtimeSec));

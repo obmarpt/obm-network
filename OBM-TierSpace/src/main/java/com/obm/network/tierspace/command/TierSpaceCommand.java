@@ -1,5 +1,6 @@
 package com.obm.network.tierspace.command;
 
+import com.obm.network.core.tier.CompetitiveTier;
 import com.obm.network.core.tier.TierRankUtil;
 import com.obm.network.tierspace.mode.GameModeId;
 import com.obm.network.tierspace.mode.ModeRegistry;
@@ -69,6 +70,8 @@ public class TierSpaceCommand implements CommandExecutor, TabCompleter {
         int wins = store.getWins(player.getUniqueId(), mode);
         int losses = store.getLosses(player.getUniqueId(), mode);
         int streak = store.getStreak(player.getUniqueId(), mode);
+        int kills = store.getKills(player.getUniqueId(), mode);
+        int deaths = store.getDeaths(player.getUniqueId(), mode);
 
         PlacementService placement = com.obm.network.tierspace.TierSpacePlugin.get().getPlacementService();
         boolean inPlacement = placement != null && placement.isInPlacement(player.getUniqueId(), mode);
@@ -80,12 +83,14 @@ public class TierSpaceCommand implements CommandExecutor, TabCompleter {
             player.sendMessage("§e" + placement.getPlacementLabel(player.getUniqueId(), mode));
             player.sendMessage("§7Rating: §f" + rating + " §7(oculto até placement)");
         } else {
-            player.sendMessage("§7Rank: " + TierRankUtil.fromRating(rating).displayName());
-            player.sendMessage("§7Rating: §f" + rating);
+            CompetitiveTier tier = CompetitiveTier.getTierFromRating(rating);
+            player.sendMessage("§7Tier: " + tier.displayName());
+            player.sendMessage("§7Elo: §f" + rating);
             player.sendMessage("§7" + TierRankUtil.formatNextRankLine(rating));
-            player.sendMessage("§7Progress: §f" + TierRankUtil.formatProgress(rating));
+            player.sendMessage("§7Progresso: §f" + TierRankUtil.formatProgress(rating));
         }
         player.sendMessage("§7W/L: §a" + wins + " §7/ §c" + losses + " §7| Streak: §e" + streak);
+        player.sendMessage("§7K/D: §f" + kills + "§7/§f" + deaths + " §8(§f" + store.formatKd(player.getUniqueId(), mode) + "§8)");
 
         DailyQuestService quests = com.obm.network.tierspace.TierSpacePlugin.get().getDailyQuestService();
         if (quests != null) {

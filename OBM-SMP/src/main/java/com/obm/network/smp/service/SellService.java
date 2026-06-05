@@ -75,12 +75,13 @@ public class SellService {
 
         int total = bonusService.applySellPayout(player.getUniqueId(), baseTotal);
         economyService.deposit(player.getUniqueId(), total);
-        RetentionFeedback.coinsGained(player, total);
+        RetentionFeedback.coinsGained(player, total, "Sell");
 
         levelService.addSellXp(player, total);
 
         String boostInfo = total > baseTotal
                 ? " §7(§a+" + (total - baseTotal) + " bónus rank/nível§7)" : "";
-        return SellResult.ok("§aVenda confirmada: §e" + total + " coins" + boostInfo + "§a.", total);
+        return SellResult.ok("§aVenda confirmada: §e"
+                + com.obm.network.core.economy.CurrencyLabels.formatSmpMoney(total) + boostInfo + "§a.", total);
     }
 }

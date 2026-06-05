@@ -45,7 +45,7 @@ public class RankCommand implements CommandExecutor {
         if (args.length > 0 && args[0].equalsIgnoreCase("list")) {
             player.sendMessage("§6--- Ranks SMP ---");
             for (RankDefinition rank : rankCatalog.getRanks()) {
-                player.sendMessage("§e" + rank.displayName() + " §7- §f" + rank.cost() + " coins"
+                player.sendMessage("§e" + rank.displayName() + " §7- §f" + rank.cost() + " Money"
                         + " §8| +venda " + pct(rank.sellBoost())
                         + " +kill " + pct(rank.killBoost())
                         + " -loja " + pct(rank.shopDiscount()));
@@ -60,11 +60,11 @@ public class RankCommand implements CommandExecutor {
 
         player.sendMessage("§6--- Progressão ---");
         player.sendMessage("§7Rank: §e" + rank.displayName());
-        player.sendMessage("§7Nível: §e" + level + " §8(§f" + xp + "§7/§f" + required + " XP§8)");
+        player.sendMessage("§aSMP Level: §f" + level + " §8(§f" + xp + "§7/§f" + required + " XP§8)");
         player.sendMessage("§7Bónus: §a+" + pct(rank.sellBoost()) + " venda §7| §c+" + pct(rank.killBoost())
                 + " kills §7| §b-" + pct(rank.shopDiscount()) + " loja");
         rankCatalog.getNextRank(rank.id()).ifPresentOrElse(
-                next -> player.sendMessage("§7Próximo rank: §e" + next.displayName() + " §7(§f" + next.cost() + " coins§7) §8- §a/rank buy"),
+                next -> player.sendMessage("§7Próximo rank: §e" + next.displayName() + " §7(§f" + next.cost() + " Money§7) §8- §a/rank buy"),
                 () -> player.sendMessage("§7Rank máximo alcançado.")
         );
         return true;

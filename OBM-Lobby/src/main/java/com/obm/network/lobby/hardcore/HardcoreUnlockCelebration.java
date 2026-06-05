@@ -83,7 +83,7 @@ public final class HardcoreUnlockCelebration {
         var world = player.getWorld();
         var center = player.getLocation().add(0, 1.1, 0);
 
-        world.spawnParticle(Particle.TOTEM, center, 24, 0.35, 0.55, 0.35, 0.08);
+        world.spawnParticle(Particle.TOTEM_OF_UNDYING, center, 24, 0.35, 0.55, 0.35, 0.08);
         world.spawnParticle(Particle.END_ROD, center, 12, 0.45, 0.35, 0.45, 0.04);
 
         OBMLobbyPlugin plugin = OBMLobbyPlugin.get();

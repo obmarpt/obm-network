@@ -1,13 +1,23 @@
 # OBM-TierSpace — Phase 3 Multi-Mode Competitive
 
+logging:
+  debug: false
+
 world: TierSpace
 
-# Hub de entrada (rankedSpawn) — bússola abre menu; fila só pelo menu/comando/NPC "fila"
+# Hub rankedSpawn — espada = Queue Duels, party = Party, bússola = menu
 ranked-spawn:
+  gui-refresh-ticks: 40
+  queue-item:
+    slot: 0
+    name: "§9§l⚔ §b§lQUEUE DUELS"
+  party-item:
+    slot: 1
+    name: "§d§l👥 PARTY"
   selector:
     enabled: true
     slot: 4
-    name: "§b§lTierSpace §8| §7Modos"
+    name: "§b§lTierSpace §8| §7Menu"
 
 rating:
   default: 600
@@ -43,30 +53,39 @@ season:
   reset-factor: 0.3
 
 rank-rewards:
+  Bronze:
+    prefix: "§8▪ "
+    tag: "§8Bronze"
+  Silver:
+    prefix: "§f◇ "
+    tag: "§fSilver"
   Gold:
     prefix: "§6✦ "
-    tag: "§6Gold Elite"
+    tag: "§6Gold"
   Diamond:
     prefix: "§b◆ "
     particle: END_ROD
     tag: "§bDiamond"
   Master:
     prefix: "§d★ "
-    tag: "§dMaster"
-  GrandMaster:
-    prefix: "§5✧ "
     particle: DRAGON_BREATH
-    tag: "§5GrandMaster"
+    tag: "§dMaster"
 
 rewards:
   daily-first-win-bonus: 15
 
 matchmaking:
   tick-interval-seconds: 1
-  initial-range: 75
-  range-expansion: 50
-  expansion-interval-seconds: 5
-  max-range: 300
+  initial-range: 50
+  range-expansion: 25
+  expansion-interval-seconds: 4
+  max-range: 250
+
+rating-elo:
+  win-min: 10
+  win-max: 20
+  loss-min: 8
+  loss-max: 15
 
 match:
   countdown-seconds: 3
@@ -79,36 +98,56 @@ modes:
     display-name: "Sword PvP"
     kit: sword
     gui-slot: 10
-  nodebuff:
-    enabled: true
-    display-name: "NoDebuff PvP"
-    kit: nodebuff
-    gui-slot: 11
-  uhc:
-    enabled: true
-    display-name: "UHC PvP"
-    kit: uhc
-    gui-slot: 12
   axe:
     enabled: true
     display-name: "Axe PvP"
     kit: axe
+    gui-slot: 11
+  mace:
+    enabled: true
+    display-name: "Mace PvP"
+    kit: mace
+    gui-slot: 12
+  uhc:
+    enabled: true
+    display-name: "UHC PvP"
+    kit: uhc
     gui-slot: 13
   netherite:
     enabled: true
     display-name: "Netherite PvP"
     kit: netherite
+    gui-slot: 14
+  op:
+    enabled: true
+    display-name: "OP PvP"
+    kit: op
+    gui-slot: 15
+  pot:
+    enabled: true
+    display-name: "Pot PvP"
+    kit: pot
+    gui-slot: 16
+  smp:
+    enabled: true
+    display-name: "SMP PvP"
+    kit: smp
     gui-slot: 19
-  crystal:
+  vanilla:
     enabled: true
-    display-name: "Crystal PvP"
-    kit: crystal
+    display-name: "CPvP"
+    kit: vanilla
     gui-slot: 20
-  mace:
-    enabled: true
-    display-name: "Mace PvP"
-    kit: mace
+  nodebuff:
+    enabled: false
+    display-name: "NoDebuff (legado)"
+    kit: nodebuff
     gui-slot: 21
+  crystal:
+    enabled: false
+    display-name: "Crystal (legado)"
+    kit: crystal
+    gui-slot: 22
 
 kits:
   sword:
@@ -208,10 +247,47 @@ kits:
         material: GOLDEN_APPLE
         amount: 16
         slot: 2
+  pot:
+    armor: DIAMOND
+    armor-enchant-level: 2
+    weapon: DIAMOND_SWORD
+    weapon-enchant-level: 3
+    offhand: GOLDEN_APPLE
+    offhand-amount: 1
+    extra-items:
+      potions:
+        material: SPLASH_POTION
+        amount: 64
+        slot: 1
+        potion-type: HEALING
+        potion-level: 2
+  op:
+    armor: DIAMOND
+    armor-enchant-level: 4
+    weapon: DIAMOND_SWORD
+    weapon-enchant-level: 5
+    offhand: GOLDEN_APPLE
+    offhand-amount: 64
+    food: GOLDEN_CARROT
+    food-amount: 64
+  smp:
+    armor: IRON
+    weapon: IRON_SWORD
+    offhand: SHIELD
+    offhand-amount: 1
+    food: COOKED_BEEF
+    food-amount: 32
+  vanilla:
+    armor: LEATHER
+    weapon: STONE_SWORD
+    offhand: GOLDEN_APPLE
+    offhand-amount: 8
+    food: BREAD
+    food-amount: 16
 
 arenas:
   arena_standard_1:
-    modes: [sword, nodebuff, uhc, axe, netherite, mace]
+    modes: [sword, axe, mace, uhc, netherite, op, pot, smp, vanilla]
     spawn1:
       x: 0.5
       y: 65.0

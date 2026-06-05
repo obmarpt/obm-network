@@ -1,9 +1,11 @@
 package com.obm.network.lobby.gui;
 
 import com.obm.network.core.OBMCorePlugin;
+import com.obm.network.core.economy.CurrencyLabels;
 import com.obm.network.core.integration.EconomyBridge;
 import com.obm.network.core.integration.SMPBridge;
 import com.obm.network.core.integration.TierSpaceBridge;
+import com.obm.network.core.progression.ProgressionLevelService;
 import com.obm.network.core.storage.DataStore;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -28,11 +30,17 @@ public class ProfileMenu {
 
     public static Inventory create(Player player) {
         Inventory inv = Bukkit.createInventory(null, 27, MenuTitles.PROFILE);
-        MenuUtil.fillAll(inv, Material.YELLOW_STAINED_GLASS_PANE);
+        MenuUtil.fillAll(inv, Material.BLACK_STAINED_GLASS_PANE);
 
         UUID uuid = player.getUniqueId();
         DataStore ds = OBMCorePlugin.get().getDataStore();
         SMPBridge.ProgressionSnapshot progression = SMPBridge.getProgression(uuid);
+        ProgressionLevelService levels = OBMCorePlugin.get().getProgressionLevelService();
+        if (levels != null) {
+            levels.ensureInitialized(uuid);
+        }
+        int hcLevel = levels != null ? levels.getHcLevel(uuid) : 1;
+        int globalLevel = levels != null ? levels.getGlobalLevel(uuid) : 1;
 
         int rushKills = ds.getInt(uuid, "kills_smp");
         int rushDeaths = ds.getInt(uuid, "deaths_smp");
@@ -40,6 +48,9 @@ public class ProfileMenu {
         int hcDeaths = ds.getInt(uuid, "deaths_uhc");
         int hcLives = ds.getInt(uuid, "lives_uhc");
         int playtime = ds.getInt(uuid, "playtime_smp") + ds.getInt(uuid, "playtime_uhc");
+        int emeralds = OBMCorePlugin.get().getGlobalEconomy() != null
+                ? OBMCorePlugin.get().getGlobalEconomy().getBalance(uuid)
+                : 0;
 
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
@@ -49,8 +60,16 @@ public class ProfileMenu {
             skullMeta.setLore(java.util.List.of(
                     MenuColors.separator(),
                     MenuColors.neutral("Tempo ") + MenuColors.white(MenuUtil.formatTime(playtime)),
-                    MenuColors.neutral("Level ") + MenuColors.white(String.valueOf(progression.level())),
-                    MenuColors.neutral("Coins ") + MenuColors.rush(String.valueOf(EconomyBridge.getBalance(uuid)))
+                    MenuColors.neutral("Ping ") + MenuColors.white(player.getPing() + "ms"),
+                    "",
+                    MenuColors.rush("SMP Level ") + MenuColors.white(String.valueOf(progression.level())),
+                    MenuColors.hardcore("HC Level ") + MenuColors.white(String.valueOf(hcLevel)),
+                    MenuColors.tier("Global Level ") + MenuColors.white(String.valueOf(globalLevel)),
+                    "",
+                    MenuColors.rush(CurrencyLabels.SMP_MONEY + " ") + MenuColors.white(
+                            CurrencyLabels.formatAmount(EconomyBridge.getBalance(uuid))),
+                    MenuColors.tier(CurrencyLabels.GLOBAL_EMERALDS + " ") + MenuColors.white(
+                            CurrencyLabels.formatAmount(emeralds))
             ));
             head.setItemMeta(skullMeta);
         }
@@ -88,14 +107,19 @@ public class ProfileMenu {
         ));
 
         inv.setItem(SLOT_PROGRESS, MenuUtil.item(
-                Material.EXPERIENCE_BOTTLE,
-                MenuColors.bold(MenuColors.hex("#CC88FF", "📈 PROGRESSÃO")),
+                Material.NETHER_STAR,
+                MenuColors.bold(MenuColors.hex("#55FFFF", "✦ PROGRESSO")),
                 MenuColors.separator(),
-                MenuColors.neutral("XP ") + MenuColors.white(progression.xp() + "/" + progression.xpRequired()),
-                MenuColors.neutral("Próximo rank ") + MenuColors.rush(progression.nextRankName()),
+                MenuColors.rush("SMP Level ") + MenuColors.white(String.valueOf(progression.level()))
+                        + " §8(" + progression.xp() + "/" + progression.xpRequired() + " XP)",
+                MenuColors.hardcore("HC Level ") + MenuColors.white(String.valueOf(hcLevel)),
+                MenuColors.tier("Global Level ") + MenuColors.white(String.valueOf(globalLevel)),
+                MenuColors.separator(),
+                MenuColors.neutral("Rank Rush ") + MenuColors.rush(progression.rankName()),
                 progression.maxRank()
                         ? MenuColors.success("Rank máximo!")
-                        : MenuColors.neutral("Custo ") + MenuColors.rush(progression.nextRankCost() + " coins")
+                        : MenuColors.neutral("Próximo ") + MenuColors.rush(progression.nextRankName())
+                        + MenuColors.neutral(" · ") + MenuColors.rush(progression.nextRankCost() + " Money")
         ));
 
         inv.setItem(SLOT_BACK, MenuUtil.item(

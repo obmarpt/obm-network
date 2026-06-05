@@ -16,9 +16,15 @@ public final class GuiItems {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(name);
+            meta.setDisplayName(GuiColors.colorize(name));
             if (lore.length > 0) {
-                meta.setLore(List.of(lore));
+                List<String> colored = new ArrayList<>();
+                for (String line : lore) {
+                    if (line != null && !line.isEmpty()) {
+                        colored.add(GuiColors.colorize(line));
+                    }
+                }
+                meta.setLore(colored);
             }
             item.setItemMeta(meta);
         }
@@ -31,7 +37,7 @@ public final class GuiItems {
         if (meta != null) {
             meta.setDisplayName("§f" + formatMaterial(material));
             List<String> lore = new ArrayList<>();
-            lore.add("§7Preço: §e" + unitPrice + " coins/un");
+            lore.add("§7Preço: §e" + unitPrice + " Money/un");
             if (blocked) {
                 lore.add("§cIndisponível para compra");
             } else {

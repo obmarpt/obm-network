@@ -70,12 +70,14 @@ public class TierSpaceMenu {
 
         } else {
 
-            swordLore.add("§7Rank: " + resolvePlaceholder(player, "%obm_tier_rank_" + MODE + "%"));
+            swordLore.add("§7Tier: " + resolvePlaceholder(player, "%obm_tier_tier_" + MODE + "%"));
 
-            swordLore.add("§7Rating: " + resolvePlaceholder(player, "%obm_tier_rating_" + MODE + "%"));
+            swordLore.add("§7Elo: " + resolvePlaceholder(player, "%obm_tier_rating_" + MODE + "%"));
 
         }
 
+        swordLore.add("§7W/L: " + resolvePlaceholder(player, "%obm_tier_wl_" + MODE + "%"));
+        swordLore.add("§7K/D: " + resolvePlaceholder(player, "%obm_tier_kd_" + MODE + "%"));
         swordLore.add("§7Streak: " + resolvePlaceholder(player, "%obm_tier_streak_" + MODE + "%"));
 
         swordLore.add("");

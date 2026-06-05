@@ -2,14 +2,15 @@ package com.obm.network.smp.progression;
 
 import com.obm.network.core.OBMCorePlugin;
 import com.obm.network.core.storage.DataStore;
+import com.obm.network.core.storage.PlayerStatsKeys;
 
 import java.util.UUID;
 
 public class PlayerProgressionStore {
 
-    private static final String RANK_KEY = "smp_rank";
-    private static final String XP_KEY = "smp_xp";
-    private static final String LEVEL_KEY = "smp_level";
+    private static final String RANK_KEY = PlayerStatsKeys.SMP_RANK;
+    private static final String XP_KEY = PlayerStatsKeys.SMP_XP;
+    private static final String LEVEL_KEY = PlayerStatsKeys.SMP_LEVEL;
 
     private final DataStore dataStore;
 

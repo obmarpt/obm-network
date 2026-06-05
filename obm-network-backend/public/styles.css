@@ -1,0 +1,89 @@
+:root {
+  --bg: #0f1419;
+  --card: #1a2332;
+  --accent: #3b82f6;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --danger: #ef4444;
+  --ok: #22c55e;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.hidden { display: none !important; }
+.center { max-width: 360px; margin: 4rem auto; }
+.panel { padding: 2rem; background: var(--card); border-radius: 12px; }
+input, button {
+  width: 100%;
+  margin: 0.5rem 0;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: #0f172a;
+  color: var(--text);
+}
+button {
+  background: var(--accent);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+button.ghost { width: auto; background: transparent; border: 1px solid #475569; }
+.error { color: var(--danger); font-size: 0.9rem; }
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #334155;
+}
+.badge {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background: #334155;
+}
+.badge.ok { background: #166534; color: #bbf7d0; }
+.badge.off { background: #7f1d1d; color: #fecaca; }
+
+.grid { display: grid; gap: 1rem; padding: 1rem 1.5rem; }
+.grid.stats { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+.grid.two { grid-template-columns: 1fr 1fr; }
+@media (max-width: 900px) { .grid.two { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 1rem;
+}
+.card h2 { margin: 0 0 0.75rem; font-size: 1rem; color: var(--muted); }
+.card span { color: var(--muted); font-size: 0.85rem; }
+.card strong { display: block; font-size: 1.5rem; margin-top: 0.25rem; }
+
+ul { list-style: none; padding: 0; margin: 0; max-height: 280px; overflow-y: auto; }
+li {
+  padding: 0.5rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  border-bottom: 1px solid #243044;
+}
+li:hover, li.active { background: #243044; }
+.logs li { cursor: default; font-size: 0.8rem; color: var(--muted); }
+pre {
+  background: #0f172a;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  overflow: auto;
+  max-height: 200px;
+}
+.actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+.actions button { width: auto; flex: 1; min-width: 100px; font-size: 0.85rem; }

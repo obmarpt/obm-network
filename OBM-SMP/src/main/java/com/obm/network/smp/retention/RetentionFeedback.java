@@ -1,5 +1,6 @@
 package com.obm.network.smp.retention;
 
+import com.obm.network.core.economy.CurrencyLabels;
 import com.obm.network.smp.SMPPlugin;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -15,20 +16,34 @@ public final class RetentionFeedback {
     }
 
     public static void coinsGained(Player player, int amount) {
+        coinsGained(player, amount, null);
+    }
+
+    public static void coinsGained(Player player, int amount, String reason) {
         if (amount <= 0) {
             return;
         }
-        String formatted = formatCoins(amount);
-        player.sendMessage("§a+§e" + formatted + " coins§a!");
-        showTemporary(player, "§a+§e" + formatted + " coins", TemporaryActionBar.DEFAULT_TICKS);
+        String coins = CurrencyLabels.formatAmount(amount);
+        String actionBar = reason == null || reason.isBlank()
+                ? "§a+" + coins + " coins!"
+                : "§a+" + coins + " coins §7(" + reason + ")";
+        showTemporary(player, actionBar, TemporaryActionBar.DEFAULT_TICKS);
+    }
+
+    public static void coinsLost(Player player, int amount) {
+        if (amount <= 0) {
+            return;
+        }
+        String coins = CurrencyLabels.formatAmount(amount);
+        showTemporary(player, "§c-" + coins + " coins", TemporaryActionBar.DEFAULT_TICKS);
     }
 
     public static void dailySuccess(Player player, int amount) {
         player.sendMessage("");
-        player.sendMessage("§a§l✅ Recebeste " + formatCoins(amount) + " coins");
+        player.sendMessage("§a§l✅ Recebeste " + CurrencyLabels.formatSmpMoney(amount));
         player.sendMessage("§7Volta amanhã para mais recompensas!");
         player.sendMessage("");
-        player.sendTitle("§a§l✅ DAILY", "§e+" + formatCoins(amount) + " coins", 5, 40, 10);
+        player.sendTitle("§a§l✅ DAILY", "§e+" + CurrencyLabels.formatSmpMoney(amount), 5, 40, 10);
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1.2f);
         showTemporary(player, "§a✅ Daily reward collected!", 100);
     }
@@ -41,19 +56,18 @@ public final class RetentionFeedback {
 
     public static void playtimeMilestone(Player player, int minutes, int coins) {
         player.sendMessage("§a§l🎁 " + minutes + " min jogados!");
-        player.sendMessage("§7Recebeste §e" + formatCoins(coins) + " coins§7.");
         player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.9f, 1.0f);
-        showTemporary(player, "§6+" + formatCoins(coins) + " coins §7| §e" + minutes + "min playtime", 100);
+        coinsGained(player, coins, minutes + "min");
     }
 
     public static void levelUp(Player player, int level, int coinsReward) {
-        player.sendMessage("§a§l⬆ LEVEL UP! §eNível " + level);
+        player.sendMessage("§a§l⬆ SMP LEVEL UP! §eSMP Level " + level);
         if (coinsReward > 0) {
-            player.sendMessage("§7Bónus: §e+" + formatCoins(coinsReward) + " coins");
+            player.sendMessage("§7Bónus: §e+" + CurrencyLabels.formatSmpMoney(coinsReward));
         }
-        player.sendTitle("§6§lLEVEL UP", "§eNível " + level, 10, 50, 10);
+        player.sendTitle("§6§lSMP LEVEL UP", "§aSMP Level §f" + level, 10, 50, 10);
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-        showTemporary(player, "§6§lLEVEL UP §8| §eNível " + level, 100);
+        showTemporary(player, "§6§lSMP LEVEL §8| §aSMP Level §f" + level, 100);
     }
 
     public static void xpGained(Player player, int amount) {
@@ -65,7 +79,7 @@ public final class RetentionFeedback {
 
     public static void smpWelcome(Player player, int coins, int level) {
         showTemporary(player,
-                "§6" + formatCoins(coins) + " coins §8| §eLv " + level + " §8| §7Bem-vindo ao Rush",
+                "§6" + CurrencyLabels.formatSmpMoney(coins) + " §8| §eLv " + level + " §8| §7Bem-vindo ao Rush",
                 100);
     }
 

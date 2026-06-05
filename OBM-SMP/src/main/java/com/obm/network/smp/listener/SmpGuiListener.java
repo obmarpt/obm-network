@@ -266,14 +266,14 @@ public class SmpGuiListener implements Listener {
         }
 
         if (clicked.getType() == Material.GOLD_NUGGET) {
-            int price = parseQuantity(clicked.getItemMeta().getDisplayName().replace("§e", "").replace(" coins", ""));
+            int price = parseQuantity(clicked.getItemMeta().getDisplayName().replace("§e", "").replace(" Money", ""));
             ItemStack item = top.getItem(13);
             if (item == null || item.getType().isAir()) {
                 player.sendMessage("§cColoca um item na slot central primeiro.");
                 return;
             }
             auctionGui.setSellSession(player.getUniqueId(), new AuctionSession(item.clone(), price));
-            player.sendMessage("§aPreço definido: §e" + price + " coins§a.");
+            player.sendMessage("§aPreço definido: §e" + com.obm.network.core.economy.CurrencyLabels.formatSmpMoney(price) + "§a.");
             return;
         }
 

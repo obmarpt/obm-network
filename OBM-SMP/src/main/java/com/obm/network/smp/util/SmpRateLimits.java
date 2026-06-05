@@ -41,7 +41,7 @@ public final class SmpRateLimits {
             int sentToday = getPaySentToday(player.getUniqueId());
             if (sentToday + amount > dailyLimit) {
                 return PayCheckResult.denied("§cLimite diário de envio: §f" + dailyLimit
-                        + " coins§c (já enviaste §f" + sentToday + "§c).");
+                        + " Money§c (já enviaste §f" + sentToday + "§c).");
             }
         }
         return PayCheckResult.ok();

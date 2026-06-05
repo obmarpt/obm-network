@@ -33,75 +33,30 @@ public class MenuManager implements Listener {
             return;
         }
 
+        if (isFiller(item)) {
+            if (title.equals(MainMenuConfig.title())) {
+                event.setCancelled(true);
+            }
+            return;
+        }
+
         DataStore ds = OBMCorePlugin.get().getDataStore();
 
-        if (title.equals(MenuTitles.MAIN)) {
+        if (title.equals(MainMenuConfig.title())) {
             event.setCancelled(true);
-            int slot = event.getRawSlot();
-            if (slot == MainMenu.SLOT_RUSH) {
-                playClick(player);
-                player.openInventory(SMPMenu.create(player));
-            } else if (slot == MainMenu.SLOT_TIERSPACE) {
-                playClick(player);
-                enterTierSpaceHub(player);
-            } else if (slot == MainMenu.SLOT_HARDCORE) {
-                playClick(player);
-                player.openInventory(UHCMenu.create(player));
-            } else if (slot == MainMenu.SLOT_PROFILE) {
-                playClick(player);
-                player.openInventory(ProfileMenu.create(player));
-            }
+            handleMainMenuClick(player, event.getRawSlot(), ds);
             return;
         }
 
         if (title.equals(MenuTitles.RUSH)) {
             event.setCancelled(true);
-            int slot = event.getRawSlot();
-            if (slot == SMPMenu.SLOT_PLAY) {
-                enterMode(player, ds, OBMCorePlugin.get().getWorldModeService().getPrimarySMPWorld(),
-                        MenuColors.rush("Bem-vindo ao Rush! Divirta-te."));
-            } else if (slot == SMPMenu.SLOT_SHOP) {
-                playClick(player);
-                ShopGui shopGui = SMPPlugin.get().getShopGui();
-                if (shopGui != null) {
-                    shopGui.openCategories(player);
-                }
-            } else if (slot == SMPMenu.SLOT_AUCTION) {
-                playClick(player);
-                var auctionGui = SMPPlugin.get().getAuctionGui();
-                if (auctionGui != null) {
-                    auctionGui.openMain(player);
-                }
-            } else if (slot == SMPMenu.SLOT_BACK) {
-                playClick(player);
-                player.openInventory(MainMenu.create(player));
-            }
+            handleRushMenuClick(player, event.getRawSlot(), ds);
             return;
         }
 
         if (title.equals(MenuTitles.HARDCORE)) {
             event.setCancelled(true);
-            int slot = event.getRawSlot();
-            if (slot == UHCMenu.SLOT_PLAY) {
-                if (!HardcoreUnlockService.canEnter(player.getUniqueId())) {
-                    playClick(player);
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.7f, 0.5f);
-                    HardcoreUnlockService.sendBlockedMessage(player);
-                    return;
-                }
-                int lives = ds.getInt(player.getUniqueId(), "lives_uhc");
-                if (lives <= 0) {
-                    player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.8f, 0.8f);
-                    player.sendMessage(MenuColors.error("Não tens vidas no Hardcore!"));
-                    player.closeInventory();
-                    return;
-                }
-                enterMode(player, ds, OBMCorePlugin.get().getWorldModeService().getPrimaryUHCWorld(),
-                        MenuColors.hardcore("Bem-vindo ao Hardcore! Boa sorte."));
-            } else if (slot == UHCMenu.SLOT_BACK) {
-                playClick(player);
-                player.openInventory(MainMenu.create(player));
-            }
+            handleHardcoreMenuClick(player, event.getRawSlot(), ds);
             return;
         }
 
@@ -114,10 +69,58 @@ public class MenuManager implements Listener {
         }
     }
 
-    private void enterMode(Player player, DataStore ds, String worldName, String welcomeMessage) {
+    private void handleMainMenuClick(Player player, int slot, DataStore ds) {
+        if (slot == MainMenu.slotPvp()) {
+            enterPvp(player);
+        } else if (slot == MainMenu.slotSmp()) {
+            enterSmp(player, ds);
+        } else if (slot == MainMenu.slotHardcore()) {
+            enterHardcore(player, ds);
+        }
+    }
+
+    private void enterPvp(Player player) {
+        playClick(player);
+        if (!RankedHubService.teleport(player)) {
+            player.sendMessage(MenuColors.error("Hub PvP indisponível."));
+            return;
+        }
+        resetPlayerState(player);
+        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.6f, 1.2f);
+        showEnteringFeedback(player, MainMenuConfig.pvpItem().enteringMessage());
+    }
+
+    private void enterSmp(Player player, DataStore ds) {
+        playClick(player);
+        String worldName = OBMCorePlugin.get().getWorldModeService().getPrimarySMPWorld();
+        teleportToModeWorld(player, ds, worldName, MainMenuConfig.smpItem().enteringMessage());
+    }
+
+    private void enterHardcore(Player player, DataStore ds) {
+        playClick(player);
+
+        if (!HardcoreUnlockService.canEnter(player.getUniqueId())) {
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 0.7f, 0.5f);
+            HardcoreUnlockService.sendBlockedMessage(player);
+            return;
+        }
+
+        int lives = ds.getInt(player.getUniqueId(), "lives_uhc");
+        if (lives <= 0) {
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 0.8f, 0.8f);
+            player.sendMessage(MenuColors.error("Não tens vidas no Hardcore!"));
+            player.closeInventory();
+            return;
+        }
+
+        String worldName = OBMCorePlugin.get().getWorldModeService().getPrimaryUHCWorld();
+        teleportToModeWorld(player, ds, worldName, MainMenuConfig.hardcoreItems().enteringMessage());
+    }
+
+    private void teleportToModeWorld(Player player, DataStore ds, String worldName, String enteringMessage) {
         World world = Bukkit.getWorld(worldName);
         if (world == null) {
-            player.sendMessage(MenuColors.error("Erro: mundo não encontrado!"));
+            player.sendMessage(MenuColors.error("Mundo não encontrado."));
             return;
         }
 
@@ -129,19 +132,59 @@ public class MenuManager implements Listener {
         player.teleport(safeSpawn != null ? safeSpawn : world.getSpawnLocation());
         resetPlayerState(player);
         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.6f, 1.2f);
-        player.sendMessage(welcomeMessage);
         CooldownService.setEnteredMode(player);
-        player.closeInventory();
+        showEnteringFeedback(player, enteringMessage);
     }
 
-    private void enterTierSpaceHub(Player player) {
-        if (!RankedHubService.teleport(player)) {
-            return;
-        }
-        resetPlayerState(player);
-        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.6f, 1.2f);
-        player.sendMessage(MenuColors.tier("Bem-vindo ao TierSpace! ") + MenuColors.neutral("Usa a bússola ou um NPC para escolher o modo."));
+    private void showEnteringFeedback(Player player, String message) {
         player.closeInventory();
+        String colored = MenuText.colorize(message);
+        player.sendMessage(colored);
+
+        if (MainMenuConfig.useTitleFeedback()) {
+            player.sendTitle(
+                    MenuText.colorize("&a&l»"),
+                    colored,
+                    MainMenuConfig.titleFadeIn(),
+                    MainMenuConfig.titleStay(),
+                    MainMenuConfig.titleFadeOut()
+            );
+        }
+    }
+
+    private void handleRushMenuClick(Player player, int slot, DataStore ds) {
+        if (slot == SMPMenu.SLOT_PLAY) {
+            enterSmp(player, ds);
+        } else if (slot == SMPMenu.SLOT_SHOP) {
+            playClick(player);
+            ShopGui shopGui = SMPPlugin.get().getShopGui();
+            if (shopGui != null) {
+                shopGui.openCategories(player);
+            }
+        } else if (slot == SMPMenu.SLOT_AUCTION) {
+            playClick(player);
+            var auctionGui = SMPPlugin.get().getAuctionGui();
+            if (auctionGui != null) {
+                auctionGui.openMain(player);
+            }
+        } else if (slot == SMPMenu.SLOT_BACK) {
+            playClick(player);
+            player.openInventory(MainMenu.create(player));
+        }
+    }
+
+    private void handleHardcoreMenuClick(Player player, int slot, DataStore ds) {
+        if (slot == UHCMenu.SLOT_PLAY) {
+            enterHardcore(player, ds);
+        } else if (slot == UHCMenu.SLOT_BACK) {
+            playClick(player);
+            player.openInventory(MainMenu.create(player));
+        }
+    }
+
+    private boolean isFiller(ItemStack item) {
+        Material mat = item.getType();
+        return mat.name().endsWith("STAINED_GLASS_PANE") || mat == Material.BLACK_STAINED_GLASS_PANE;
     }
 
     private void playClick(Player player) {

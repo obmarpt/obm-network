@@ -2,6 +2,7 @@ lobby:
   # force-always: true → /lobby ignora combat, cooldown e estado bugado (recomendado produção)
   command:
     force-always: true
+    debug: false
   world: Lobby
   spawn:
     x: 0.5
@@ -10,6 +11,51 @@ lobby:
     yaw: -90
     pitch: 0
 
+# Menu principal (27 slots) — linha central: [vidro][PvP][Hardcore][SMP][vidro]
+main-menu:
+  title: "&8✦ &7Seleciona um modo"
+  filler:
+    material: GRAY_STAINED_GLASS_PANE
+    name: " "
+  layout:
+    pvp: 12
+    hardcore: 13
+    smp: 14
+  feedback:
+    use-title: true
+    title-fade-in: 5
+    title-stay: 25
+    title-fade-out: 10
+  modes:
+    pvp:
+      material: IRON_SWORD
+      name: "&e⚔ PvP"
+      lore:
+        - "&7Acede ao modo PvP"
+        - "&8Clique para entrar"
+      entering: "&aA entrar em PvP..."
+    smp:
+      material: DIAMOND_SWORD
+      name: "&b💎 SMP"
+      lore:
+        - "&7Modo survival"
+        - "&8Clique para entrar"
+      entering: "&aA entrar em SMP..."
+    hardcore:
+      locked:
+        material: BARRIER
+        name: "&c🔒 Hardcore"
+        lore:
+          - "&7Desbloqueado em:"
+          - "&e{coins} Money"
+          - "&eNível {level}"
+      unlocked:
+        material: NETHERITE_SWORD
+        name: "&c☠ Hardcore"
+        lore:
+          - "&7Modo hardcore"
+          - "&8Clique para entrar"
+      entering: "&aA entrar em Hardcore..."
 
 # Hologramas: plugins/OBM-Core/holograms.yml (HologramService)
-# Edita coords e linhas lá — não uses esta secção.
+# Requisitos Hardcore (coins/level): plugins/OBM-Core/config.yml → hardcore.unlock

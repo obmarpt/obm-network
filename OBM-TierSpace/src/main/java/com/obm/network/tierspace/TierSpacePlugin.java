@@ -4,18 +4,23 @@ import com.obm.network.core.tier.TierRankUtil;
 import com.obm.network.tierspace.anticheat.AnticheatIntegration;
 import com.obm.network.tierspace.anticheat.MatchProtectionListener;
 import com.obm.network.tierspace.arena.ArenaService;
+import com.obm.network.tierspace.command.LeaveCommand;
+import com.obm.network.tierspace.command.PartyCommand;
 import com.obm.network.tierspace.command.QueueCommand;
 import com.obm.network.tierspace.command.TierSpaceCommand;
 import com.obm.network.tierspace.feedback.MatchFeedbackService;
 import com.obm.network.tierspace.kit.KitService;
+import com.obm.network.tierspace.kit.PlayerKitService;
 import com.obm.network.tierspace.listener.MatchListener;
-import com.obm.network.tierspace.listener.TierGuiListener;
+import com.obm.network.tierspace.listener.QueueGuiRefreshListener;
 import com.obm.network.tierspace.listener.RankedSpawnListener;
+import com.obm.network.tierspace.listener.TierGuiListener;
 import com.obm.network.tierspace.listener.TierSpaceJoinListener;
 import com.obm.network.tierspace.listener.TierSpaceNpcListener;
 import com.obm.network.tierspace.match.MatchService;
 import com.obm.network.tierspace.match.RematchService;
 import com.obm.network.tierspace.mode.ModeRegistry;
+import com.obm.network.tierspace.party.PartyService;
 import com.obm.network.tierspace.progression.DailyQuestService;
 import com.obm.network.tierspace.progression.PlacementService;
 import com.obm.network.tierspace.queue.QueueFeedbackService;
@@ -24,6 +29,8 @@ import com.obm.network.tierspace.rating.RatingCalculator;
 import com.obm.network.tierspace.reward.RankRewardService;
 import com.obm.network.tierspace.season.TierSeasonManager;
 import com.obm.network.tierspace.storage.TierSpaceStore;
+import com.obm.network.tierspace.ui.KitManageGui;
+import com.obm.network.tierspace.ui.PartyGui;
 import com.obm.network.tierspace.ui.TierGuiMenu;
 import com.obm.network.tierspace.ui.TierSpaceScoreboardService;
 import com.obm.network.tierspace.ui.TierSpaceTabService;
@@ -40,15 +47,18 @@ public class TierSpacePlugin extends JavaPlugin {
     private QueueService queueService;
     private QueueFeedbackService queueFeedbackService;
     private MatchService matchService;
-    private ArenaService arenaService;
-    private TierSpaceScoreboardService scoreboardService;
-    private TierSpaceTabService tabService;
+    private PartyService partyService;
+    private PlayerKitService playerKitService;
+    private TierGuiMenu tierGuiMenu;
+    private PartyGui partyGui;
+    private KitManageGui kitManageGui;
+    private TierSeasonManager seasonManager;
     private PlacementService placementService;
     private DailyQuestService dailyQuestService;
-    private TierSeasonManager seasonManager;
+    private TierSpaceScoreboardService scoreboardService;
+    private TierSpaceTabService tabService;
     private RankRewardService rankRewardService;
-    private RematchService rematchService;
-    private TierGuiMenu tierGuiMenu;
+    private QueueGuiRefreshListener queueGuiRefreshListener;
     private AnticheatIntegration anticheatIntegration;
 
     @Override
@@ -74,7 +84,11 @@ public class TierSpacePlugin extends JavaPlugin {
                 getConfig().getDouble("rating.streak-bonus-per-win", 0.10),
                 getConfig().getInt("rating.streak-bonus-cap", 5),
                 getConfig().getBoolean("demotion-shield.enabled", true),
-                getConfig().getInt("demotion-shield.losses-required", 3)
+                getConfig().getInt("demotion-shield.losses-required", 3),
+                getConfig().getInt("rating-elo.win-min", 10),
+                getConfig().getInt("rating-elo.win-max", 20),
+                getConfig().getInt("rating-elo.loss-min", 8),
+                getConfig().getInt("rating-elo.loss-max", 15)
         );
 
         dailyQuestService = new DailyQuestService(
@@ -93,30 +107,35 @@ public class TierSpacePlugin extends JavaPlugin {
         rankRewardService.reload(getConfig());
         rankRewardService.start();
 
-        rematchService = new RematchService();
+        RematchService rematchService = new RematchService();
+        partyService = new PartyService();
 
-        arenaService = new ArenaService();
+        ArenaService arenaService = new ArenaService();
         arenaService.reload(getConfig());
 
         KitService kitService = new KitService();
         kitService.reload(getConfig());
+        playerKitService = new PlayerKitService(kitService);
 
         MatchFeedbackService feedbackService = new MatchFeedbackService();
-        scoreboardService = new TierSpaceScoreboardService(this, store, placementService, dailyQuestService, modeRegistry);
+        scoreboardService = new TierSpaceScoreboardService(
+                this, store, placementService, dailyQuestService, modeRegistry);
         scoreboardService.start();
 
         tabService = new TierSpaceTabService(this, store, placementService, rankRewardService);
         tabService.start();
 
-        tierGuiMenu = new TierGuiMenu(modeRegistry, seasonManager);
-
         queueService = new QueueService(
                 store,
-                getConfig().getInt("matchmaking.initial-range", 75),
-                getConfig().getInt("matchmaking.range-expansion", 50),
-                getConfig().getInt("matchmaking.expansion-interval-seconds", 5),
-                getConfig().getInt("matchmaking.max-range", 300)
+                getConfig().getInt("matchmaking.initial-range", 50),
+                getConfig().getInt("matchmaking.range-expansion", 25),
+                getConfig().getInt("matchmaking.expansion-interval-seconds", 4),
+                getConfig().getInt("matchmaking.max-range", 250)
         );
+
+        tierGuiMenu = new TierGuiMenu(modeRegistry, seasonManager, queueService);
+        partyGui = new PartyGui(partyService);
+        kitManageGui = new KitManageGui(playerKitService);
 
         queueFeedbackService = new QueueFeedbackService(this, queueService, store, feedbackService);
         queueFeedbackService.start();
@@ -128,6 +147,7 @@ public class TierSpacePlugin extends JavaPlugin {
                 this,
                 arenaService,
                 kitService,
+                playerKitService,
                 store,
                 modeRegistry,
                 ratingCalculator,
@@ -151,28 +171,35 @@ public class TierSpacePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(
                 new MatchProtectionListener(matchService, anticheatIntegration.matchProtectionService()), this);
         getServer().getPluginManager().registerEvents(
-                new TierGuiListener(tierGuiMenu, modeRegistry, matchService, rematchService), this);
+                new TierGuiListener(tierGuiMenu, modeRegistry, matchService, rematchService, queueService,
+                        queueFeedbackService, partyGui, partyService, kitManageGui, playerKitService), this);
         getServer().getPluginManager().registerEvents(
                 new TierSpaceJoinListener(tabService, seasonManager, rankRewardService), this);
         getServer().getPluginManager().registerEvents(
-                new RankedSpawnListener(this, tierGuiMenu), this);
+                new RankedSpawnListener(this, tierGuiMenu, partyGui, queueService, queueFeedbackService), this);
         if (getServer().getPluginManager().isPluginEnabled("Citizens")) {
             getServer().getPluginManager().registerEvents(
                     new TierSpaceNpcListener(tierGuiMenu, matchService), this);
         } else {
             getLogger().warning("Citizens não encontrado — NPCs TierSpace desativados.");
         }
+
+        queueGuiRefreshListener = new QueueGuiRefreshListener(this, tierGuiMenu);
+        queueGuiRefreshListener.start();
+
         startMatchmakingTask();
 
         if (arenaService.getArenaCount() == 0) {
-            getLogger().warning("Nenhuma arena configurada. Cria o mundo TierSpace e ajusta config.yml.");
+            getLogger().warning("Nenhuma arena configurada.");
         }
-
-        getLogger().info("OBM-TierSpace iniciado — " + modeRegistry.enabledModes().size() + " modos activos.");
+        getLogger().info("OBM-TierSpace — " + modeRegistry.enabledModes().size() + " modos PvP activos.");
     }
 
     @Override
     public void onDisable() {
+        if (queueGuiRefreshListener != null) {
+            queueGuiRefreshListener.stop();
+        }
         if (anticheatIntegration != null) {
             anticheatIntegration.stop();
         }
@@ -197,6 +224,8 @@ public class TierSpacePlugin extends JavaPlugin {
     private void registerCommands() {
         registerExecutor("tierspace", new TierSpaceCommand(store, tierGuiMenu, modeRegistry, seasonManager));
         registerExecutor("queue", new QueueCommand(matchService, queueService, queueFeedbackService, modeRegistry));
+        registerExecutor("leave", new LeaveCommand(queueService, queueFeedbackService));
+        registerExecutor("party", new PartyCommand(partyService));
     }
 
     private void registerExecutor(String name, org.bukkit.command.CommandExecutor executor) {
@@ -213,9 +242,8 @@ public class TierSpacePlugin extends JavaPlugin {
 
     private void startMatchmakingTask() {
         long interval = getConfig().getLong("matchmaking.tick-interval-seconds", 1L) * 20L;
-        Bukkit.getScheduler().runTaskTimer(this, () -> {
-            queueService.findMatch().ifPresent(matchService::startMatch);
-        }, interval, interval);
+        Bukkit.getScheduler().runTaskTimer(this, () ->
+                queueService.findMatch().ifPresent(matchService::startMatch), interval, interval);
     }
 
     public static TierSpacePlugin get() {
@@ -230,6 +258,10 @@ public class TierSpacePlugin extends JavaPlugin {
         return queueService;
     }
 
+    public PartyService getPartyService() {
+        return partyService;
+    }
+
     public TierSpaceStore getStore() {
         return store;
     }
@@ -242,15 +274,15 @@ public class TierSpacePlugin extends JavaPlugin {
         return tierGuiMenu;
     }
 
-    public TierSeasonManager getSeasonManager() {
-        return seasonManager;
-    }
-
     public PlacementService getPlacementService() {
         return placementService;
     }
 
     public DailyQuestService getDailyQuestService() {
         return dailyQuestService;
+    }
+
+    public TierSeasonManager getSeasonManager() {
+        return seasonManager;
     }
 }

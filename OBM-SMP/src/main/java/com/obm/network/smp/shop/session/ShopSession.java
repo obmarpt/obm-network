@@ -1,5 +1,6 @@
 package com.obm.network.smp.shop.session;
 
+import com.obm.network.smp.shop.ShopLimits;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -65,8 +66,12 @@ public final class ShopSession {
         return selectedAmount;
     }
 
+    public int getMaxQuantity() {
+        return ShopLimits.maxQuantity();
+    }
+
     public void setSelectedAmount(int selectedAmount) {
-        this.selectedAmount = Math.max(1, Math.min(64, selectedAmount));
+        this.selectedAmount = Math.max(1, Math.min(getMaxQuantity(), selectedAmount));
     }
 
     public void adjustAmount(int delta) {

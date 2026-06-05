@@ -65,7 +65,7 @@ public final class SearchGui {
         meta.setDisplayName((selected ? "§a§l" : "§f") + GuiItems.formatMaterial(material));
 
         List<String> lore = new ArrayList<>();
-        lore.add("§7Preço: §e" + unitPriceWithDiscount + " coins/un");
+        lore.add("§7Preço: §e" + unitPriceWithDiscount + " Money/un");
         if (unitPriceWithDiscount < unitPrice) {
             lore.add("§7Base: §8" + unitPrice + " §a(-" + (unitPrice - unitPriceWithDiscount) + ")");
         }
@@ -77,8 +77,10 @@ public final class SearchGui {
         } else if (selected) {
             lore.add("§8────────────");
             lore.add("§7Quantidade: §e" + session.getSelectedAmount());
-            lore.add("§7Esquerdo: §f+1 §8| §7Direito: §f-1");
-            lore.add("§7Shift+Esq: §f+16 §8| §7Shift-Dir: §f-16");
+            lore.add("§7Barra: §f+ / − §7ou clique no item");
+            lore.add("§7Shift: §f±16");
+            int total = unitPriceWithDiscount * session.getSelectedAmount();
+            lore.add("§7Total: §e" + total + " Money");
             lore.add("§aConfirmar na barra inferior");
         } else {
             lore.add("§eClique para selecionar");

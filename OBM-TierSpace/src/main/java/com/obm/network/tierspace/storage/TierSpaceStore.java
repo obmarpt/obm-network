@@ -27,7 +27,33 @@ public class TierSpaceStore {
         if (!dataStore.has(uuid, key(mode, "placement_matches"))) {
             dataStore.set(uuid, key(mode, "placement_matches"), 0);
         }
+        if (!dataStore.has(uuid, key(mode, "kills"))) {
+            dataStore.set(uuid, key(mode, "kills"), 0);
+        }
+        if (!dataStore.has(uuid, key(mode, "deaths"))) {
+            dataStore.set(uuid, key(mode, "deaths"), 0);
+        }
         dataStore.save(uuid);
+    }
+
+    public int getKills(UUID uuid, GameModeId mode) {
+        return dataStore.getInt(uuid, key(mode, "kills"));
+    }
+
+    public int getDeaths(UUID uuid, GameModeId mode) {
+        return dataStore.getInt(uuid, key(mode, "deaths"));
+    }
+
+    public String formatKd(UUID uuid, GameModeId mode) {
+        int deaths = Math.max(1, getDeaths(uuid, mode));
+        return String.format(java.util.Locale.US, "%.2f", (double) getKills(uuid, mode) / deaths);
+    }
+
+    public void recordMatchKill(UUID winnerId, UUID loserId, GameModeId mode) {
+        dataStore.increment(winnerId, key(mode, "kills"));
+        dataStore.increment(loserId, key(mode, "deaths"));
+        dataStore.save(winnerId);
+        dataStore.save(loserId);
     }
 
     public int getRating(UUID uuid, GameModeId mode) {
@@ -137,6 +163,8 @@ public class TierSpaceStore {
         dataStore.set(uuid, key(mode, "streak"), 0);
         dataStore.set(uuid, key(mode, "best_streak"), 0);
         dataStore.set(uuid, key(mode, "loss_streak"), 0);
+        dataStore.set(uuid, key(mode, "kills"), 0);
+        dataStore.set(uuid, key(mode, "deaths"), 0);
         resetPlacement(uuid, mode);
         dataStore.save(uuid);
     }

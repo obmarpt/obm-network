@@ -1,5 +1,6 @@
 package com.obm.network.smp.progression;
 
+import com.obm.network.core.progression.ProgressionLevelService;
 import com.obm.network.smp.retention.RetentionFeedback;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -112,8 +113,15 @@ public class LevelService {
         store.setXp(uuid, xp);
 
         if (leveled) {
+            ProgressionLevelService global = ProgressionLevelService.get();
+            if (global != null) {
+                global.grantGlobalXpFromSmpLevelUp(uuid, level);
+            }
+            if (totalCoins > 0) {
+                RetentionFeedback.coinsGained(player, totalCoins, "Level Up");
+            }
             RetentionFeedback.levelUp(player, level, totalCoins);
-            String message = "§aNível " + level;
+            String message = "§aSMP Level " + level;
             return new LevelUpResult(true, level, totalCoins, message);
         }
 

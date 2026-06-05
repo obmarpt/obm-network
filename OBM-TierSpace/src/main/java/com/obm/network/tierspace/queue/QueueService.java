@@ -2,6 +2,7 @@ package com.obm.network.tierspace.queue;
 
 import com.obm.network.tierspace.mode.GameModeId;
 import com.obm.network.tierspace.storage.TierSpaceStore;
+import com.obm.network.tierspace.util.TierSpaceLog;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -37,18 +38,54 @@ public class QueueService {
         this.maxRange = maxRange;
     }
 
-    public boolean join(Player player, GameModeId mode) {
+    public enum JoinResult {
+        JOINED,
+        SWITCHED,
+        REFRESHED
+    }
+
+    public JoinResult joinOrSwitch(Player player, GameModeId mode) {
         UUID uuid = player.getUniqueId();
-        if (queuedPlayers.containsKey(uuid)) {
-            return false;
+        QueueEntry existing = queuedPlayers.get(uuid);
+        if (existing != null) {
+            if (existing.mode() == mode) {
+                queuedPlayers.put(uuid, new QueueEntry(uuid, mode, existing.rating(), System.currentTimeMillis()));
+                TierSpaceLog.debug("Queue refresh " + player.getName() + " mode=" + mode.id());
+                return JoinResult.REFRESHED;
+            }
+            queuedPlayers.remove(uuid);
+            store.ensureInitialized(uuid, mode);
+            int rating = store.getRating(uuid, mode);
+            queuedPlayers.put(uuid, new QueueEntry(uuid, mode, rating, System.currentTimeMillis()));
+            TierSpaceLog.info("Queue switch " + player.getName() + " mode=" + mode.id());
+            return JoinResult.SWITCHED;
         }
         store.ensureInitialized(uuid, mode);
-        queuedPlayers.put(uuid, new QueueEntry(uuid, mode, store.getRating(uuid, mode), System.currentTimeMillis()));
-        return true;
+        int rating = store.getRating(uuid, mode);
+        queuedPlayers.put(uuid, new QueueEntry(uuid, mode, rating, System.currentTimeMillis()));
+        TierSpaceLog.info("Queue join " + player.getName() + " mode=" + mode.id() + " rating=" + rating);
+        return JoinResult.JOINED;
+    }
+
+    public boolean join(Player player, GameModeId mode) {
+        JoinResult result = joinOrSwitch(player, mode);
+        return result == JoinResult.JOINED || result == JoinResult.SWITCHED || result == JoinResult.REFRESHED;
+    }
+
+    public Optional<GameModeId> getQueuedMode(UUID uuid) {
+        return getEntry(uuid).map(QueueEntry::mode);
+    }
+
+    public int getQueueSize(String modeId) {
+        return GameModeId.from(modeId).map(this::getQueueSize).orElse(0);
     }
 
     public boolean leave(UUID uuid) {
-        return queuedPlayers.remove(uuid) != null;
+        boolean removed = queuedPlayers.remove(uuid) != null;
+        if (removed) {
+            TierSpaceLog.debug("Queue leave uuid=" + uuid);
+        }
+        return removed;
     }
 
     public boolean isQueued(UUID uuid) {
@@ -75,6 +112,9 @@ public class QueueService {
                 if (Math.abs(anchor.rating() - candidate.rating()) <= allowedRange) {
                     queuedPlayers.remove(anchor.uuid());
                     queuedPlayers.remove(candidate.uuid());
+                    TierSpaceLog.info("Match pair mode=" + anchor.mode().id()
+                            + " ratings=" + anchor.rating() + "/" + candidate.rating()
+                            + " range=" + allowedRange);
                     return Optional.of(new MatchPair(anchor, candidate));
                 }
             }

@@ -1,7 +1,7 @@
 name: OBM-Lobby
 main: com.obm.network.lobby.OBMLobbyPlugin
 version: 1.0
-api-version: 1.20
+api-version: '1.21'
 author: Obmar
 description: Lobby do MineSpace
 
@@ -16,19 +16,25 @@ softdepend:
 
 permissions:
   obm.lobby:
-    description: Voltar ao lobby (/lobby)
-    default: false
+    description: Voltar ao lobby (/lobby, /hub)
+    default: true
+  obm.lobby.bypass:
+    description: Ignora combat/cooldown no /lobby (quando force-always está desligado)
+    default: op
   obm.menu:
     description: Abrir menu principal (/menu)
-    default: false
+    default: true
 
 commands:
   lobby:
     description: Voltar para o lobby
     usage: /lobby
+    aliases: [hub, l]
     permission: obm.lobby
+    permission-message: "§cNão tens permissão para usar este comando."
 
   menu:
     description: Abrir menu principal
     usage: /menu
     permission: obm.menu
+    permission-message: "§cNão tens permissão para usar este comando."

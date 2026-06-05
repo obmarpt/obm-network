@@ -1,7 +1,7 @@
 name: OBM-TierSpace
 main: com.obm.network.tierspace.TierSpacePlugin
 version: 1.0
-api-version: 1.20
+api-version: '1.21'
 author: Obmar
 description: Modo competitivo TierSpace com ranking Elo por tipo de PvP
 
@@ -35,3 +35,13 @@ commands:
     description: Entrar ou sair da fila competitiva
     usage: /queue <mode|leave|status>
     permission: obm.tierspace.queue
+
+  leave:
+    description: Sair da fila TierSpace
+    usage: /leave
+    permission: obm.tierspace.queue
+
+  party:
+    description: Gerir party TierSpace
+    usage: /party <create|invite|accept|leave|kick>
+    permission: obm.tierspace.use

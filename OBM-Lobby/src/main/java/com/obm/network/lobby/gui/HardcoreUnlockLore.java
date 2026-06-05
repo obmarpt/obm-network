@@ -1,5 +1,6 @@
 package com.obm.network.lobby.gui;
 
+import com.obm.network.core.economy.CurrencyLabels;
 import com.obm.network.core.hardcore.HardcoreUnlockService;
 import com.obm.network.core.hardcore.HardcoreUnlockStatus;
 
@@ -24,7 +25,7 @@ final class HardcoreUnlockLore {
         lore.add("");
         lore.add("§7Requisitos:");
         lore.add("§fLevel: §e" + unlock.requiredLevel());
-        lore.add("§fCoins: §e" + formatCoinsComma(unlock.requiredCoins()));
+        lore.add("§f" + CurrencyLabels.SMP_MONEY + ": §e" + formatCoinsComma(unlock.requiredCoins()));
         lore.add("");
         lore.add("§7Teu progresso:");
         lore.add(progressLevel(unlock.playerLevel(), unlock.requiredLevel()));
@@ -51,7 +52,7 @@ final class HardcoreUnlockLore {
         lore.add("");
         lore.add("§7Requisitos:");
         lore.add("§fLevel: §e" + unlock.requiredLevel());
-        lore.add("§fCoins: §e" + formatCoinsComma(unlock.requiredCoins()));
+        lore.add("§f" + CurrencyLabels.SMP_MONEY + ": §e" + formatCoinsComma(unlock.requiredCoins()));
         lore.add("");
         lore.add("§7Progresso:");
         lore.add(progressLevel(unlock.playerLevel(), unlock.requiredLevel()));
@@ -68,7 +69,7 @@ final class HardcoreUnlockLore {
         String cur = HardcoreUnlockService.formatCoins(current);
         String req = HardcoreUnlockService.formatCoins(required);
         String color = current >= required ? "§a" : "§6";
-        return "§fCoins: " + color + cur + "§7/§e" + req;
+        return "§f" + CurrencyLabels.SMP_MONEY + ": " + color + cur + "§7/§e" + req;
     }
 
     static String formatCoinsComma(int amount) {

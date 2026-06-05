@@ -60,7 +60,8 @@ public class ShopService {
         UUID uuid = player.getUniqueId();
 
         if (!economyService.canAfford(uuid, total)) {
-            return PurchaseResult.fail("§cSaldo insuficiente. Precisas de §e" + total + " coins§c.");
+            return PurchaseResult.fail("§cSaldo insuficiente. Precisas de §e"
+                    + com.obm.network.core.economy.CurrencyLabels.formatSmpMoney(total) + "§c.");
         }
 
         ItemStack stack = new ItemStack(material, quantity);
@@ -81,7 +82,8 @@ public class ShopService {
         String discountInfo = unitPrice < baseUnit
                 ? " §7(§a-" + (baseUnit - unitPrice) + " desconto§7)" : "";
         return PurchaseResult.ok("§aCompra confirmada: §e" + quantity + "x "
-                + material.name() + " §apor §f" + total + " coins" + discountInfo + "§a.");
+                + material.name() + " §apor §f"
+                    + com.obm.network.core.economy.CurrencyLabels.formatSmpMoney(total) + discountInfo + "§a.");
     }
 
     private boolean canStack(Player player, Material material, int quantity) {

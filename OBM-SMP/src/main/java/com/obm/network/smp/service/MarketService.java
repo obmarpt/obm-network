@@ -119,7 +119,8 @@ public class MarketService {
 
         int total = listing.getTotalValue();
         if (!economyService.canAfford(buyer.getUniqueId(), total)) {
-            return MarketSaleResult.error("Saldo insuficiente. Precisas de " + total + " coins.");
+            return MarketSaleResult.error("Saldo insuficiente. Precisas de "
+                    + com.obm.network.core.economy.CurrencyLabels.formatSmpMoney(total) + ".");
         }
 
         ItemStack itemToGive = listing.getItem().clone();
@@ -143,7 +144,8 @@ public class MarketService {
             return MarketSaleResult.error("Inventário cheio. Compra cancelada e reembolsada.");
         }
 
-        return MarketSaleResult.success("§aCompra confirmada! Pagaste §e" + total + " coins§a.");
+        return MarketSaleResult.success("§aCompra confirmada! Pagaste §e"
+                + com.obm.network.core.economy.CurrencyLabels.formatSmpMoney(total) + "§a.");
     }
 
     private void restoreListing(String id, MarketListing listing) {

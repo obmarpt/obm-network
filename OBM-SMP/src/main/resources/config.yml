@@ -106,6 +106,7 @@ admin:
 
 shop:
   debug-clicks: false
+  max-quantity: 64
   vip-items:
     - NETHER_STAR
     - BEACON

@@ -6,8 +6,12 @@ import com.obm.network.core.integration.EmeraldRewardBridge;
 import com.obm.network.core.integration.EconomyBridge;
 import com.obm.network.core.integration.SMPBridge;
 import com.obm.network.core.location.SafeSpawnService;
+import com.obm.network.core.progression.ProgressionLevelService;
+import com.obm.network.core.stats.PlayerStatsTracker;
 import com.obm.network.core.storage.DataStore;
+import com.obm.network.core.storage.PlayerStatsKeys;
 import com.obm.network.core.world.WorldModeService;
+import com.obm.network.smp.death.SmpDeathDeduplicator;
 import com.obm.network.smp.progression.LevelService;
 import com.obm.network.smp.progression.PlayerProgressionStore;
 import com.obm.network.smp.progression.ProgressionBonusService;
@@ -37,6 +41,7 @@ public class SMPManager {
     private final int killReward;
     private final int deathPenalty;
     private final boolean deathPenaltyEnabled;
+    private final SmpDeathDeduplicator deathDeduplicator;
 
     public SMPManager(EconomyService economyService,
                       WorldModeService worldModeService,
@@ -45,6 +50,7 @@ public class SMPManager {
                       PlayerProgressionStore progressionStore,
                       RankCatalog rankCatalog,
                       KillFarmGuard killFarmGuard,
+                      SmpDeathDeduplicator deathDeduplicator,
                       int killReward,
                       int deathPenalty,
                       boolean deathPenaltyEnabled) {
@@ -57,6 +63,7 @@ public class SMPManager {
         this.progressionStore = progressionStore;
         this.rankCatalog = rankCatalog;
         this.killFarmGuard = killFarmGuard;
+        this.deathDeduplicator = deathDeduplicator;
 
         this.killReward = Math.max(0, killReward);
         this.deathPenalty = Math.max(0, deathPenalty);
@@ -125,20 +132,24 @@ public class SMPManager {
 
         if (!blocked && reward > 0) {
             economyService.deposit(killerId, reward);
-            RetentionFeedback.coinsGained(killer, reward);
+            RetentionFeedback.coinsGained(killer, reward, "Kill");
             EmeraldRewardBridge.smpKill(killer, victim);
             com.obm.network.core.integration.BattlePassBridge.smpKill(killer);
-            killer.sendMessage("§7Mataste §f" + victim.getName());
         } else if (altBlocked) {
             killer.sendMessage("§7Sem recompensa (mesmo IP — anti-alt).");
-        } else {
+        } else if (farmBlocked) {
             killer.sendMessage("§7Sem recompensa (anti farm).");
         }
 
-        /*
-         * ✅ STATS (SMP)
-         */
-        dataStore.increment(killerId, "kills_smp");
+        dataStore.increment(killerId, PlayerStatsKeys.KILLS_SMP);
+        ProgressionLevelService globalLevels = OBMCorePlugin.get().getProgressionLevelService();
+        if (globalLevels != null) {
+            globalLevels.onSmpKill(killerId);
+        }
+        PlayerStatsTracker tracker = OBMCorePlugin.get().getPlayerStatsTracker();
+        if (tracker != null) {
+            tracker.onKill(killerId, killer.getName());
+        }
 
         int streak = dataStore.getInt(killerId, "killstreak_smp") + 1;
         dataStore.set(killerId, "killstreak_smp", streak);
@@ -159,32 +170,28 @@ public class SMPManager {
      * ✅ DEATH SYSTEM
      */
     public void handleDeath(Player victim, Player killer) {
-
-        if (!isInSMP(victim)) return;
+        if (!isInSMP(victim)) {
+            return;
+        }
 
         UUID victimId = victim.getUniqueId();
+        if (!deathDeduplicator.tryClaim(victimId)) {
+            return;
+        }
+        deathDeduplicator.releaseLater(victimId);
 
-        // ✅ stats SMP
-        dataStore.increment(victimId, "deaths_smp");
-
+        dataStore.increment(victimId, PlayerStatsKeys.DEATHS_SMP);
         dataStore.set(victimId, "killstreak_smp", 0);
-
         dataStore.save(victimId);
 
         if (deathPenaltyEnabled && deathPenalty > 0) {
-
-            int penalty = Math.min(deathPenalty,
-                    economyService.getBalance(victimId));
-
-            if (penalty > 0 &&
-                economyService.safeWithdraw(victimId, penalty)) {
-
-                victim.sendMessage("§c-§e" + economyService.format(penalty)
-                        + " §c| Morreste no SMP");
+            int penalty = Math.min(deathPenalty, economyService.getBalance(victimId));
+            if (penalty > 0 && economyService.safeWithdraw(victimId, penalty)) {
+                RetentionFeedback.coinsLost(victim, penalty);
             }
         }
 
-        if (killer != null && isInSMP(killer)) {
+        if (killer != null && isInSMP(killer) && !killer.getUniqueId().equals(victimId)) {
             handleKill(killer, victim);
         }
     }
@@ -198,7 +205,7 @@ public class SMPManager {
 
         int payout = bonusService.applyPlaytimeReward(player.getUniqueId(), reward);
         economyService.deposit(player.getUniqueId(), payout);
-        RetentionFeedback.coinsGained(player, payout);
+        RetentionFeedback.coinsGained(player, payout, "Playtime");
         EmeraldRewardBridge.smpPlaytime(player);
 
         levelService.addPlaytimeXp(player);

@@ -21,6 +21,7 @@ import com.obm.network.smp.listener.SMPListener;
 import com.obm.network.smp.listener.SmpRespawnListener;
 import com.obm.network.smp.listener.SmpGuiListener;
 import com.obm.network.smp.listener.SpawnProtectionListener;
+import com.obm.network.smp.death.SmpDeathDeduplicator;
 import com.obm.network.smp.manager.SMPManager;
 import com.obm.network.smp.progression.LevelService;
 import com.obm.network.smp.progression.PlayerProgressionStore;
@@ -70,6 +71,7 @@ public class SMPPlugin extends JavaPlugin {
     private LevelService levelService;
     private ProgressionBonusService bonusService;
     private KillFarmGuard killFarmGuard;
+    private SmpDeathDeduplicator deathDeduplicator;
     private SMPManager smpManager;
     private WorldModeService worldModeService;
 
@@ -113,6 +115,7 @@ public class SMPPlugin extends JavaPlugin {
         marketService = new MarketService(this, economyService);
         spawnProtectionService = new SpawnProtectionService(getConfig(), worldModeService);
         killFarmGuard = new KillFarmGuard(getConfig());
+        deathDeduplicator = new SmpDeathDeduplicator();
 
         progressionStore = new PlayerProgressionStore();
         rankCatalog = new RankCatalog();
@@ -144,6 +147,7 @@ public class SMPPlugin extends JavaPlugin {
                 progressionStore,
                 rankCatalog,
                 killFarmGuard,
+                deathDeduplicator,
                 getConfig().getInt("economy.kill-reward", 150),
                 getConfig().getInt("economy.death-penalty", 50),
                 getConfig().getBoolean("economy.death-penalty-enabled", true)

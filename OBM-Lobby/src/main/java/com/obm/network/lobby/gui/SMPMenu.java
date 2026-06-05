@@ -45,7 +45,7 @@ public class SMPMenu {
                 Material.EMERALD,
                 MenuColors.bold(MenuColors.rush("💰 ECONOMIA")),
                 MenuColors.separator(),
-                MenuColors.neutral("Coins ") + MenuColors.rush(String.valueOf(money)),
+                MenuColors.neutral("Money ") + MenuColors.rush(String.valueOf(money)),
                 MenuColors.neutral("Ganhos ") + MenuColors.white(String.valueOf(EconomyBridge.getTotalEarned(uuid))),
                 MenuColors.neutral("Rank ") + MenuColors.rush(progression.rankName())
         ));

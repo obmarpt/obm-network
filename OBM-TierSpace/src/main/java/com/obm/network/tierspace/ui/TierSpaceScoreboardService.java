@@ -1,6 +1,8 @@
 package com.obm.network.tierspace.ui;
 
 import com.obm.network.core.OBMCorePlugin;
+import com.obm.network.core.integration.TierSpaceBridge;
+import com.obm.network.core.tier.CompetitiveTier;
 import com.obm.network.core.tier.TierRankUtil;
 import com.obm.network.tierspace.mode.GameModeId;
 import com.obm.network.tierspace.mode.ModeRegistry;
@@ -101,20 +103,23 @@ public class TierSpaceScoreboardService {
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         setLine(objective, ChatColor.GRAY + "Mode: " + ChatColor.WHITE + modeRegistry.displayName(mode), 10);
+        String modeId = mode.id();
         if (inPlacement) {
-            setLine(objective, ChatColor.YELLOW + placementService.getPlacementLabel(uuid, mode), 9);
+            setLine(objective, ChatColor.YELLOW + placementService.getPlacementLabel(uuid, mode), 11);
         } else {
-            var rank = TierRankUtil.fromRating(rating);
-            setLine(objective, ChatColor.GRAY + "Rank: " + rank.displayName(), 9);
+            CompetitiveTier tier = CompetitiveTier.getTierFromRating(rating);
+            setLine(objective, ChatColor.GRAY + "Tier: " + tier.displayName(), 11);
         }
-        setLine(objective, ChatColor.GRAY + "Rating: " + ChatColor.WHITE + rating, 8);
+        setLine(objective, ChatColor.GRAY + "Elo: " + ChatColor.WHITE + rating, 10);
         if (!inPlacement) {
-            setLine(objective, TierRankUtil.formatNextRankLine(rating), 7);
-            setLine(objective, ChatColor.GRAY + "Progress: " + ChatColor.AQUA + TierRankUtil.formatProgress(rating), 6);
+            setLine(objective, TierRankUtil.formatNextRankLine(rating), 9);
+            setLine(objective, ChatColor.GRAY + "Progress: " + ChatColor.AQUA + TierRankUtil.formatProgress(rating), 8);
         }
-        setLine(objective, ChatColor.GRAY + "W/L: " + ChatColor.GREEN + wins + ChatColor.GRAY + " / " + ChatColor.RED + losses, 5);
-        setLine(objective, ChatColor.GRAY + "Streak: " + ChatColor.YELLOW + streak, 4);
-        setLine(objective, dailyQuestService.getProgressLine(uuid, mode), 3);
+        setLine(objective, ChatColor.GRAY + "W/L: " + ChatColor.GREEN + wins + ChatColor.GRAY + " / " + ChatColor.RED + losses, 7);
+        setLine(objective, ChatColor.GRAY + "K/D: " + ChatColor.WHITE + TierSpaceBridge.getKills(uuid, modeId)
+                + ChatColor.GRAY + "/" + ChatColor.WHITE + TierSpaceBridge.getDeaths(uuid, modeId), 6);
+        setLine(objective, ChatColor.GRAY + "Streak: " + ChatColor.YELLOW + streak, 5);
+        setLine(objective, dailyQuestService.getProgressLine(uuid, mode), 4);
         setLine(objective, ChatColor.DARK_GRAY + "" + ChatColor.STRIKETHROUGH + "----------------", 2);
 
         player.setScoreboard(board);

@@ -46,8 +46,8 @@ public class RetentionJoinListener implements Listener {
         player.sendMessage("");
         player.sendMessage("§7Hardcore desbloqueia em:");
         player.sendMessage("§fLevel: §e" + hc.playerLevel() + "§7/§f" + hc.requiredLevel());
-        player.sendMessage("§fCoins: §6" + HardcoreUnlockService.formatCoins(hc.playerCoins())
-                + "§7/§e" + HardcoreUnlockService.formatCoins(hc.requiredCoins()));
+        player.sendMessage("§fMoney: §6" + HardcoreUnlockService.formatMoney(hc.playerCoins())
+                + "§7/§e" + HardcoreUnlockService.formatMoney(hc.requiredCoins()));
         player.sendMessage("§8§m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     }
 }

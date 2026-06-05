@@ -35,6 +35,18 @@ public class KitService {
         }
     }
 
+    public void applyRandomKit(Player player) {
+        if (kits.isEmpty()) {
+            return;
+        }
+        String id = kits.keySet().stream().skip((int) (Math.random() * kits.size())).findFirst().orElse("sword");
+        applyKit(player, id);
+    }
+
+    public java.util.Set<String> kitIds() {
+        return java.util.Set.copyOf(kits.keySet());
+    }
+
     public void applyKit(Player player, String kitId) {
         KitDefinition kit = kits.get(kitId.toLowerCase());
         if (kit == null) {
@@ -90,8 +102,8 @@ public class KitService {
         Enchantment enchant = item.getType().name().contains("SWORD")
                 || item.getType().name().contains("AXE")
                 || item.getType().name().contains("MACE")
-                ? Enchantment.DAMAGE_ALL
-                : Enchantment.PROTECTION_ENVIRONMENTAL;
+                ? Enchantment.SHARPNESS
+                : Enchantment.PROTECTION;
         item.addUnsafeEnchantment(enchant, level);
         return item;
     }
@@ -103,7 +115,7 @@ public class KitService {
         }
         ItemStack item = new ItemStack(material, extra.amount());
         if (extra.enchantLevel() > 0) {
-            item.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, extra.enchantLevel());
+            item.addUnsafeEnchantment(Enchantment.SHARPNESS, extra.enchantLevel());
         }
         if (extra.potionType() != null && item.getItemMeta() instanceof PotionMeta meta) {
             try {

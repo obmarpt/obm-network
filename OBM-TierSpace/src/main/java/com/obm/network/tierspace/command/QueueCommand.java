@@ -1,5 +1,6 @@
 package com.obm.network.tierspace.command;
 
+import com.obm.network.tierspace.hub.TierSpaceHub;
 import com.obm.network.tierspace.match.MatchService;
 import com.obm.network.tierspace.mode.GameModeId;
 import com.obm.network.tierspace.mode.ModeRegistry;
@@ -37,6 +38,10 @@ public class QueueCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage("§cApenas jogadores.");
+            return true;
+        }
+        if (!TierSpaceHub.isInTierSpaceHub(player)) {
+            player.sendMessage("§cSó podes usar este comando no TierSpace.");
             return true;
         }
 

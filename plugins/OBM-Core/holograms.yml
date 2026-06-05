@@ -1,241 +1,469 @@
-# MineSpace — hologramas centralizados (OBM-Core / HologramService)
-# Formato: legacy & (sem MiniMessage). Sem linhas vazias.
-# IDs antigos dos TOPs mantidos (top_smp_*) para não duplicar no DecentHolograms.
-# Desactiva os YAML antigos em plugins/DecentHolograms/holograms/ (obm_*.yml) se usares só este ficheiro.
+# =============================================================================
+# MineSpace — hologramas OBM-Core (HologramService + DecentHolograms DHAPI)
+# =============================================================================
+# • Única fonte: este ficheiro (não uses plugins/DecentHolograms/holograms/*.yml)
+# • IDs explícitos — evita duplicar com /dh create manual
+# • Static + %obm_*% / %server_online% → PlaceholderAPI + interval DH (~40 ticks)
+# • Leaderboard → DataStore (actualização: settings.dynamic-update-ticks)
+# • Tops rede → config.yml remote-leaderboard.holograms (API 60s)
+# =============================================================================
 
 settings:
   id-prefix: obm
   dynamic-update-ticks: 200
+  static-refresh-ticks: 40
 
 holograms:
+
+  # ---------------------------------------------------------------------------
+  # LOBBY — base (spawn, stats, ajuda)
+  # ---------------------------------------------------------------------------
   lobby:
+
     welcome:
+      id: obm_lobby_welcome
       type: static
       world: Lobby
-      x: 6
+      x: 0.5
       y: 168.0
-      z: 0
+      z: -6.5
       lines:
         - "&b&l✦ MineSpace ✦"
         - "&8──────────────"
-        - "&7Bem-vindo, &f%player_name%"
-        - "&7Escolhe o teu modo abaixo"
+        - "&7Olá, &f%player_name%&7!"
+        - "&7Online: &a%server_online%&7/&a%server_max_players%"
         - "&6⚔ Rush &8· &c💀 Hardcore &8· &b🏆 TierSpace"
         - "&8──────────────"
-        - "&6🎯 &eDomina o ranking!"
+        - "&e/menu &7· &e/lobby &7· NPCs abaixo"
 
-    rewards:
+    help:
+      id: obm_lobby_help
       type: static
       world: Lobby
-      x: -2.832
-      y: 167.282
-      z: -17.507
+      x: 3.5
+      y: 167.0
+      z: -4.5
       lines:
-        - "&6&l🎁 RECOMPENSAS"
-        - "&7Recompensas diárias · &bMineSpace"
-        - "&6» &eClica para receber"
+        - "&e&l❓ COMO JOGAR"
+        - "&8──────────────"
+        - "&7Clica num &fNPC &7ou &e/menu"
+        - "&7Rush: farm, loja, PvP"
+        - "&7Hardcore: vidas limitadas"
+        - "&7TierSpace: ranked 1v1"
+        - "&8──────────────"
+        - "&7Loja global: &e/shopglobal"
 
     player_stats:
+      id: obm_lobby_player_stats
       type: static
       world: Lobby
-      x: 40
-      y: 165.5
+      x: -3.5
+      y: 166.5
       z: 0.5
       refresh-ticks: 40
       lines:
         - "&6&l📊 AS TUAS STATS"
         - "&8──────────────"
-        - "&7💰 Coins: &e%obm_coins%"
-        - "&7📈 Level: &f%obm_level% &8| &7Rank: &e%obm_rank%"
-        - "&7🏆 Tier: &b%obm_tier_rating_sword% &8| &f%obm_tier_rank_sword%"
-        - "&8──────────────"
+        - "&7💰 Money: &e%obm_money%"
+        - "&7💎 Emeralds: &a%obm_emeralds%"
+        - "&7📈 Level: &f%obm_level% &8| &e%obm_rank%"
+        - "&7🏆 Tier: &b%obm_tier_rating_sword% &7(&f%obm_tier_rank_sword%&7)"
         - "&7W/L: &a%obm_tier_wins_sword%&8/&c%obm_tier_losses_sword%"
 
-    rush_info:
+    rewards:
+      id: obm_lobby_rewards
       type: static
       world: Lobby
-      x: 36
-      y: 167.0
-      z: -6
+      x: -2.5
+      y: 166.2
+      z: -17.4
+      lines:
+        - "&6&l🎁 RECOMPENSAS"
+        - "&7Diárias e eventos"
+        - "&6» &e/daily &7· &e/shopglobal"
+
+    global_label:
+      id: obm_lobby_global_label
+      type: static
+      world: Lobby
+      x: -4.5
+      y: 168.5
+      z: 4.0
+      lines:
+        - "&6&l🌐 TOP NETWORK"
+        - "&7Money · Kills · Playtime"
+        - "&8(API · 60s)"
+
+  # ---------------------------------------------------------------------------
+  # LOBBY — info modos (acima dos NPCs Citizens, +2.2 Y)
+  # RUSH 35.55 / 161 / -5.55 | UHC 37.35 / 161 / 0.48 | SMP 35.50 / 161 / 6.47
+  # ---------------------------------------------------------------------------
+
+    smp_info:
+      id: obm_lobby_smp_info
+      type: static
+      world: Lobby
+      x: 35.55
+      y: 163.2
+      z: -5.55
       lines:
         - "&6&l⚔ RUSH SMP"
         - "&8──────────────"
-        - "&7Farm → Vender → Gear → PvP"
-        - "&7Mundo: &fworld &7+ nether/end"
+        - "&7Farm · Vender · Loja · PvP"
+        - "&7Mundo: &fworld &7(+ nether/end)"
         - "&7Economia: &e💰 Activa"
         - "&8──────────────"
-        - "&6&l▶ Entra pelo menu!"
+        - "&6&l▶ Clica no NPC"
 
-    hardcore_info:
+    uhc_info:
+      id: obm_lobby_uhc_info
       type: static
       world: Lobby
-      x: 37
-      y: 167.0
-      z: 0
+      x: 37.35
+      y: 163.2
+      z: 0.48
       lines:
         - "&c&l💀 HARDCORE"
         - "&8──────────────"
-        - "&7Sobrevive. Evolui. Morre."
-        - "&7Mundo: &fuhc &7+ nether/end"
-        - "&c⚠ Vidas limitadas"
+        - "&7Vidas limitadas · alto risco"
+        - "&7Unlock: &e200k Money &7+ &flvl 10"
+        - "&7Mundo: &fUHC"
         - "&8──────────────"
-        - "&c&l▶ Entra pelo menu!"
+        - "&c&l▶ Clica no NPC"
 
     tierspace_info:
+      id: obm_lobby_tierspace_info
       type: static
       world: Lobby
-      x: 36
-      y: 167.0
-      z: 7
-      refresh-ticks: 40
+      x: 35.50
+      y: 163.2
+      z: 6.47
       lines:
         - "&b&l🏆 TIERSPACE"
         - "&8──────────────"
-        - "&7PvP competitivo 1v1 · Elo ranking"
+        - "&7Ranked 1v1 · Elo · Seasons"
         - "&7Season: &f%obm_tier_season% &7(&b%obm_tier_season_days%&7d)"
         - "&8──────────────"
-        - "&b&l🎯 Click to play"
-        - "&3⚡ Queue now — abre o menu!"
+        - "&b&l▶ Clica no NPC"
 
-    top_smp_playtime:
-      id: top_smp_playtime
-      type: leaderboard
+    rush_alias_info:
+      id: obm_lobby_rush_alias_info
+      type: static
       world: Lobby
-      x: 14
-      y: 165
-      z: 18
-      stat: playtime_smp
-      format: playtime
-      title: "&6&l📊 TOP RUSH — PLAYTIME"
-      footer: "&6💰 &fDomina a economia!"
+      x: 39.0
+      y: 163.2
+      z: 1.0
+      lines:
+        - "&6&l⚔ RUSH"
+        - "&7Mesmo modo que &eRush SMP"
+        - "&6» &eNPC ou &e/menu"
 
-    top_smp_blocks:
-      id: top_smp_blocks
-      type: leaderboard
-      world: Lobby
-      x: 11
-      y: 163
-      z: 18
-      stat: blocks_smp
-      title: "&6&l⛏ TOP RUSH — BLOCKS"
-      footer: "&6💰 &fDomina a economia!"
+  # ---------------------------------------------------------------------------
+  # LOBBY — leaderboards locais (DataStore) · plataforma Y=65
+  # ---------------------------------------------------------------------------
 
     top_smp_kills:
       id: top_smp_kills
       type: leaderboard
       world: Lobby
-      x: 30
-      y: 163
-      z: 18
+      x: 52
+      y: 65
+      z: 30
       stat: kills_smp
       title: "&6&l⚔ TOP RUSH — KILLS"
-      footer: "&6💰 &fDomina a economia!"
+      footer: "&7Atualiza a cada 10s"
+
+    top_smp_playtime:
+      id: top_smp_playtime
+      type: leaderboard
+      world: Lobby
+      x: 56
+      y: 65
+      z: 30
+      stat: playtime_smp
+      format: playtime
+      title: "&6&l⏳ TOP RUSH — PLAYTIME"
+      footer: "&7Atualiza a cada 10s"
 
     top_smp_money:
       id: top_smp_money
       type: leaderboard
       world: Lobby
-      x: 27
-      y: 163
-      z: 18
-      stat: money_smp
-      title: "&6&l💰 TOP RUSH — COINS"
-      footer: "&6💰 &fDomina a economia!"
+      x: 60
+      y: 65
+      z: 30
+      stat: smp_balance
+      title: "&6&l💰 TOP RUSH — MONEY"
+      footer: "&7Atualiza a cada 10s"
 
     top_uhc_kills:
       id: top_uhc_kills
       type: leaderboard
       world: Lobby
-      x: 80
+      x: 68
       y: 65
-      z: 35
+      z: 30
       stat: kills_uhc
       title: "&c&l⚔ TOP HARDCORE — KILLS"
-      footer: "&c💀 &fSobrevive ao Hardcore!"
+      footer: "&7Atualiza a cada 10s"
 
-    top_uhc_deaths:
-      id: top_uhc_deaths
+    top_uhc_wins:
+      id: top_uhc_wins
       type: leaderboard
       world: Lobby
-      x: 84
+      x: 72
       y: 65
-      z: 35
-      stat: deaths_uhc
-      title: "&c&l💀 TOP HARDCORE — DEATHS"
-      footer: "&c💀 &fSobrevive ao Hardcore!"
-
-    top_uhc_playtime:
-      id: top_uhc_playtime
-      type: leaderboard
-      world: Lobby
-      x: 88
-      y: 65
-      z: 35
-      stat: playtime_uhc
-      format: playtime
-      title: "&c&l⏳ TOP HARDCORE — PLAYTIME"
-      footer: "&c💀 &fSobrevive ao Hardcore!"
-
-    top_uhc_lives:
-      id: top_uhc_lives
-      type: leaderboard
-      world: Lobby
-      x: 92
-      y: 65
-      z: 35
-      stat: lives_uhc
-      title: "&c&l❤ TOP HARDCORE — VIDAS"
-      footer: "&c💀 &fSobrevive ao Hardcore!"
-
-    top_uhc_kdr:
-      id: top_uhc_kdr
-      type: leaderboard
-      world: Lobby
-      x: 96
-      y: 65
-      z: 35
-      format: kdr
-      kills-stat: kills_uhc
-      deaths-stat: deaths_uhc
-      min-kills: 5
-      title: "&c&l📊 TOP HARDCORE — K/D"
-      footer: "&c💀 &fSobrevive ao Hardcore!"
+      z: 30
+      stat: wins_uhc
+      title: "&c&l🏆 TOP HARDCORE — WINS"
+      footer: "&7Atualiza a cada 10s"
 
     top_tierspace_rating:
       id: top_tierspace_rating
       type: leaderboard
       world: Lobby
-      x: 40
+      x: 36
       y: 65
-      z: 35
+      z: 30
       stat: tierspace_sword_rating
       format: tier_rating
-      title: "&b&l🏆 TIER TOP — RATING"
-      footer: "&b⚡ &fSobe no ranking!"
+      title: "&b&l🏆 TIER — RATING"
+      footer: "&b⚡ Sobe no ranking!"
 
     top_tierspace_streak:
       id: top_tierspace_streak
       type: leaderboard
       world: Lobby
-      x: 44
+      x: 40
       y: 65
-      z: 35
+      z: 30
       stat: tierspace_sword_best_streak
       format: integer_plain
-      title: "&d&l🔥 TOP STREAK"
-      footer: "&d🔥 &fMantém a streak!"
+      title: "&d&l🔥 TIER — STREAK"
+      footer: "&d🔥 Melhor sequência"
 
-  tierspace:
+    top_tierspace_wins:
+      id: top_tierspace_wins
+      type: leaderboard
+      world: Lobby
+      x: 44
+      y: 65
+      z: 30
+      stat: tierspace_sword_wins
+      title: "&b&l✦ TIER — WINS"
+      footer: "&7Atualiza a cada 10s"
+
+    boards_smp_label:
+      id: obm_lobby_boards_smp_label
+      type: static
+      world: Lobby
+      x: 56
+      y: 66.5
+      z: 28
+      lines:
+        - "&6&lRUSH SMP"
+
+    boards_uhc_label:
+      id: obm_lobby_boards_uhc_label
+      type: static
+      world: Lobby
+      x: 70
+      y: 66.5
+      z: 28
+      lines:
+        - "&c&lHARDCORE"
+
+    boards_tier_label:
+      id: obm_lobby_boards_tier_label
+      type: static
+      world: Lobby
+      x: 40
+      y: 66.5
+      z: 28
+      lines:
+        - "&b&lTIERSPACE"
+
+  # ---------------------------------------------------------------------------
+  # RUSH SMP — entrada mundo
+  # ---------------------------------------------------------------------------
+  smp:
+
     entry:
+      id: obm_smp_entry
+      type: static
+      world: world
+      x: 0.5
+      y: 72.0
+      z: 0.5
+      lines:
+        - "&6&l⚔ RUSH SMP"
+        - "&8──────────────"
+        - "&7Bem-vindo ao survival PvP"
+        - "&7&a/shop &7· &a/sell &7· &a/money"
+        - "&8──────────────"
+        - "&e/lobby &7para voltar ao hub"
+
+  # ---------------------------------------------------------------------------
+  # HARDCORE (UHC) — entrada mundo
+  # ---------------------------------------------------------------------------
+  uhc:
+
+    entry:
+      id: obm_uhc_entry
+      type: static
+      world: UHC
+      x: 0.5
+      y: 72.0
+      z: 0.5
+      lines:
+        - "&c&l💀 HARDCORE"
+        - "&8──────────────"
+        - "&c⚠ Vidas limitadas"
+        - "&7Morreste = menos vidas"
+        - "&8──────────────"
+        - "&e/lobby &7para sair"
+
+  # ---------------------------------------------------------------------------
+  # TIERSPACE — hub ranked
+  # ---------------------------------------------------------------------------
+  tierspace:
+
+    entry:
+      id: obm_tierspace_entry
       type: static
       world: rankedSpawn
-      x: 32
-      y: 122
-      z: -9
+      x: 32.5
+      y: 125.5
+      z: -9.5
       lines:
-        - "&b&l🏆 TIERSPACE"
-        - "&8──────────────"
-        - "&7Fila 1v1 · &f/queue sword"
-        - "&7Season: &f%obm_tier_season%"
-        - "&8──────────────"
-        - "&b▶ Entra na fila!"
+        - "&d&l🏆 TIERSPACE"
+        - "&8┏━━━━━━━━━━┓"
+        - "&7Duelos 1v1 · Season &f#%obm_tier_season%"
+        - "&7Espada no hub · &f/queue"
+        - "&8┗━━━━━━━━━━┛"
+
+    queue_sword:
+      id: obm_ts_queue_sword
+      type: static
+      world: rankedSpawn
+      x: 22.5
+      y: 124.2
+      z: -9.5
+      lines:
+        - "&9&lSWORD"
+        - "&8┏━━━━━━━━━━┓"
+        - "&7Queue: &f%obm_tier_queue_sword%"
+        - "%obm_tier_queue_status_sword%"
+        - "&8┗━━━━━━━━━━┛"
+
+    queue_axe:
+      id: obm_ts_queue_axe
+      type: static
+      world: rankedSpawn
+      x: 24.5
+      y: 124.2
+      z: -9.5
+      lines:
+        - "&e&lAXE"
+        - "&8┏━━━━━━━━━━┓"
+        - "&7Queue: &f%obm_tier_queue_axe%"
+        - "%obm_tier_queue_status_axe%"
+        - "&8┗━━━━━━━━━━┛"
+
+    queue_mace:
+      id: obm_ts_queue_mace
+      type: static
+      world: rankedSpawn
+      x: 26.5
+      y: 124.2
+      z: -9.5
+      lines:
+        - "&6&lMACE"
+        - "&8┏━━━━━━━━━━┓"
+        - "&7Queue: &f%obm_tier_queue_mace%"
+        - "%obm_tier_queue_status_mace%"
+        - "&8┗━━━━━━━━━━┛"
+
+    queue_uhc:
+      id: obm_ts_queue_uhc
+      type: static
+      world: rankedSpawn
+      x: 28.5
+      y: 124.2
+      z: -9.5
+      lines:
+        - "&c&lUHC"
+        - "&8┏━━━━━━━━━━┓"
+        - "&7Queue: &f%obm_tier_queue_uhc%"
+        - "%obm_tier_queue_status_uhc%"
+        - "&8┗━━━━━━━━━━┛"
+
+    queue_netherite:
+      id: obm_ts_queue_netherite
+      type: static
+      world: rankedSpawn
+      x: 30.5
+      y: 124.2
+      z: -9.5
+      lines:
+        - "&8&lNETHERITE"
+        - "&8┏━━━━━━━━━━┓"
+        - "&7Queue: &f%obm_tier_queue_netherite%"
+        - "%obm_tier_queue_status_netherite%"
+        - "&8┗━━━━━━━━━━┛"
+
+    queue_op:
+      id: obm_ts_queue_op
+      type: static
+      world: rankedSpawn
+      x: 34.5
+      y: 124.2
+      z: -9.5
+      lines:
+        - "&b&lOP"
+        - "&8┏━━━━━━━━━━┓"
+        - "&7Queue: &f%obm_tier_queue_op%"
+        - "%obm_tier_queue_status_op%"
+        - "&8┗━━━━━━━━━━┛"
+
+    queue_pot:
+      id: obm_ts_queue_pot
+      type: static
+      world: rankedSpawn
+      x: 36.5
+      y: 124.2
+      z: -9.5
+      lines:
+        - "&5&lPOT"
+        - "&8┏━━━━━━━━━━┓"
+        - "&7Queue: &f%obm_tier_queue_pot%"
+        - "%obm_tier_queue_status_pot%"
+        - "&8┗━━━━━━━━━━┛"
+
+    queue_smp:
+      id: obm_ts_queue_smp
+      type: static
+      world: rankedSpawn
+      x: 38.5
+      y: 124.2
+      z: -9.5
+      lines:
+        - "&a&lSMP"
+        - "&8┏━━━━━━━━━━┓"
+        - "&7Queue: &f%obm_tier_queue_smp%"
+        - "%obm_tier_queue_status_smp%"
+        - "&8┗━━━━━━━━━━┛"
+
+    queue_vanilla:
+      id: obm_ts_queue_vanilla
+      type: static
+      world: rankedSpawn
+      x: 40.5
+      y: 124.2
+      z: -9.5
+      lines:
+        - "&f&lCPVP"
+        - "&8┏━━━━━━━━━━┓"
+        - "&7Queue: &f%obm_tier_queue_vanilla%"
+        - "%obm_tier_queue_status_vanilla%"
+        - "&8┗━━━━━━━━━━┛"

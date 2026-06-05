@@ -66,7 +66,7 @@ public class MatchFeedbackService {
 
         } else {
 
-            player.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, player.getLocation().add(0, 1.2, 0),
+            player.getWorld().spawnParticle(Particle.HAPPY_VILLAGER, player.getLocation().add(0, 1.2, 0),
 
                     8, 0.4, 0.3, 0.4, 0);
 
@@ -254,9 +254,9 @@ public class MatchFeedbackService {
 
     private void playWinCelebration(Player player) {
 
-        player.getWorld().spawnParticle(Particle.TOTEM, player.getLocation().add(0, 1, 0), 25, 0.5, 0.7, 0.5, 0.05);
+        player.getWorld().spawnParticle(Particle.TOTEM_OF_UNDYING, player.getLocation().add(0, 1, 0), 25, 0.5, 0.7, 0.5, 0.05);
 
-        player.getWorld().spawnParticle(Particle.FIREWORKS_SPARK, player.getLocation().add(0, 1, 0), 12, 0.3, 0.4, 0.3, 0.02);
+        player.getWorld().spawnParticle(Particle.FIREWORK, player.getLocation().add(0, 1, 0), 12, 0.3, 0.4, 0.3, 0.02);
 
         player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1f, 1.8f);
 

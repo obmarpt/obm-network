@@ -30,7 +30,7 @@ public class MoneyCommand implements CommandExecutor {
                 return true;
             }
             int balance = economyService.getBalance(player.getUniqueId());
-            player.sendMessage("§aSeu saldo SMP: §e" + balance + " coins");
+            player.sendMessage("§aSaldo Rush: §e" + economyService.format(balance));
             return true;
         }
 
@@ -63,8 +63,8 @@ public class MoneyCommand implements CommandExecutor {
                 }
 
                 SmpRateLimits.recordPay(player, amount);
-                player.sendMessage("§aVocê pagou §e" + amount + " coins §apara §f" + target.getName() + "§a.");
-                target.sendMessage("§aVocê recebeu §e" + amount + " coins §ade §f" + player.getName() + "§a.");
+                player.sendMessage("§aPagaste §e" + economyService.format(amount) + " §apara §f" + target.getName() + "§a.");
+                target.sendMessage("§aRecebeste §e" + economyService.format(amount) + " §ade §f" + player.getName() + "§a.");
             } catch (NumberFormatException ex) {
                 player.sendMessage("§cValor inválido. Use um número inteiro.");
             }

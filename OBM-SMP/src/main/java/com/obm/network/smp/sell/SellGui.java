@@ -33,10 +33,11 @@ public class SellGui {
         int base = sellService.calculateBaseValue(contents);
         int total = sellService.calculateValue(player, contents);
         inventory.setItem(INFO_SLOT, GuiItems.named(Material.PAPER, "§eValor estimado",
-                "§7Base: §f" + base + " coins",
-                "§7Com bónus: §a" + total + " coins",
+                "§7Base: §f" + base + " Money",
+                "§7Com bónus: §a" + total + " Money",
                 "§8Coloca itens nas slots acima"));
-        inventory.setItem(CONFIRM_SLOT, GuiItems.named(Material.LIME_CONCRETE, "§aConfirmar venda", "§7Recebe §e" + total + " coins"));
+        inventory.setItem(CONFIRM_SLOT, GuiItems.named(Material.LIME_CONCRETE, "§aConfirmar venda",
+                "§7Recebe §e" + com.obm.network.core.economy.CurrencyLabels.formatSmpMoney(total)));
         inventory.setItem(CANCEL_SLOT, GuiItems.named(Material.RED_CONCRETE, "§cCancelar", "§7Devolve os itens"));
     }
 }

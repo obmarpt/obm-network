@@ -10,6 +10,7 @@ import com.obm.network.tierspace.arena.ArenaDefinition;
 import com.obm.network.tierspace.arena.ArenaService;
 import com.obm.network.tierspace.feedback.MatchFeedbackService;
 import com.obm.network.tierspace.kit.KitService;
+import com.obm.network.tierspace.kit.PlayerKitService;
 import com.obm.network.tierspace.mode.GameModeId;
 import com.obm.network.tierspace.mode.ModeRegistry;
 import com.obm.network.tierspace.progression.DailyQuestService;
@@ -25,6 +26,7 @@ import com.obm.network.tierspace.ui.PostMatchGui;
 import com.obm.network.tierspace.ui.PostMatchSnapshot;
 import com.obm.network.tierspace.ui.TierSpaceScoreboardService;
 import com.obm.network.tierspace.ui.TierSpaceTabService;
+import com.obm.network.tierspace.util.TierSpaceLog;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
@@ -42,6 +44,7 @@ public class MatchService {
     private final TierSpacePlugin plugin;
     private final ArenaService arenaService;
     private final KitService kitService;
+    private final PlayerKitService playerKitService;
     private final TierSpaceStore store;
     private final ModeRegistry modeRegistry;
     private final RatingCalculator ratingCalculator;
@@ -70,6 +73,7 @@ public class MatchService {
     public MatchService(TierSpacePlugin plugin,
                         ArenaService arenaService,
                         KitService kitService,
+                        PlayerKitService playerKitService,
                         TierSpaceStore store,
                         ModeRegistry modeRegistry,
                         RatingCalculator ratingCalculator,
@@ -89,6 +93,7 @@ public class MatchService {
         this.plugin = plugin;
         this.arenaService = arenaService;
         this.kitService = kitService;
+        this.playerKitService = playerKitService;
         this.store = store;
         this.modeRegistry = modeRegistry;
         this.ratingCalculator = ratingCalculator;
@@ -128,12 +133,21 @@ public class MatchService {
             player.sendMessage("§cJá estás num match.");
             return false;
         }
-        if (queueService.isQueued(player.getUniqueId())) {
-            player.sendMessage("§cJá estás em fila.");
+        seasonManager.ensurePlayerSeason(player);
+        return enterQueue(player, mode, false);
+    }
+
+    public boolean switchQueue(Player player, GameModeId mode) {
+        if (!modeRegistry.isEnabled(mode)) {
+            player.sendMessage("§cEste modo não está disponível.");
+            return false;
+        }
+        if (isInMatch(player.getUniqueId())) {
+            player.sendMessage("§cJá estás num match.");
             return false;
         }
         seasonManager.ensurePlayerSeason(player);
-        return requeue(player, mode, false);
+        return enterQueue(player, mode, false);
     }
 
     public boolean requeue(Player player, GameModeId mode) {
@@ -146,22 +160,33 @@ public class MatchService {
             return false;
         }
 
-        queueService.leave(player.getUniqueId());
+        QueueService.JoinResult result = queueService.joinOrSwitch(player, mode);
         store.ensureInitialized(player.getUniqueId(), mode);
-
-        if (!queueService.join(player, mode)) {
-            player.sendMessage("§cNão foi possível entrar na fila.");
-            return false;
-        }
-
         queueFeedbackService.startTracking(player);
 
-        if (fromPostMatch) {
-            feedbackService.sendRequeue(player);
-        } else {
-            feedbackService.sendQueueJoin(player, modeRegistry.displayName(mode), queueService.getQueueSize(mode));
+        String modeName = modeRegistry.displayName(mode);
+        int inQueue = queueService.getQueueSize(mode);
+        switch (result) {
+            case JOINED -> {
+                if (fromPostMatch) {
+                    feedbackService.sendRequeue(player);
+                } else {
+                    feedbackService.sendQueueJoin(player, modeName, inQueue);
+                }
+            }
+            case SWITCHED -> player.sendMessage("§dTierSpace §8| §7Fila: §f" + modeName
+                    + " §8(§7" + inQueue + " na queue§8)");
+            case REFRESHED -> player.sendMessage("§dTierSpace §8| §aFila atualizada: §f" + modeName);
         }
         return true;
+    }
+
+    private boolean enterQueue(Player player, GameModeId mode, boolean fromPostMatch) {
+        if (isInMatch(player.getUniqueId())) {
+            player.sendMessage("§cJá estás num match.");
+            return false;
+        }
+        return requeue(player, mode, fromPostMatch);
     }
 
     public Optional<Match> getMatch(UUID uuid) {
@@ -208,6 +233,8 @@ public class MatchService {
 
         ArenaDefinition arena = arenaOptional.get();
         String kitId = modeRegistry.kitId(mode);
+        TierSpaceLog.info("Match start " + playerOne.getName() + " vs " + playerTwo.getName()
+                + " mode=" + mode.id() + " arena=" + arena.id());
 
         Match match = new Match(
                 UUID.randomUUID().toString(),
@@ -244,8 +271,8 @@ public class MatchService {
 
         onMatchStart(playerOne);
         onMatchStart(playerTwo);
-        kitService.applyKit(playerOne, kitId);
-        kitService.applyKit(playerTwo, kitId);
+        playerKitService.applyForMatch(playerOne, kitId);
+        playerKitService.applyForMatch(playerTwo, kitId);
 
         runCountdown(match, countdownSeconds);
     }
@@ -267,6 +294,10 @@ public class MatchService {
         int preLossStreak = store.getStreak(loserId, mode);
         boolean winnerInPlacement = placementService.isInPlacement(winnerId, mode);
         boolean loserInPlacement = placementService.isInPlacement(loserId, mode);
+
+        if (reason == Match.EndReason.DEATH) {
+            store.recordMatchKill(winnerId, loserId, mode);
+        }
 
         RatingChange winChange = ratingCalculator.calculateWin(
                 winnerRating,

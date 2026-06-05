@@ -79,7 +79,7 @@ public class AuctionGui {
     }
 
     private ItemStack priceButton(int price) {
-        return GuiItems.named(Material.GOLD_NUGGET, "§e" + price + " coins", "§7Clique para definir preço");
+        return GuiItems.named(Material.GOLD_NUGGET, "§e" + price + " Money", "§7Clique para definir preço");
     }
 
     private ItemStack listingIcon(MarketListing listing) {
@@ -89,8 +89,8 @@ public class AuctionGui {
             List<String> lore = meta.hasLore() ? new ArrayList<>(meta.getLore()) : new ArrayList<>();
             OfflinePlayer seller = Bukkit.getOfflinePlayer(listing.getSeller());
             lore.add("§7ID: §f" + listing.getId());
-            lore.add("§7Preço: §e" + listing.getPrice() + " coins/un");
-            lore.add("§7Total: §a" + listing.getTotalValue() + " coins");
+            lore.add("§7Preço: §e" + listing.getPrice() + " Money/un");
+            lore.add("§7Total: §a" + listing.getTotalValue() + " Money");
             lore.add("§7Vendedor: §f" + (seller.getName() != null ? seller.getName() : "Desconhecido"));
             lore.add("§aClique para comprar");
             meta.setLore(lore);

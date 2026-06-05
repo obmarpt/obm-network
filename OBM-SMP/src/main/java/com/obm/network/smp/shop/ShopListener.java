@@ -165,6 +165,16 @@ public final class ShopListener implements Listener {
             searchGui.beginSearch(player, session);
             return;
         }
+        if (slot == CategoryGui.SLOT_MINUS && session.hasSelection()) {
+            session.adjustAmount(-1);
+            categoryGui.refreshSelectionBar(player);
+            return;
+        }
+        if (slot == CategoryGui.SLOT_PLUS && session.hasSelection()) {
+            session.adjustAmount(1);
+            categoryGui.refreshSelectionBar(player);
+            return;
+        }
         if (slot == CategoryGui.SLOT_PREV && session.getPage() > 0) {
             session.setPage(session.getPage() - 1);
             categoryGui.refreshItems(player);
@@ -208,7 +218,7 @@ public final class ShopListener implements Listener {
 
         if (session.hasSelection() && session.getSelectedMaterial() == material) {
             adjustQuantity(event, session);
-            categoryGui.refreshItems(player);
+            categoryGui.refreshSelectionBar(player);
             return;
         }
 
@@ -233,7 +243,7 @@ public final class ShopListener implements Listener {
                 session.getSelectedAmount());
         player.sendMessage(result.message());
         if (result.success()) {
-            categoryGui.refreshItems(player);
+            categoryGui.refreshSelectionBar(player);
         }
     }
 

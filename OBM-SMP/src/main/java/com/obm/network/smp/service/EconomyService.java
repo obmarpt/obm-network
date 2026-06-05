@@ -101,6 +101,7 @@ public class EconomyService {
         trackEarned(uuid, amount);
         syncVaultToMatch(uuid, newBalance);
         dataStore.save(uuid);
+        notifyRemoteStorage(uuid, newBalance);
 
         return new EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null);
     }
@@ -121,8 +122,18 @@ public class EconomyService {
         trackSpent(uuid, amount);
         syncVaultToMatch(uuid, newBalance);
         dataStore.save(uuid);
+        notifyRemoteStorage(uuid, newBalance);
 
         return new EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null);
+    }
+
+    private void notifyRemoteStorage(UUID uuid, int newBalance) {
+        try {
+            Class<?> hook = Class.forName("com.obm.network.core.storage.remote.BackendStorageHook");
+            hook.getMethod("onSmpCoinsChanged", UUID.class, int.class).invoke(null, uuid, newBalance);
+        } catch (ReflectiveOperationException ignored) {
+            // OBM-Core antigo ou storage desactivado
+        }
     }
 
     public boolean safeWithdraw(UUID uuid, int amount) {
@@ -178,6 +189,6 @@ public class EconomyService {
     }
 
     public String format(int amount) {
-        return amount + " coins";
+        return com.obm.network.core.economy.CurrencyLabels.formatSmpMoney(amount);
     }
 }

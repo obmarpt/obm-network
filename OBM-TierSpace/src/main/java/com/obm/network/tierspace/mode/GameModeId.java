@@ -6,16 +6,30 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 public enum GameModeId {
     SWORD("sword", "Sword PvP", "⚔", Material.IRON_SWORD, 10),
-    NODEBUFF("nodebuff", "NoDebuff PvP", "💧", Material.SPLASH_POTION, 11),
-    UHC("uhc", "UHC PvP", "🏹", Material.BOW, 12),
-    AXE("axe", "Axe PvP", "🪓", Material.IRON_AXE, 13),
-    NETHERITE("netherite", "Netherite PvP", "🔥", Material.NETHERITE_CHESTPLATE, 19),
-    CRYSTAL("crystal", "Crystal PvP", "💥", Material.END_CRYSTAL, 20),
-    MACE("mace", "Mace PvP", "⚡", resolveMaterial("MACE", Material.NETHERITE_AXE), 21);
+    AXE("axe", "Axe PvP", "🪓", Material.IRON_AXE, 11),
+    MACE("mace", "Mace PvP", "⚡", resolveMaterial("MACE", Material.NETHERITE_AXE), 12),
+    UHC("uhc", "UHC PvP", "🏹", Material.BOW, 13),
+    NETHERITE("netherite", "Netherite PvP", "🔥", Material.NETHERITE_CHESTPLATE, 14),
+    OP("op", "OP PvP", "✦", Material.ENCHANTED_GOLDEN_APPLE, 15),
+    POT("pot", "Pot PvP", "🧪", Material.SPLASH_POTION, 16),
+    SMP("smp", "SMP PvP", "⛏", Material.IRON_PICKAXE, 19),
+    VANILLA("vanilla", "CPvP", "🗡", Material.WOODEN_SWORD, 20),
+    /** Legado — desactivado por defeito no config. */
+    NODEBUFF("nodebuff", "NoDebuff PvP", "💧", Material.SPLASH_POTION, 21),
+    CRYSTAL("crystal", "Crystal PvP", "💥", Material.END_CRYSTAL, 22);
+
+    private static final Map<String, GameModeId> ALIASES = Map.of(
+            "cpvp", VANILLA,
+            "vanilla", VANILLA,
+            "pot", POT,
+            "nodebuff", POT,
+            "nb", POT
+    );
 
     private final String id;
     private final String defaultDisplayName;
@@ -39,7 +53,7 @@ public enum GameModeId {
         return defaultDisplayName;
     }
 
-    /** Fallback when ModeRegistry is unavailable. */
+    /** Fallback quando {@link com.obm.network.tierspace.mode.ModeRegistry} não está disponível. */
     public String displayName() {
         return defaultDisplayName;
     }
@@ -58,6 +72,7 @@ public enum GameModeId {
 
     public static List<GameModeId> ordered() {
         return Arrays.stream(values())
+                .filter(m -> m != NODEBUFF && m != CRYSTAL)
                 .sorted(Comparator.comparingInt(GameModeId::defaultGuiSlot))
                 .toList();
     }
@@ -67,6 +82,10 @@ public enum GameModeId {
             return Optional.empty();
         }
         String normalized = raw.toLowerCase(Locale.ROOT);
+        GameModeId alias = ALIASES.get(normalized);
+        if (alias != null) {
+            return Optional.of(alias);
+        }
         return Arrays.stream(values())
                 .filter(mode -> mode.id.equals(normalized))
                 .findFirst();
