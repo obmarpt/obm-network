@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conta — MineSpace</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body data-page="account">
+  <div id="app-nav"></div>
+  <main class="container" style="max-width:560px;">
+    <h1 class="page-title">A minha conta</h1>
+    <div class="card" id="accountCard"><p class="muted">A carregar...</p></div>
+
+    <div class="card" style="margin-top:1rem;">
+      <h3>Ligar Minecraft</h3>
+      <p class="muted">Se o UUID não estiver ligado, gera um código e usa <code>/link &lt;código&gt;</code> in-game.</p>
+      <input class="input" id="linkUsername" placeholder="Username Minecraft">
+      <button class="btn btn-primary" id="linkBtn" type="button">Gerar código</button>
+      <div id="linkResult"></div>
+    </div>
+
+    <div class="card" style="margin-top:1rem;">
+      <h3>Encomendas</h3>
+      <div id="ordersList"><p class="muted">—</p></div>
+    </div>
+  </main>
+  <div id="app-footer"></div>
+  <script src="/js/layout.js"></script>
+  <script src="/js/site.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const devLink = sessionStorage.getItem('verifyDevLink');
+      if (devLink) {
+        sessionStorage.removeItem('verifyDevLink');
+        alert('Verifica o email (dev): ' + devLink);
+      }
+      const card = document.getElementById('accountCard');
+      try {
+        const { account } = await api('/api/web/auth/me');
+        card.innerHTML = `
+          <p><strong>Email:</strong> ${esc(account.email)}</p>
+          <p><strong>Minecraft:</strong> ${esc(account.username || '—')}</p>
+          <p><strong>UUID:</strong> ${esc(account.uuid || 'Não ligado')}</p>
+          <p>Email verificado: ${account.emailVerified
+            ? '<span class="badge badge-success">Sim</span>'
+            : '<span class="badge badge-warn">Não</span> <button class="btn btn-ghost btn-sm" id="resendVerify">Reenviar</button>'}</p>`;
+        if (!account.emailVerified) {
+          document.getElementById('resendVerify')?.addEventListener('click', async () => {
+            const r = await api('/api/web/auth/verify/resend', { method: 'POST' });
+            if (r.devLink) alert('Dev link: ' + r.devLink);
+            else alert('Email de verificação enviado.');
+          });
+        }
+        if (account.uuid) {
+          card.innerHTML += `<a class="btn btn-ghost" href="profile.html?uuid=${encodeURIComponent(account.uuid)}">Ver perfil público</a>`;
+        }
+
+        const { orders } = await api('/api/store/orders');
+        document.getElementById('ordersList').innerHTML = orders.length
+          ? `<table><thead><tr><th>ID</th><th>Estado</th><th>Data</th></tr></thead><tbody>
+            ${orders.map((o) => `<tr><td>${o.id}</td><td>${o.status}</td><td>${new Date(o.created_at).toLocaleDateString('pt-PT')}</td></tr>`).join('')}
+            </tbody></table>`
+          : '<p class="muted">Sem encomendas.</p>';
+      } catch {
+        card.innerHTML = '<p>Sem sessão. <a href="login.html">Entrar</a></p>';
+        location.href = 'login.html';
+      }
+    });
+  </script>
+</body>
+</html>

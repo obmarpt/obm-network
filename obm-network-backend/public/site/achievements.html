@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Achievements — MineSpace</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body data-page="achievements">
+  <div id="app-nav"></div>
+  <main class="container">
+    <h1 class="page-title">Achievements</h1>
+    <p class="muted">Completa desafios para desbloquear cosméticos exclusivos</p>
+    <div id="myProgress" class="card hidden" style="margin:1rem 0;"></div>
+    <div class="grid-2" id="achievementsGrid" style="margin-top:1rem;"></div>
+  </main>
+  <div id="app-footer"></div>
+  <script src="/js/layout.js"></script>
+  <script src="/js/site.js"></script>
+  <script src="/js/catalog.js"></script>
+  <script>
+    const TRIGGER_MAP = {
+      kills: (p) => p?.smp?.kills ?? 0,
+      duel_wins: (p) => p?.tierspace?.wins ?? 0,
+      coins: (p) => p?.coins ?? 0,
+      killstreak: () => 0,
+      hc_minutes: (p) => Math.floor((p?.hc?.playtime ?? 0)),
+    };
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      let profile = null;
+      try {
+        const { account } = await api('/api/web/auth/me');
+        if (account?.uuid) {
+          const data = await api(`/api/public/player/${account.uuid}`);
+          profile = data.profile;
+          document.getElementById('myProgress').classList.remove('hidden');
+          document.getElementById('myProgress').innerHTML = `<h3>O teu progresso</h3><p>Logado como <strong>${esc(account.username)}</strong></p>`;
+        }
+      } catch { /* guest */ }
+
+      try {
+        const { achievements } = await fetch('/api/public/catalog/achievements').then((r) => r.json());
+        document.getElementById('achievementsGrid').innerHTML = (achievements || []).map((a) => {
+          const current = profile ? (TRIGGER_MAP[a.trigger]?.(profile) ?? 0) : null;
+          const pct = current != null ? Math.min(100, (current / a.target) * 100) : 0;
+          const progress = current != null
+            ? `<p class="muted">${fmt(current)} / ${fmt(a.target)}</p><div class="progress-bar"><span style="width:${pct}%"></span></div>`
+            : '<p class="muted">Inicia sessão para ver progresso</p>';
+          return `
+            <article class="card">
+              <h3>${a.name}</h3>
+              ${rarityBadge(a.rarity)}
+              <p style="margin:0.5rem 0;">${a.description}</p>
+              <p class="muted">Reward: ${esc(a.reward)}</p>
+              ${progress}
+            </article>`;
+        }).join('');
+      } catch {
+        document.getElementById('achievementsGrid').innerHTML = '<p class="muted">Indisponível</p>';
+      }
+    });
+  </script>
+</body>
+</html>

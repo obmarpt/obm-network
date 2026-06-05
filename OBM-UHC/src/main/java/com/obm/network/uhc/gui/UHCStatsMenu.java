@@ -2,7 +2,8 @@ package com.obm.network.uhc.gui;
 
 import com.obm.network.core.OBMCorePlugin;
 import com.obm.network.core.progression.ProgressionLevelService;
-import com.obm.network.core.storage.DataStore;
+import com.obm.network.core.integration.HardcoreStatsBridge;
+import com.obm.network.core.storage.PlayerStatsKeys;
 import com.obm.network.uhc.util.UHCUtils;
 
 import org.bukkit.Bukkit;
@@ -34,13 +35,6 @@ public final class UHCStatsMenu {
     public static final int SLOT_BACK = 16;
     public static final int SLOT_SUMMARY = 22;
 
-    private static final String KILLS_KEY = "kills_uhc";
-    private static final String DEATHS_KEY = "deaths_uhc";
-    private static final String WINS_KEY = "wins_uhc";
-    private static final String MOBS_KEY = "mobs_uhc";
-    private static final String PLAYTIME_KEY = "playtime_uhc";
-    private static final String TIME_ALIVE_KEY = "time_alive_uhc";
-
     private UHCStatsMenu() {
     }
 
@@ -50,16 +44,16 @@ public final class UHCStatsMenu {
 
     public static Inventory create(Player player) {
         UUID uuid = player.getUniqueId();
-        DataStore ds = OBMCorePlugin.get().getDataStore();
+        HardcoreStatsBridge.ensureInitialized(uuid);
 
         int lives = UHCUtils.getLives(player);
-        int kills = ds.getInt(uuid, KILLS_KEY);
-        int deaths = ds.getInt(uuid, DEATHS_KEY);
-        int wins = ds.getInt(uuid, WINS_KEY);
-        int mobs = ds.getInt(uuid, MOBS_KEY);
-        int playtimeSec = ds.getInt(uuid, PLAYTIME_KEY);
-        int timeAliveSec = ds.getInt(uuid, TIME_ALIVE_KEY);
-        String kdr = formatKd(kills, deaths);
+        int kills = HardcoreStatsBridge.getKills(uuid);
+        int deaths = HardcoreStatsBridge.getDeaths(uuid);
+        int wins = HardcoreStatsBridge.getWins(uuid);
+        int mobs = HardcoreStatsBridge.getMobs(uuid);
+        int playtimeSec = HardcoreStatsBridge.getPlaytime(uuid);
+        int timeAliveSec = HardcoreStatsBridge.getTimeAlive(uuid);
+        String kdr = HardcoreStatsBridge.getKd(uuid);
 
         Inventory inv = Bukkit.createInventory(null, 27, TITLE);
         fillAll(inv, Material.RED_STAINED_GLASS_PANE);

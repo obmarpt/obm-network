@@ -8,6 +8,7 @@ import com.obm.network.tierspace.progression.DailyQuestService;
 import com.obm.network.tierspace.progression.PlacementService;
 import com.obm.network.tierspace.season.TierSeasonManager;
 import com.obm.network.tierspace.storage.TierSpaceStore;
+import com.obm.network.core.ui.PlayerUx;
 import com.obm.network.tierspace.ui.TierGuiMenu;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -38,16 +39,17 @@ public class TierSpaceCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cApenas jogadores.");
+        if (!PlayerUx.requirePlayer(sender)) {
             return true;
         }
+        Player player = (Player) sender;
 
         if (args.length >= 1 && args[0].equalsIgnoreCase("season")) {
             return handleSeason(sender, args);
         }
 
         if (args.length == 0 || args[0].equalsIgnoreCase("menu")) {
+            PlayerUx.openGuiFeedback(player, "TierSpace");
             player.openInventory(tierGuiMenu.create(player));
             return true;
         }
@@ -57,8 +59,17 @@ public class TierSpaceCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        GameModeId mode = GameModeId.from(args[0]).orElse(GameModeId.SWORD);
-        showStats(player, mode);
+        var modeOpt = GameModeId.from(args[0]);
+        if (modeOpt.isEmpty()) {
+            PlayerUx.usageLines(player,
+                    "§e/tierspace menu §8— §7abrir menu",
+                    "§e/tierspace stats <modo> §8— §7estatísticas",
+                    "§e/tierspace <modo> §8— §7stats rápidas");
+            PlayerUx.hint(player, "Modos: §f" + String.join("§7, §f",
+                    modeRegistry.enabledModes().stream().map(m -> m.id()).toList()));
+            return true;
+        }
+        showStats(player, modeOpt.get());
         return true;
     }
 

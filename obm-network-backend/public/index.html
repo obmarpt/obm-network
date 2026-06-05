@@ -3,269 +3,261 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OBM Admin Panel</title>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #0f172a;
-      color: #e2e8f0;
-      min-height: 100vh;
-      padding: 2rem;
-    }
-
-    .hidden { display: none !important; }
-
-    /* Login */
-    .login-wrap {
-      max-width: 380px;
-      margin: 4rem auto;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 12px;
-      padding: 2rem;
-    }
-
-    .login-wrap h1 { font-size: 1.5rem; margin-bottom: 1.5rem; text-align: center; }
-
-    .input {
-      width: 100%;
-      padding: 0.6rem 0.75rem;
-      border-radius: 8px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: #e2e8f0;
-      font-size: 0.875rem;
-      margin-bottom: 0.75rem;
-      outline: none;
-    }
-
-    .input:focus { border-color: #3b82f6; }
-
-    .btn {
-      border: none;
-      border-radius: 6px;
-      padding: 0.5rem 1rem;
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.1s, opacity 0.15s;
-    }
-
-    .btn-primary { background: #2563eb; color: #fff; width: 100%; }
-    .btn-primary:hover { background: #1d4ed8; }
-    .btn-ghost { background: transparent; color: #94a3b8; border: 1px solid #334155; }
-
-    .login-error { color: #f87171; font-size: 0.875rem; margin-top: 0.75rem; text-align: center; }
-
-    /* App */
-    header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    h1 { font-size: 1.5rem; font-weight: 700; }
-
-    .status {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.875rem;
-      color: #94a3b8;
-    }
-
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: #64748b; }
-    .dot.online { background: #22c55e; }
-    .dot.error  { background: #ef4444; }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .stat-card {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-    }
-
-    .stat-card span { display: block; font-size: 0.75rem; color: #64748b; text-transform: uppercase; margin-bottom: 0.35rem; }
-    .stat-card strong { font-size: 1.5rem; color: #fbbf24; }
-
-    .card {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 1.5rem;
-    }
-
-    .card-header {
-      padding: 1rem 1.25rem;
-      border-bottom: 1px solid #334155;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-
-    .card-header span { font-size: 0.8rem; color: #64748b; }
-
-    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
-
-    .top-list { list-style: none; padding: 1rem 1.25rem; }
-    .top-list li { padding: 0.4rem 0; border-bottom: 1px solid #334155; font-size: 0.875rem; display: flex; justify-content: space-between; }
-    .top-list li:last-child { border-bottom: none; }
-
-    .table-wrap { overflow-x: auto; }
-
-    table { width: 100%; border-collapse: collapse; min-width: 900px; }
-
-    th, td {
-      padding: 0.75rem 1rem;
-      text-align: left;
-      border-bottom: 1px solid #334155;
-      vertical-align: middle;
-    }
-
-    th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; font-weight: 600; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #263348; }
-
-    code { font-size: 0.75rem; color: #94a3b8; word-break: break-all; }
-
-    .rank {
-      display: inline-block;
-      padding: 0.15rem 0.6rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: capitalize;
-    }
-
-    .rank-bronze   { background: #78350f; color: #fcd34d; }
-    .rank-silver   { background: #374151; color: #d1d5db; }
-    .rank-gold     { background: #713f12; color: #fde68a; }
-    .rank-platinum { background: #1e3a5f; color: #93c5fd; }
-    .rank-default  { background: #334155; color: #cbd5e1; }
-
-    .coins    { color: #fbbf24; font-weight: 600; }
-    .emeralds { color: #34d399; font-weight: 600; }
-
-    .actions { display: flex; flex-wrap: wrap; gap: 0.35rem; }
-
-    .btn-give    { background: #166534; color: #bbf7d0; padding: 0.35rem 0.55rem; font-size: 0.75rem; }
-    .btn-remove  { background: #713f12; color: #fde68a; padding: 0.35rem 0.55rem; font-size: 0.75rem; }
-    .btn-ban     { background: #991b1b; color: #fecaca; padding: 0.35rem 0.55rem; font-size: 0.75rem; }
-    .btn-kick    { background: #854d0e; color: #fef08a; padding: 0.35rem 0.55rem; font-size: 0.75rem; }
-    .btn-freeze  { background: #1e40af; color: #bfdbfe; padding: 0.35rem 0.55rem; font-size: 0.75rem; }
-    .btn-broadcast { background: #6d28d9; color: #ede9fe; }
-
-    .command-panel { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
-    .command-row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
-    .command-row label { font-size: 0.875rem; font-weight: 600; min-width: 140px; color: #94a3b8; }
-    .command-row .input { flex: 1; min-width: 200px; margin-bottom: 0; }
-
-    .empty, .error-msg { padding: 2rem; text-align: center; color: #64748b; }
-    .error-msg { color: #f87171; }
-
-    #toastContainer {
-      position: fixed;
-      top: 1.25rem;
-      right: 1.25rem;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      max-width: 360px;
-    }
-
-    .toast {
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-    }
-
-    .toast-success { background: #166534; color: #bbf7d0; border: 1px solid #22c55e; }
-    .toast-error   { background: #991b1b; color: #fecaca; border: 1px solid #ef4444; }
-  </style>
+  <title>OBM Enterprise — MineSpace</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  <div id="toastContainer"></div>
+  <div id="toastContainer" class="toast-container"></div>
 
   <div id="login-view" class="login-wrap">
-    <h1>OBM Admin Panel</h1>
-    <input class="input" id="loginUser" type="text" placeholder="Utilizador" autocomplete="username">
-    <input class="input" id="loginPass" type="password" placeholder="Password" autocomplete="current-password">
-    <button class="btn btn-primary" id="loginBtn">Entrar</button>
-    <p id="loginError" class="login-error"></p>
+    <div class="login-card">
+      <h1>OBM Enterprise</h1>
+      <p class="muted">Gestão MineSpace</p>
+      <input class="input" id="loginUser" type="text" placeholder="Utilizador" autocomplete="username">
+      <input class="input" id="loginPass" type="password" placeholder="Password" autocomplete="current-password">
+      <button class="btn btn-primary btn-block" id="loginBtn">Entrar</button>
+      <p id="loginError" class="error-text"></p>
+    </div>
   </div>
 
-  <div id="app-view" class="hidden">
-    <header>
-      <h1>OBM Admin Panel</h1>
-      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
-        <div class="status">
-          <div class="dot" id="statusDot"></div>
-          <span id="statusText">A carregar...</span>
+  <div id="app-view" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand">OBM <span>Enterprise</span></div>
+      <nav class="nav">
+        <button class="nav-item active" data-page="dashboard">📊 Dashboard</button>
+        <button class="nav-item" data-page="players">🧍 Players</button>
+        <button class="nav-item" data-page="staff">👮 Staff</button>
+        <button class="nav-item" data-page="leaderboards">🏆 Leaderboards</button>
+        <button class="nav-item" data-page="bans">🚫 Bans</button>
+        <button class="nav-item" data-page="reports">📨 Reports</button>
+        <button class="nav-item" data-page="logs">📜 Logs</button>
+        <button class="nav-item" data-page="monitor">🧠 Monitor</button>
+        <button class="nav-item" data-page="anticheat">🛡️ Anticheat</button>
+        <button class="nav-item admin-only" data-page="store">🛒 Loja Web</button>
+        <button class="nav-item admin-only" data-page="webaccounts">📧 Contas Web</button>
+        <button class="nav-item" data-page="support">💬 Suporte Web</button>
+      </nav>
+      <button class="btn btn-ghost btn-block nav-logout" id="logoutBtn">Sair</button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <h2 id="pageTitle">Dashboard</h2>
+        <div class="topbar-right">
+          <span class="role-badge" id="roleBadge">—</span>
+          <div class="status-pill"><span class="dot" id="statusDot"></span><span id="statusText">—</span></div>
         </div>
-        <button class="btn btn-ghost" id="logoutBtn">Sair</button>
-      </div>
-    </header>
+      </header>
 
-    <section class="stats-grid">
-      <div class="stat-card"><span>Total Players</span><strong id="statTotalPlayers">—</strong></div>
-      <div class="stat-card"><span>Total Coins</span><strong id="statTotalCoins">—</strong></div>
-      <div class="stat-card"><span>Média Coins</span><strong id="statAvgCoins">—</strong></div>
-    </section>
-
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-header"><strong>Top Coins</strong></div>
-        <ul class="top-list" id="topCoins"><li class="empty">—</li></ul>
-      </div>
-      <div class="card">
-        <div class="card-header"><strong>Top Emeralds</strong></div>
-        <ul class="top-list" id="topEmeralds"><li class="empty">—</li></ul>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-header"><strong>Comandos globais</strong></div>
-      <div class="command-panel">
-        <div class="command-row">
-          <label for="manualCommand">Comando manual</label>
-          <input class="input" id="manualCommand" type="text" placeholder="say &lt;mensagem&gt; (whitelist)" autocomplete="off">
-          <button class="btn btn-primary" id="btnManualCommand">Executar</button>
+      <section id="page-dashboard" class="page">
+        <div class="stats-grid" id="dashStats"></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><strong>Online (24h)</strong></div><div class="chart-wrap"><canvas id="chartOnline"></canvas></div></div>
+          <div class="card"><div class="card-head"><strong>Growth jogadores</strong></div><div class="chart-wrap"><canvas id="chartGrowth"></canvas></div></div>
+          <div class="card"><div class="card-head"><strong>Kills / dia</strong></div><div class="chart-wrap"><canvas id="chartKills"></canvas></div></div>
+          <div class="card"><div class="card-head"><strong>Economia (coins)</strong></div><div class="chart-wrap"><canvas id="chartEconomy"></canvas></div></div>
         </div>
-        <div class="command-row">
-          <label for="broadcastMsg">Broadcast</label>
-          <input class="input" id="broadcastMsg" type="text" placeholder="Mensagem para todos" autocomplete="off">
-          <button class="btn btn-broadcast" id="btnBroadcast">📢 Broadcast</button>
-        </div>
-      </div>
-    </div>
+      </section>
 
-    <div class="card">
-      <div class="card-header">
-        <strong>Players</strong>
-        <span id="playerCount">0 registos</span>
-      </div>
-      <div id="tableContainer">
-        <p class="empty">A carregar players...</p>
-      </div>
-    </div>
+      <section id="page-players" class="page hidden">
+        <div class="toolbar">
+          <input class="input search-input" id="playerSearch" type="search" placeholder="Nome ou UUID…">
+          <button class="btn btn-primary" id="playerSearchBtn">Pesquisar</button>
+        </div>
+        <div class="card">
+          <div class="card-head"><strong>Jogadores</strong><span class="muted" id="playersMeta">—</span></div>
+          <div id="playersTableWrap"></div>
+          <div class="pagination" id="playersPagination"></div>
+        </div>
+        <div id="playerProfilePanel" class="card hidden">
+          <div class="card-head"><strong id="profileTitle">Perfil</strong><button class="btn btn-ghost btn-sm" id="closeProfile">✕</button></div>
+          <div class="profile-sections" id="profileContent"></div>
+          <div class="economy-actions admin-only">
+            <h4>Economia (admin)</h4>
+            <div class="action-row">
+              <input class="input" id="ecoCoinsDelta" type="number" placeholder="Δ coins">
+              <input class="input" id="ecoEmeraldsDelta" type="number" placeholder="Δ emeralds">
+              <button class="btn btn-primary" id="ecoApplyBtn">Aplicar</button>
+            </div>
+          </div>
+          <div class="economy-actions admin-only">
+            <h4>Acções admin</h4>
+            <div class="action-row">
+              <button class="btn btn-remove" id="ecoResetSmp">Reset SMP</button>
+              <button class="btn btn-remove" id="ecoResetAll">Reset ALL</button>
+            </div>
+          </div>
+          <div class="economy-actions mod-only">
+            <h4>Moderação</h4>
+            <div class="action-row">
+              <input class="input" id="banReason" type="text" placeholder="Motivo ban">
+              <input class="input" id="banHours" type="number" placeholder="Horas (0=perm)">
+              <button class="btn btn-danger" id="banPlayerBtn">Ban</button>
+              <button class="btn btn-ghost" id="unbanPlayerBtn">Unban</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="page-staff" class="page hidden">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head"><strong>Online agora</strong><span class="muted" id="staffOnlineCount">—</span></div>
+            <div id="staffOnlineList"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><strong>Comando rápido</strong></div>
+            <div class="panel">
+              <div class="action-row">
+                <input class="input flex" id="staffCmd" placeholder="tp Player1 Player2">
+                <button class="btn btn-primary" id="staffCmdRun">Executar</button>
+              </div>
+              <p class="muted small">tp, say, broadcast, kick (mods). lp apenas admin.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="page-leaderboards" class="page hidden">
+        <div class="grid-3" id="leaderboardsGrid"></div>
+      </section>
+
+      <section id="page-bans" class="page hidden">
+        <div class="toolbar">
+          <button class="btn btn-primary" id="bansRefresh">Actualizar</button>
+          <label class="muted"><input type="checkbox" id="bansActiveOnly"> Só activos</label>
+        </div>
+        <div class="card">
+          <div class="card-head"><strong>Banir jogador</strong></div>
+          <div class="panel action-row">
+            <input class="input" id="banUuid" placeholder="UUID">
+            <input class="input" id="banName" placeholder="Nome">
+            <input class="input" id="banReasonGlobal" placeholder="Motivo">
+            <input class="input" id="banHoursGlobal" type="number" placeholder="Horas">
+            <button class="btn btn-danger" id="banSubmit">Ban</button>
+          </div>
+        </div>
+        <div class="card"><div id="bansTableWrap"></div><div class="pagination" id="bansPagination"></div></div>
+      </section>
+
+      <section id="page-reports" class="page hidden">
+        <div class="toolbar">
+          <select class="input" id="reportFilter"><option value="open">Abertos</option><option value="closed">Fechados</option><option value="all">Todos</option></select>
+          <button class="btn btn-primary" id="reportsRefresh">Actualizar</button>
+        </div>
+        <div class="card"><div id="reportsTableWrap"></div></div>
+      </section>
+
+      <section id="page-logs" class="page hidden">
+        <div class="toolbar">
+          <select class="input" id="logTypeFilter">
+            <option value="all">Todos</option><option value="join">Joins</option>
+            <option value="kill">Kills</option><option value="command">Comandos</option>
+            <option value="ban">Bans</option>            <option value="admin">Admin</option>
+            <option value="anticheat">Anticheat</option>
+          </select>
+          <button class="btn btn-primary" id="logsRefreshBtn">Actualizar</button>
+        </div>
+        <div class="card timeline" id="logsTimeline"></div>
+        <div class="pagination" id="logsPagination"></div>
+      </section>
+
+      <section id="page-monitor" class="page hidden">
+        <div class="stats-grid" id="monitorStats"></div>
+        <div class="card">
+          <div class="card-head"><strong>Health</strong><button class="btn btn-primary btn-sm" id="healthRefreshBtn">Testar</button></div>
+          <pre class="result-box" id="healthJson">—</pre>
+        </div>
+      </section>
+
+      <section id="page-anticheat" class="page hidden">
+        <div class="stats-grid" id="acStats"></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><strong>Flags (24h)</strong></div><div class="chart-wrap"><canvas id="chartAcTimeline"></canvas></div></div>
+          <div class="card"><div class="card-head"><strong>Por severidade</strong></div><div class="chart-wrap"><canvas id="chartAcSeverity"></canvas></div></div>
+        </div>
+        <div class="toolbar">
+          <select class="input" id="acViolFilter">
+            <option value="">Todas severidades</option>
+            <option value="critical">Critical</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+          <button class="btn btn-primary" id="acRefreshBtn">Actualizar</button>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head"><strong>Alertas abertos</strong></div>
+            <div id="acAlertsWrap"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><strong>Suspeitos</strong></div>
+            <div id="acSuspectsWrap"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><strong>Violações recentes</strong></div>
+          <div id="acViolationsWrap"></div>
+          <div class="pagination" id="acViolPagination"></div>
+        </div>
+      </section>
+
+      <section id="page-webaccounts" class="page hidden admin-only">
+        <div class="toolbar"><button class="btn btn-primary" id="webAccountsRefresh">Actualizar</button></div>
+        <div class="card"><div id="webAccountsWrap"></div></div>
+      </section>
+
+      <section id="page-support" class="page hidden">
+        <div class="toolbar">
+          <button class="btn btn-primary" id="supportRefreshBtn">Actualizar</button>
+          <select class="input" id="supportStatusFilter">
+            <option value="">Todos</option>
+            <option value="open">Open</option>
+            <option value="answered">Answered</option>
+            <option value="closed">Closed</option>
+          </select>
+        </div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><strong>Tickets</strong></div><div id="supportTicketsWrap"></div></div>
+          <div class="card"><div class="card-head"><strong>Detalhe</strong></div><div id="supportDetailWrap"><p class="muted">Selecciona um ticket</p></div></div>
+        </div>
+      </section>
+
+      <section id="page-store" class="page hidden">
+        <div class="toolbar">
+          <button class="btn btn-primary" id="storeRefreshBtn">Actualizar</button>
+          <select class="input" id="storeOrderFilter">
+            <option value="">Todos estados</option>
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <option value="fulfilled">Fulfilled</option>
+            <option value="failed">Failed</option>
+          </select>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head"><strong>Produtos</strong></div>
+            <div id="storeProductsWrap"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><strong>Encomendas</strong><span class="muted" id="storeOrdersMeta">—</span></div>
+            <div id="storeOrdersWrap"></div>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top:1rem;">
+          <div class="card">
+            <div class="card-head"><strong>Códigos promocionais</strong></div>
+            <div id="storePromosWrap"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><strong>Subscrições</strong></div>
+            <div id="storeSubsWrap"></div>
+          </div>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script src="dashboard.js"></script>

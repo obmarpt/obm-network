@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class SmpDeathDeduplicator {
 
-    private static final long RELEASE_TICKS = 20L;
+    private static final long RELEASE_TICKS = 100L;
 
     private final Set<UUID> processedDeaths = ConcurrentHashMap.newKeySet();
 

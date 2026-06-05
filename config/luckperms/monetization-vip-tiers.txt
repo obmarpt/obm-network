@@ -1,0 +1,47 @@
+# MineSpace — VIP tiers monetização (vip_plus / mvp_plus)
+# Aplicar em servidor já com production-setup.txt. Depois: lp sync
+
+# =============================================================================
+# 1. GRUPOS E HIERARQUIA
+# =============================================================================
+
+lp creategroup vip_plus
+lp creategroup mvp_plus
+
+lp group vip_plus parent add vip
+lp group mvp_plus parent add mvp
+
+lp group vip_plus setweight 15
+lp group mvp_plus setweight 25
+
+# Track jogador (se já existir, editar em vez de criar)
+lp createtrack player default vip vip_plus mvp mvp_plus
+
+# =============================================================================
+# 2. VIP+
+# =============================================================================
+
+lp group vip_plus permission set group.vip_plus true
+lp group vip_plus permission set obm.vip.kit true
+lp group vip_plus permission set essentials.sethome.multiple.vip_plus true
+lp group vip_plus permission set essentials.fly true
+lp group vip_plus meta setprefix 105 "&b&lVIP+ &r"
+
+# =============================================================================
+# 3. MVP (reforço perks loja)
+# =============================================================================
+
+lp group mvp permission set obm.vip.warp true
+lp group mvp permission set obm.queue.priority true
+
+# =============================================================================
+# 4. MVP+
+# =============================================================================
+
+lp group mvp_plus permission set group.mvp_plus true
+lp group mvp_plus permission set obm.vip.warp true
+lp group mvp_plus permission set obm.queue.priority true
+lp group mvp_plus permission set essentials.sethome.multiple.mvp_plus true
+lp group mvp_plus meta setprefix 115 "&d&lM&b&lV&d&lP&b&l+ &r"
+
+lp sync

@@ -1,24 +1,13 @@
 # https://github.com/NEZNAMY/TAB/wiki/Feature-guide:-Header-&-Footer
 header-footer:
-  enabled: true
+  enabled: false
   designs:
     default:
       header:
-        - "<#00AAFF>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</#00AAFF>"
-        - "<gradient:#00AAFF:#AA00FF><bold>✦ MineSpace ✦</bold></gradient>"
-        - "<gray>Bem-vindo, <white>%player%<gray>!"
-        - "<#FFAA00>Rush</#FFAA00> <gray>·</gray> <#FF4444>Hardcore</#FF4444> <gray>·</gray> <#00AAFF>TierSpace</#00AAFF>"
-        - "<gray>Online: <white>%online% <dark_gray>· <gray>Staff: <gold>%staffonline%"
-        - ""
+        - "&b&lMINESPACE NETWORK"
       footer:
-        - "<gray>Coins: <gold>%vault_eco_balance%"
-        - "<gray>Rank: <yellow>%group%"
-        - "<gray>Nível: <aqua>%obm_level%"
-        - "<gray>Ping: <green>%ping%ms"
-        - ""
-        - "<gradient:#FFAA00:#FF7700>Domina o ranking!</gradient>"
-        - "<#00AAFF>play.minespace.net</#00AAFF>"
-        - "<#00AAFF>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</#00AAFF>"
+        - "&7Store: &astore.minespace.com"
+        - "&7Online: &e%online%"
 
 # https://github.com/NEZNAMY/TAB/wiki/Feature-guide:-Tablist-name-formatting
 tablist-name-formatting:
@@ -27,12 +16,12 @@ tablist-name-formatting:
 
 # https://github.com/NEZNAMY/TAB/wiki/Feature-guide:-Nametags
 scoreboard-teams:
-  enabled: true
+  enabled: false
   enable-collision: true
   invisible-nametags: false
   # https://github.com/NEZNAMY/TAB/wiki/Feature-guide:-Sorting-players-in-tablist
   sorting-types:
-    - "GROUPS:owner,admin,mod,helper,builder,vip,default"
+    - "GROUPS:owner,admin,mod,helper,builder,mvp_plus,mvp,vip_plus,vip,default"
     - "PLACEHOLDER_A_TO_Z:%player%"
   case-sensitive-sorting: true
   can-see-friendly-invisibles: false
@@ -40,7 +29,7 @@ scoreboard-teams:
 
 # https://github.com/NEZNAMY/TAB/wiki/Feature-guide:-Playerlist-Objective
 playerlist-objective:
-  enabled: true
+  enabled: false
   value: "%ping%"
   fancy-value: "&7Ping: %ping%"
   title: "TAB" # Only visible on Bedrock Edition

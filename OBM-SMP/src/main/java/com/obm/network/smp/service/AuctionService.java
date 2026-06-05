@@ -63,11 +63,7 @@ public class AuctionService {
             return MarketSaleResult.error("Apenas o dono do anúncio pode removê-lo.");
         }
 
-        MarketSaleResult result = marketService.removeListing(listingId, seller.getUniqueId());
-        if (result.isSuccess()) {
-            seller.getInventory().addItem(listing.getItem());
-        }
-        return result;
+        return marketService.removeListing(seller, listingId);
     }
 
     public int getMinPrice() {

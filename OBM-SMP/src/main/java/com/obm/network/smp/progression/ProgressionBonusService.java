@@ -17,19 +17,28 @@ public class ProgressionBonusService {
     }
 
     public int applyKillReward(UUID uuid, int baseReward) {
-        double multiplier = rankService.getKillMultiplier(uuid) * levelService.getLevelKillMultiplier(uuid);
+        double multiplier = rankService.getKillMultiplier(uuid)
+                * rankService.getMoneyMultiplier(uuid)
+                * levelService.getLevelKillMultiplier(uuid)
+                * com.obm.network.core.integration.BattlePassBridge.moneyMultiplier(uuid);
         int amount = Math.max(0, (int) Math.round(baseReward * multiplier));
         return applyVipCoinBonus(uuid, amount);
     }
 
     public int applySellPayout(UUID uuid, int baseTotal) {
-        double multiplier = rankService.getSellMultiplier(uuid) * levelService.getLevelSellMultiplier(uuid);
+        double multiplier = rankService.getSellMultiplier(uuid)
+                * rankService.getMoneyMultiplier(uuid)
+                * levelService.getLevelSellMultiplier(uuid)
+                * com.obm.network.core.integration.BattlePassBridge.moneyMultiplier(uuid);
         int amount = Math.max(0, (int) Math.floor(baseTotal * multiplier));
         return applyVipCoinBonus(uuid, amount);
     }
 
     public int applyPlaytimeReward(UUID uuid, int baseReward) {
-        return applyVipCoinBonus(uuid, Math.max(0, baseReward));
+        double multiplier = rankService.getMoneyMultiplier(uuid)
+                * com.obm.network.core.integration.BattlePassBridge.moneyMultiplier(uuid);
+        int amount = Math.max(0, (int) Math.round(baseReward * multiplier));
+        return applyVipCoinBonus(uuid, amount);
     }
 
     private int applyVipCoinBonus(UUID uuid, int amount) {

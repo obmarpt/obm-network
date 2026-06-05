@@ -91,6 +91,18 @@ public class TierGuiMenu {
         return inv;
     }
 
+    /** Actualiza slots dinâmicos sem reabrir o inventário (menos lag). */
+    public void refreshQueueSlots(Player player, Inventory inv) {
+        if (player == null || inv == null || inv.getSize() < 54) {
+            return;
+        }
+        UUID uuid = player.getUniqueId();
+        Optional<GameModeId> queued = queueService.getQueuedMode(uuid);
+        for (GameModeId mode : modeRegistry.enabledModes()) {
+            inv.setItem(modeRegistry.guiSlot(mode), createModeItem(uuid, mode, queued.orElse(null)));
+        }
+    }
+
     private ItemStack createModeItem(UUID uuid, GameModeId mode, GameModeId activeQueue) {
         String modeId = mode.id();
         boolean queued = mode == activeQueue;

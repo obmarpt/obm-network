@@ -131,39 +131,47 @@ public class SMPManager {
         int reward = bonusService.applyKillReward(killerId, killReward);
 
         if (!blocked && reward > 0) {
+            if (!com.obm.network.core.security.SecurityBridge.tryClaimEconomy(
+                    killerId, "smp_kill", reward, victimId.toString())) {
+                return;
+            }
             economyService.deposit(killerId, reward);
             RetentionFeedback.coinsGained(killer, reward, "Kill");
             EmeraldRewardBridge.smpKill(killer, victim);
             com.obm.network.core.integration.BattlePassBridge.smpKill(killer);
+            killFarmGuard.recordKill(killerId, victimId);
+
+            dataStore.increment(killerId, PlayerStatsKeys.KILLS_SMP);
+            ProgressionLevelService globalLevels = OBMCorePlugin.get().getProgressionLevelService();
+            if (globalLevels != null) {
+                globalLevels.onSmpKill(killerId);
+            }
+            PlayerStatsTracker tracker = OBMCorePlugin.get().getPlayerStatsTracker();
+            if (tracker != null) {
+                tracker.onKill(killerId, killer.getName());
+            }
+
+            int streak = dataStore.getInt(killerId, "killstreak_smp") + 1;
+            dataStore.set(killerId, "killstreak_smp", streak);
+
+            int best = dataStore.getInt(killerId, "best_killstreak_smp");
+            if (streak > best) {
+                dataStore.set(killerId, "best_killstreak_smp", streak);
+            }
+
+            com.obm.network.core.integration.AchievementBridge.smpKill(killer);
+            com.obm.network.core.integration.AchievementBridge.smpKillstreak(killer, streak);
+
+            levelService.addKillXp(killer);
+            dataStore.save(killerId);
         } else if (altBlocked) {
             killer.sendMessage("§7Sem recompensa (mesmo IP — anti-alt).");
         } else if (farmBlocked) {
             killer.sendMessage("§7Sem recompensa (anti farm).");
         }
 
-        dataStore.increment(killerId, PlayerStatsKeys.KILLS_SMP);
-        ProgressionLevelService globalLevels = OBMCorePlugin.get().getProgressionLevelService();
-        if (globalLevels != null) {
-            globalLevels.onSmpKill(killerId);
-        }
-        PlayerStatsTracker tracker = OBMCorePlugin.get().getPlayerStatsTracker();
-        if (tracker != null) {
-            tracker.onKill(killerId, killer.getName());
-        }
-
-        int streak = dataStore.getInt(killerId, "killstreak_smp") + 1;
-        dataStore.set(killerId, "killstreak_smp", streak);
-
-        int best = dataStore.getInt(killerId, "best_killstreak_smp");
-        if (streak > best) {
-            dataStore.set(killerId, "best_killstreak_smp", streak);
-        }
-
         dataStore.set(victimId, "killstreak_smp", 0);
-
-        dataStore.save(killerId);
-
-        levelService.addKillXp(killer);
+        dataStore.save(victimId);
     }
 
     /*

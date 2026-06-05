@@ -13,11 +13,18 @@ public final class TierSpaceHub {
         if (player == null) {
             return false;
         }
-        OBMCorePlugin core = OBMCorePlugin.get();
-        if (core == null) {
+        return isInTierSpaceHub(player.getWorld().getName());
+    }
+
+    public static boolean isInTierSpaceHub(String worldName) {
+        if (worldName == null || worldName.isBlank()) {
             return false;
         }
+        OBMCorePlugin core = OBMCorePlugin.get();
+        if (core == null) {
+            return "rankedSpawn".equalsIgnoreCase(worldName);
+        }
         WorldModeService worlds = core.getWorldModeService();
-        return worlds != null && worlds.isRanked(player.getWorld().getName());
+        return worlds != null && worlds.isRanked(worldName);
     }
 }

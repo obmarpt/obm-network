@@ -1,30 +1,54 @@
 const { Router } = require('express');
 const pool = require('../database');
-const { pluginOrAuthMiddleware } = require('../auth');
+const { pluginOnlyAuth } = require('../auth');
+const adminRepo = require('../db/adminRepository');
 const { notifyAdminLog } = require('../discord');
-const { isNonEmptyString, badRequest, internalError } = require('./validation');
+const { isNonEmptyString, badRequest, internalError, normalizeUuid } = require('./validation');
 
 const router = Router();
 
-router.post('/log', pluginOrAuthMiddleware, async (req, res) => {
-  const { staff, action, target, value } = req.body || {};
+router.post('/events', pluginOnlyAuth, async (req, res) => {
+  const body = req.body || {};
+  const type = body.type || body.event_type;
+  if (!isNonEmptyString(type)) return badRequest(res, 'type inválido');
 
-  if (!isNonEmptyString(staff)) return badRequest(res, 'staff inválido');
+  const actorUuid = normalizeUuid(body.actor_uuid || body.uuid);
+  const targetUuid = normalizeUuid(body.target_uuid);
+
+  try {
+    await adminRepo.insertServerEvent({
+      type: type.trim(),
+      actorUuid,
+      actorName: body.actor_name || body.name,
+      targetUuid,
+      targetName: body.target_name,
+      detail: body.detail || body.value,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    return internalError(res, err, 'events');
+  }
+});
+
+router.post('/log', pluginOnlyAuth, async (req, res) => {
+  const { action, target, value } = req.body || {};
+
   if (!isNonEmptyString(action)) return badRequest(res, 'action inválido');
 
-  const safeTarget = target != null ? String(target) : '';
-  const safeValue = value != null ? String(value) : '';
+  const safeStaff = 'plugin';
+  const safeTarget = target != null ? String(target).slice(0, 128) : '';
+  const safeValue = value != null ? String(value).slice(0, 512) : '';
 
   try {
     await pool.query(
       'INSERT INTO logs (staff, action, target, value) VALUES ($1, $2, $3, $4)',
-      [staff.trim(), action.trim(), safeTarget, safeValue]
+      [safeStaff, action.trim(), safeTarget, safeValue]
     );
 
-    console.log(`📋 LOG: ${staff} → ${action} | target=${safeTarget} | value=${safeValue}`);
+    console.log(`📋 LOG: ${safeStaff} → ${action} | target=${safeTarget} | value=${safeValue}`);
 
     notifyAdminLog({
-      staff: staff.trim(),
+      staff: safeStaff,
       action: action.trim(),
       target: safeTarget,
       value: safeValue,

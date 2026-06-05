@@ -19,6 +19,8 @@ public final class GuiTitles {
 
     public static final String MARKET_PREFIX = "§6Mercado §8| §7Pág";
 
+    public static final String RANK_PROGRESSION = "§a§lRANK PROGRESSION";
+
     private GuiTitles() {
     }
 

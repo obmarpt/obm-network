@@ -1,0 +1,251 @@
+/* Advanced player profile */
+
+.profile-page { padding-bottom: 3rem; }
+
+.profile-hero-adv {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+  background: linear-gradient(135deg, rgba(157, 78, 221, 0.12), rgba(0, 180, 255, 0.06));
+  border: 1px solid var(--border-strong);
+}
+
+.profile-hero-adv .profile-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius);
+  image-rendering: pixelated;
+  box-shadow: var(--shadow-glow-purple);
+}
+
+.profile-hero-adv h1 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.profile-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.profile-highlight-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.profile-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.profile-badge.tier-gold { border-color: rgba(255, 195, 0, 0.45); color: var(--gold); box-shadow: var(--shadow-glow-gold); }
+.profile-badge.tier-legendary { border-color: rgba(255, 140, 0, 0.5); color: #ff9f43; }
+.profile-badge.tier-epic { border-color: rgba(157, 78, 221, 0.5); color: var(--purple); }
+.profile-badge.tier-rare { border-color: rgba(0, 180, 255, 0.4); color: var(--blue); }
+
+.profile-section {
+  margin-bottom: 1.5rem;
+}
+
+.profile-section-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.profile-stat-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.75rem;
+}
+
+.profile-stat-card {
+  padding: 1rem;
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.profile-stat-card .val {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.profile-stat-card .lbl {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.profile-rank-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.profile-rank-item {
+  padding: 0.85rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-rank-item strong {
+  font-family: var(--font-display);
+  color: var(--blue);
+}
+
+.profile-season-card {
+  padding: 1.25rem;
+}
+
+.profile-season-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.profile-season-pos {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.profile-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.profile-chart-card {
+  padding: 1rem;
+  min-height: 200px;
+}
+
+.profile-chart-card h4 {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.profile-chart-svg {
+  width: 100%;
+  height: 140px;
+  display: block;
+}
+
+.profile-chart-empty {
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.profile-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.profile-tab {
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: var(--transition-fast);
+}
+
+.profile-tab.active,
+.profile-tab:hover {
+  color: var(--text);
+  border-color: var(--purple);
+  background: rgba(157, 78, 221, 0.12);
+}
+
+.profile-cosmetic-grid,
+.profile-achievement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.profile-cosmetic-item,
+.profile-achievement-item {
+  padding: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+}
+
+.profile-cosmetic-item.unlocked { border-color: rgba(0, 255, 153, 0.25); }
+.profile-cosmetic-item.active { box-shadow: var(--shadow-glow-purple); }
+.profile-achievement-item.completed { border-color: rgba(0, 255, 153, 0.3); }
+
+.rarity-common { color: #aaa; }
+.rarity-rare { color: var(--blue); }
+.rarity-epic { color: var(--purple); }
+.rarity-legendary { color: var(--gold); }
+.rarity-mythic { color: #ff6bcb; }
+
+.profile-season-history {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profile-season-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.profile-season-row.current {
+  border-color: rgba(157, 78, 221, 0.4);
+}
+
+@media (max-width: 640px) {
+  .profile-hero-adv { flex-direction: column; text-align: center; }
+  .profile-hero-meta { justify-content: center; }
+}

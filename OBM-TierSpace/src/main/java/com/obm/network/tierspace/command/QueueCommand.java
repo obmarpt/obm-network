@@ -1,5 +1,6 @@
 package com.obm.network.tierspace.command;
 
+import com.obm.network.core.ui.PlayerUx;
 import com.obm.network.tierspace.hub.TierSpaceHub;
 import com.obm.network.tierspace.match.MatchService;
 import com.obm.network.tierspace.mode.GameModeId;
@@ -36,18 +37,22 @@ public class QueueCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cApenas jogadores.");
+        if (!PlayerUx.requirePlayer(sender)) {
             return true;
         }
+        Player player = (Player) sender;
+
         if (!TierSpaceHub.isInTierSpaceHub(player)) {
-            player.sendMessage("§cSó podes usar este comando no TierSpace.");
+            PlayerUx.error(player, "Só podes usar este comando no hub TierSpace.");
             return true;
         }
 
         if (args.length == 0) {
-            player.sendMessage("§b/queue <modo> §7| §b/queue leave §7| §b/queue status");
-            player.sendMessage("§7Modos: " + String.join(", ",
+            PlayerUx.usageLines(player,
+                    "§e/queue <modo> §8— §7entrar na fila",
+                    "§e/queue leave §8— §7sair da fila",
+                    "§e/queue status §8— §7ver posição");
+            PlayerUx.hint(player, "Modos: §f" + String.join("§7, §f",
                     modeRegistry.enabledModes().stream().map(GameModeId::id).toList()));
             return true;
         }
@@ -57,9 +62,10 @@ public class QueueCommand implements CommandExecutor, TabCompleter {
             UUID uuid = player.getUniqueId();
             if (queueService.leave(uuid)) {
                 queueFeedbackService.stopTracking(uuid);
-                player.sendMessage("§7Saíste da fila TierSpace.");
+                PlayerUx.info(player, "Saíste da fila TierSpace.");
+                matchService.leaveQueueState(player);
             } else {
-                player.sendMessage("§cNão estás em fila.");
+                PlayerUx.error(player, "Não estás em fila.");
             }
             return true;
         }

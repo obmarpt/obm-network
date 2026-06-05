@@ -1,0 +1,215 @@
+# MineSpace — Problemas Difíceis de Detetar (Edge Cases)
+# Auditoria profunda — só aparecem com jogadores reais, carga ou timing específico
+
+================================================================================
+ECONOMIA — RACE CONDITIONS & PERDA SILENCIOSA
+================================================================================
+
+[HIDDEN-001] Double-write smp_balance (3 writers, 3 locks)
+  ONDE: EconomyService + PlayerCacheService.applyCoinsToLocalStore + EconomyBridge
+  QUANDO: Jogador vende item (SMP economy) enquanto backend sync aplica delta de coins.
+  SINTOMA: Saldo "salta" ±N coins sem transacção visível; reports impossíveis de reproduzir 1x.
+  REPRO: 2 threads — /sell spam + admin give coins via painel ao mesmo tempo no mesmo UUID.
+  FIX: Single writer pattern.
+
+[HIDDEN-002] PlayerData.markFullySynced() durante earn
+  ONDE: PlayerCacheSyncTask async + PlayerData.addCoins() main thread
+  QUANDO: Kill reward + periodic sync (60s) overlap.
+  SINTOMA: Coins ganhos em combate não persistem até quit; crash = perda total dessa sessão.
+  REPRO: Matar 5 players, forçar sync (esperar 60s mid-fight), crash servidor antes de quit.
+  FIX: Atomic dirty flag; version counter no save payload.
+
+[HIDDEN-003] EconomyBridge fallback sem lock
+  ONDE: EconomyBridge.deposit/withdraw quando OBM-SMP disabled
+  QUANDO: Servidor só Core sem SMP plugin temporariamente (update/reload).
+  SINTOMA: Dupe coins em janela de reload de plugins.
+  REPRO: /reload confirm durante /money pay entre 2 jogadores.
+
+[HIDDEN-004] GlobalEconomyService.setBalance sem synchronized
+  ONDE: Admin GUI set emeralds + jogador ganha emerald reward simultâneo
+  SINTOMA: Admin set "não cola" ou jogador ganha extra.
+  REPRO: Admin panel economy tab + /daily claim ao mesmo tempo.
+
+================================================================================
+LOJA & MONETIZAÇÃO
+================================================================================
+
+[HIDDEN-005] Promo TOCTOU no checkout
+  ONDE: store.js checkout → stripeWebhook fulfill
+  QUANDO: Promo EVENT max_uses=300, 50 users clicam "Comprar" nos primeiros 5 segundos.
+  SINTOMA: >300 descontos aplicados; só 1 redemption na DB.
+  REPRO: Script paralelo POST /api/store/checkout com mesmo promoCode.
+  FIX: Claim atómico no checkout, não no webhook.
+
+[HIDDEN-006] Webhook ignora tryClaimRedemption failure
+  ONDE: stripeWebhook.js linhas promo claim pós-markOrderPaid
+  QUANDO: Segunda compra mesma conta com promo per_account_limit=1.
+  SINTOMA: Order fulfilled com desconto mas sem redemption row — auditoria inconsistente.
+
+[HIDDEN-007] Starter promo partial delivery
+  ONDE: store.js redeem starter — claim antes de queue commands
+  QUANDO: Comando grant inválido no meio do loop.
+  SINTOMA: Jogador perde promo permanentemente (unique index bloqueia retry).
+
+[HIDDEN-008] per_account_limit > 1 incompatível com UNIQUE index
+  ONDE: migration 016 + promoRepository
+  QUANDO: Admin configura promo "2 usos por conta".
+  SINTOMA: Segundo uso falha silenciosamente no claim.
+
+================================================================================
+COMBATE & MUNDOS
+================================================================================
+
+[HIDDEN-009] Combat tag persiste entre mundos
+  ONDE: CombatLogService — wipe inventário sem check isSMP no wipe
+  QUANDO: Jogador em combate SMP, teleport lobby via NPC antes de tag expirar.
+  SINTOMA: Perde inventário no lobby (se tag ainda activa).
+
+[HIDDEN-010] World name case mismatch
+  ONDE: holograms.yml "UHC" vs WorldModeService "uhc" vs possível pasta "UHC"
+  QUANDO: Deploy Linux (case-sensitive) vs Windows dev.
+  SINTOMA: Hologramas UHC não spawnam; isUHC() false para mundo "UHC".
+  REPRO: Migrar de Windows host para Linux VPS.
+
+[HIDDEN-011] rankedSpawn único mundo TierSpace
+  ONDE: server-modes.yml — arenas em mundos separados?
+  QUANDO: 8 queues activas, 16 jogadores em match — lag no hub se arenas no mesmo world.
+  SINTOMA: TPS drop no rankedSpawn com muitas partidas.
+
+================================================================================
+CRATES & REWARDS
+================================================================================
+
+[HIDDEN-012] Crate charged, reward lost
+  ONDE: CrateService.beginOpenInternal → completeOpen
+  QUANDO: Player fecha inventário no tick 0 da animação; opening.remove falha.
+  SINTOMA: Emeralds gastos, sem item/rank/cosmetic.
+
+[HIDDEN-013] Daily reward timezone
+  ONDE: DailyRewardService LocalDate.now(ZoneId.systemDefault())
+  QUANDO: Servidor UTC, jogadores PT — reset às 01:00 Lisboa vs meia-noite esperada.
+  SINTOMA: "Posso reclamar 2x" ou "não posso reclamar" reports de timezone.
+
+[HIDDEN-014] Daily parse crash
+  ONDE: LocalDate.parse sem try/catch em YAML corrupto
+  QUANDO: Edição manual de players.yml com data inválida.
+  SINTOMA: /daily crash para esse jogador (command fail).
+
+================================================================================
+PERFORMANCE & MEMÓRIA
+================================================================================
+
+[HIDDEN-015] UUID map leak (balanceLocks, opening, AdminStaffGuard)
+  ONDE: Vários serviços Core/SMP
+  QUANDO: 5000 unique players ao longo de 7 dias uptime sem restart.
+  SINTOMA: Heap creep lento; GC pauses; TPS micro-stutters após dias.
+
+[HIDDEN-016] LeaderboardService HashMap async read main thread
+  ONDE: metricTopCache actualizado async, lido em hologram render sync
+  QUANDO: Pico de refresh + 20 jogadores no lobby perto de hologramas.
+  SINTOMA: ConcurrentModificationException raro (ou dados stale inconsistentes).
+
+[HIDDEN-017] GlobalEconomyService.getBalance YAML read every call
+  ONDE: getOrDefault(uuid, dataStore.getInt(...)) — default sempre avaliado
+  QUANDO: Scoreboard refresh 30 ticks × 100 players.
+  SINTOMA: I/O YAML desnecessário; lag em servidores sem DB mode.
+
+[HIDDEN-018] Backend command poll sob carga
+  ONDE: commands.js FOR UPDATE SKIP LOCKED — bom, mas INSERT burst no fulfill
+  QUANDO: Black Friday, 200 orders em 10 min.
+  SINTOMA: Queue depth; delays de entrega 5-15 min (não perda, mas UX má).
+
+================================================================================
+WEB & CONTA
+================================================================================
+
+[HIDDEN-019] Username spoof em link/start
+  ONDE: webAuth link/start UPDATE minecraft_username
+  QUANDO: Conta A define username de jogador famoso antes de link real.
+  SINTOMA: Admin/support vê nome errado; confusão, não fraude de pagamento.
+
+[HIDDEN-020] Order status leak por session_id
+  ONDE: GET /api/store/order/status sem auth
+  QUANDO: Session ID partilhado acidentalmente (screenshot Discord).
+  SINTOMA: Terceiro vê status + username da compra.
+
+[HIDDEN-021] suspiciousRequest bloqueia suporte
+  ONDE: middleware global POST body scan
+  QUANDO: Ticket "quero refund OR remove VIP from account"
+  SINTOMA: 400 invalid input — jogador pensa site está down.
+
+[HIDDEN-022] innerHTML sem CSP
+  ONDE: store.js, profile.js, dashboard.js
+  QUANDO: Futuro campo admin editável (product description XSS stored).
+  SINTOMA: Session hijack admin ou player.
+
+================================================================================
+INTEGRAÇÃO PLUGIN ↔ BACKEND
+================================================================================
+
+[HIDDEN-023] /player/save overwrite total
+  ONDE: playerRepository savePlayerFull — sem merge/version
+  QUANDO: Plugin A save stale + Plugin B save fresh (multi-server futuro).
+  SINTOMA: Stats revert 10 minutos atrás.
+
+[HIDDEN-024] Report list depende backend
+  ONDE: ReportCommand /reports/open
+  QUANDO: Backend Render cold start / timeout.
+  SINTOMA: Staff vê "indisponível" — reports só no dashboard web.
+
+[HIDDEN-025] PLUGIN_KEY única comprometida
+  ONDE: Toda API plugin (economy, save, commands)
+  QUANDO: Key em log debug, backup .env exposto.
+  SINTOMA: Economia manipulada remotamente; comandos whitelisted executados.
+
+================================================================================
+MULTI-JOGADOR & ESCALA FUTURA
+================================================================================
+
+[HIDDEN-026] PlayerCache in-memory não partilhado
+  ONDE: Arquitectura single Paper server
+  QUANDO: Expansão BungeeCord 3 SMP instances.
+  SINTOMA: Coins diferentes por servidor; saves conflitantes.
+
+[HIDDEN-027] Duel concurrent same pair
+  ONDE: DuelService pendingInvites
+  QUANDO: A desafia B, C desafia B simultâneo — só um invite em target.
+  SINTOMA: C recebe erro; OK. Mas A+B duel + C challenge mid-duel — blockReason OK.
+
+[HIDDEN-028] Market listing race
+  ONDE: MarketService buyListing
+  QUANDO: 2 buyers clicam mesmo listing no mesmo tick.
+  SINTOMA: Um deve falhar — verificar se é atómico (auditar MarketService.buy).
+
+[HIDDEN-029] Auction snipe lag
+  ONDE: AuctionGui + AuctionService
+  QUANDO: Latência 200ms+ jogador EU em servidor US.
+  SINTOMA: "Perdi o leilão" reports — UX, não bug; considerar anti-snipe extend.
+
+[HIDDEN-030] LuckPerms track staff + VIP simultâneo
+  ONDE: permissions-complete.txt — helper parent default
+  QUANDO: Staff sem VIP não tem /repair mas tem kick — OK por design.
+  SINTOMA: Staff espera perks VIP — comunicar claramente.
+
+================================================================================
+GUI & PERMISSÕES
+================================================================================
+
+[HIDDEN-031] Menu GUI bypass parcial
+  ONDE: MenuManager — agora verifica perms em SMP shop/auction/enter
+  QUANDO: NpcModeRouter.joinRush sem mesma check se NPC click bypass menu.
+  SINTOMA: Verificar NPCClickListener tem mesmas gates.
+
+[HIDDEN-032] SmpPermissions.isAdmin bypass
+  ONDE: obm.smp.admin concede todas perms SMP em código
+  QUANDO: Admin de teste com smp.admin em produção por engano.
+  SINTOMA: Bypass total economia SMP debug messages.
+
+[HIDDEN-033] TierSpace kit save custom
+  ONDE: TierGuiListener saveCustomKit — inventário actual
+  QUANDO: Staff com items creative no hub salva kit overpowered.
+  SINTOMA: PvP ranked desbalanceado se validação fraca.
+
+================================================================================
+FIM — 33 edge cases documentados
+================================================================================

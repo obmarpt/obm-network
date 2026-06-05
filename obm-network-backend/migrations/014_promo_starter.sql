@@ -1,0 +1,1 @@
+ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS reward_grants JSONB DEFAULT '[]';

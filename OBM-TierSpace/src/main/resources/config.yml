@@ -14,8 +14,11 @@ ranked-spawn:
   party-item:
     slot: 1
     name: "§d§l👥 PARTY"
+  leave-item:
+    slot: 8
+    name: "§c§l✖ §4§lSAIR DA FILA"
   selector:
-    enabled: true
+    enabled: false
     slot: 4
     name: "§b§lTierSpace §8| §7Menu"
 
@@ -75,11 +78,11 @@ rewards:
   daily-first-win-bonus: 15
 
 matchmaking:
-  tick-interval-seconds: 1
+  tick-interval-seconds: 2
   initial-range: 50
-  range-expansion: 25
-  expansion-interval-seconds: 4
-  max-range: 250
+  range-expansion: 50
+  expansion-interval-seconds: 2
+  max-range: 500
 
 rating-elo:
   win-min: 10
@@ -287,6 +290,8 @@ kits:
 
 arenas:
   arena_standard_1:
+    name: Standard Arena
+    enabled: true
     modes: [sword, axe, mace, uhc, netherite, op, pot, smp, vanilla]
     spawn1:
       x: 0.5

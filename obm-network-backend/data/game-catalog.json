@@ -1,0 +1,62 @@
+{
+  "modes": [
+    {
+      "id": "smp",
+      "name": "SMP Rush",
+      "icon": "⚔",
+      "tagline": "Survival · Economia · PvP casual",
+      "description": "O modo principal da network. Economia com coins, ranks até GODLIKE, duels BO3, market, auction e progressão constante.",
+      "features": ["Economia SMP", "Ranks", "Duels BO3", "Battle Pass", "Achievements"]
+    },
+    {
+      "id": "hardcore",
+      "name": "Hardcore",
+      "icon": "☠",
+      "tagline": "1 vida · Stats separadas",
+      "description": "Survival UHC com stats hc_* independentes. Desbloqueia com level 10 e 200k coins no SMP.",
+      "features": ["1 vida", "Stats HC", "Achievements exclusivos", "Leaderboards HC"]
+    },
+    {
+      "id": "tierspace",
+      "name": "TierSpace",
+      "icon": "🏆",
+      "tagline": "Ranked 1v1 · ELO",
+      "description": "PvP competitivo com filas por kit, matchmaking por rating, seasons e arenas automáticas.",
+      "features": ["ELO por modo", "Matchmaking", "Seasons", "11 kits PvP"]
+    }
+  ],
+  "cosmetics": [
+    { "id": "FLAME_TRAIL", "name": "Flame Trail", "type": "TRAIL", "rarity": "COMMON", "unlock": "Loja Emeralds" },
+    { "id": "HEART_TRAIL", "name": "Heart Trail", "type": "TRAIL", "rarity": "RARE", "unlock": "Loja / Crate" },
+    { "id": "BLOOD_TRAIL", "name": "Blood Trail", "type": "TRAIL", "rarity": "RARE", "unlock": "Achievement: 50 kills" },
+    { "id": "FIRE_AURA", "name": "Fire Aura", "type": "AURA", "rarity": "EPIC", "unlock": "Crate Gold" },
+    { "id": "ROYAL_AURA", "name": "Royal Aura", "type": "AURA", "rarity": "EPIC", "unlock": "Achievement: 50 duelos" },
+    { "id": "GOLDEN_AURA", "name": "Golden Aura", "type": "AURA", "rarity": "LEGENDARY", "unlock": "Achievement: GODLIKE" },
+    { "id": "STAR_PREFIX", "name": "Star Prefix", "type": "PREFIX", "rarity": "RARE", "unlock": "Loja Emeralds" },
+    { "id": "WEALTHY_PREFIX", "name": "Wealthy Prefix", "type": "PREFIX", "rarity": "LEGENDARY", "unlock": "Achievement: 100k coins" },
+    { "id": "LIGHTNING_KILL", "name": "Lightning Kill", "type": "KILL_EFFECT", "rarity": "LEGENDARY", "unlock": "Achievement / Loja" },
+    { "id": "FIGHTER_TAG", "name": "Fighter Tag", "type": "TAG", "rarity": "RARE", "unlock": "Achievement: 10 duelos" },
+    { "id": "SURVIVOR_AURA", "name": "Survivor Aura", "type": "AURA", "rarity": "MYTHIC", "unlock": "Achievement: HC 60min" }
+  ],
+  "achievements": [
+    { "id": "smp_kills_50", "name": "Caçador", "description": "Mata 50 jogadores no SMP", "target": 50, "trigger": "kills", "rarity": "RARE", "reward": "Blood Trail" },
+    { "id": "smp_kills_200", "name": "Assassino", "description": "Mata 200 jogadores no SMP", "target": 200, "trigger": "kills", "rarity": "EPIC", "reward": "Lightning Kill" },
+    { "id": "duel_wins_10", "name": "Lutador", "description": "Ganha 10 duelos", "target": 10, "trigger": "duel_wins", "rarity": "RARE", "reward": "Fighter Tag" },
+    { "id": "duel_wins_50", "name": "Campeão", "description": "Ganha 50 duelos", "target": 50, "trigger": "duel_wins", "rarity": "EPIC", "reward": "Royal Aura" },
+    { "id": "smp_rich_100k", "name": "Wealthy", "description": "Acumula 100.000 coins", "target": 100000, "trigger": "coins", "rarity": "LEGENDARY", "reward": "Wealthy Prefix" },
+    { "id": "smp_godlike", "name": "GODLIKE", "description": "Killstreak 10 no SMP", "target": 10, "trigger": "killstreak", "rarity": "LEGENDARY", "reward": "Golden Aura" },
+    { "id": "hc_survivor_60", "name": "Sobrevivente", "description": "60 minutos vivo no HC", "target": 60, "trigger": "hc_minutes", "rarity": "MYTHIC", "reward": "Survivor Aura" }
+  ],
+  "battlepass": {
+    "maxLevel": 50,
+    "premiumPrice": 3500,
+    "seasonDays": 30,
+    "sampleRewards": [
+      { "level": 1, "free": "1000 Coins SMP", "premium": "Heart Trail" },
+      { "level": 5, "free": "Booster XP", "premium": "500 Emeralds" },
+      { "level": 10, "free": "2500 Coins", "premium": "Crate Rare" },
+      { "level": 25, "free": "5000 Coins", "premium": "Fire Aura" },
+      { "level": 50, "free": "750 Emeralds", "premium": "MVP Rank Trial" }
+    ]
+  }
+}

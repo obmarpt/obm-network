@@ -37,6 +37,15 @@ public final class LeaveCommand implements CommandExecutor {
         } else {
             player.sendMessage("§cNão estás em fila.");
         }
+        com.obm.network.tierspace.TierSpacePlugin ts = com.obm.network.tierspace.TierSpacePlugin.get();
+        if (ts != null) {
+            if (ts.getHubService() != null) {
+                ts.getHubService().handleTierSpaceJoin(player, true);
+            }
+            if (ts.getMatchService() != null) {
+                ts.getMatchService().leaveQueueState(player);
+            }
+        }
         return true;
     }
 }

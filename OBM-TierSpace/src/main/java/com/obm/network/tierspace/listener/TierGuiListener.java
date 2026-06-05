@@ -1,5 +1,6 @@
 package com.obm.network.tierspace.listener;
 
+import com.obm.network.tierspace.TierSpacePlugin;
 import com.obm.network.tierspace.kit.KitPreference;
 import com.obm.network.tierspace.kit.PlayerKitService;
 import com.obm.network.tierspace.match.MatchService;
@@ -205,6 +206,15 @@ public class TierGuiListener implements Listener {
             player.sendMessage("§dTierSpace §8| §7Saíste da fila.");
         } else {
             player.sendMessage("§cNão estás em fila.");
+        }
+        TierSpacePlugin ts = TierSpacePlugin.get();
+        if (ts != null) {
+            if (ts.getHubService() != null) {
+                ts.getHubService().handleTierSpaceJoin(player, true);
+            }
+            if (ts.getMatchService() != null) {
+                ts.getMatchService().leaveQueueState(player);
+            }
         }
     }
 

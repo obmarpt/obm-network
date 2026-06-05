@@ -6,7 +6,7 @@ uhc:
   world: "uhc"
 
   lives:
-    max: 2
+    max: 1
     remove_on_kill: true
     remove_on_death: true
 

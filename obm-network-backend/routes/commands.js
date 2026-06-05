@@ -1,12 +1,12 @@
 const { Router } = require('express');
 const pool = require('../database');
-const { pluginOrAuthMiddleware } = require('../auth');
+const { pluginOnlyAuth } = require('../auth');
 const { isNonEmptyString, badRequest, internalError } = require('./validation');
 const { sanitizeRemoteCommand } = require('../utils/commandWhitelist');
 
 const router = Router();
 
-router.post('/command', pluginOrAuthMiddleware, async (req, res) => {
+router.post('/command', pluginOnlyAuth, async (req, res) => {
   const { command } = req.body || {};
 
   if (!isNonEmptyString(command)) return badRequest(res, 'command inválido');
@@ -30,13 +30,21 @@ router.post('/command', pluginOrAuthMiddleware, async (req, res) => {
   }
 });
 
-router.get('/commands', pluginOrAuthMiddleware, async (req, res) => {
+router.get('/commands', pluginOnlyAuth, async (req, res) => {
   try {
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 25));
     const result = await pool.query(
       `UPDATE commands
        SET executed = true
-       WHERE executed = false
-       RETURNING id, command, created_at`
+       WHERE id IN (
+         SELECT id FROM commands
+         WHERE executed = false
+         ORDER BY id ASC
+         LIMIT $1
+         FOR UPDATE SKIP LOCKED
+       )
+       RETURNING id, command, created_at`,
+      [limit]
     );
 
     console.log(`⚡ GET /commands → ${result.rows.length} comando(s) entregue(s)`);

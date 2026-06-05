@@ -54,7 +54,7 @@ public class UHCReviveService {
 
         for (String uuidStr : playersSection.getKeys(false)) {
             UUID uuid = UUID.fromString(uuidStr);
-            if (dataStore.getInt(uuid, "lives_uhc") <= 0) {
+            if (com.obm.network.core.integration.HardcoreStatsBridge.getLives(uuid) <= 0) {
                 scheduleRevive(uuid, ReviveType.NORMAL);
                 count++;
             }
@@ -65,7 +65,7 @@ public class UHCReviveService {
     }
 
     public void scheduleRevive(UUID uuid, ReviveType type) {
-        dataStore.set(uuid, "lives_uhc", 1);
+        dataStore.set(uuid, com.obm.network.core.storage.PlayerStatsKeys.HC_LIVES, 1);
         dataStore.getYaml().set("players." + uuid + "." + PENDING_REVIVE_KEY, type.name());
         prepareReviveLocation(uuid);
         dataStore.save(uuid);

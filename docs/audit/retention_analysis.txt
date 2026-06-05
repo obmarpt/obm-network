@@ -1,0 +1,648 @@
+================================================================================
+  MINESPACE — AUDITORIA DE RETENÇÃO DE JOGADORES
+  Foco: produto de gameplay e experiência (não código)
+  Data: 2026-06-02
+  Score global de retenção: 68/100
+================================================================================
+
+VISÃO DE JOGADOR (resumo em 1 frase)
+------------------------------------
+O servidor oferece um loop PvP/economia sólido no SMP com vários sistemas de
+progressão, mas um jogador novo pode ficar 2–5 minutos sem saber o que fazer,
+e um jogador médio pode sair após mortes frustrantes ou grind sem marcos visíveis
+na mesma sessão.
+
+
+================================================================================
+SCORE POR DIMENSÃO
+================================================================================
+
+  First impression (0–30s)     72/100
+  Gameplay loop                74/100
+  Objetivos e motivação        70/100
+  Recompensas (frequência)     65/100
+  Psicologia / churn points    58/100
+  UX global                    71/100
+  Progressão visível           75/100
+  Modos (SMP/Duel/Tier/HC)     66/100
+  Sistemas de retenção         72/100
+  Retenção D1/D7               64/100
+
+  MÉDIA PONDERADA             68/100
+
+
+================================================================================
+1. FIRST IMPRESSION (CRÍTICO) — primeiros 30 segundos
+================================================================================
+
+O QUE O JOGADOR SENTE
+----------------------
+  • Spawn no lobby → title "✦ MineSpace" + som suave + nome personalizado
+  • Chat limpo (join message desligado — bom, menos ruído)
+  • Hotbar fixa: Bússola (modos) · Battle Pass · Perfil · Cama (spawn)
+  • Scoreboard: online por modo, levels, Rush Money, Emeralds, ping
+  • Hologramas/NPCs no mapa (dependem do setup do mapa)
+
+O QUE FUNCIONA
+  ✅ Primeira impressão visual controlada (não é spam de plugins)
+  ✅ Orientação escrita: "Usa a Bússola ou clica num NPC"
+  ✅ Prova social imediata: "X online" no menu e scoreboard
+  ✅ Modo popular destacado no menu (herding — segue a multidão)
+
+MOMENTOS DE INCERTEZA (❌)
+  ❌ Três modos (SMP / Hardcore / TierSpace) sem explicar EM UMA FRASE cada um
+     para quem nunca jogou — só lore curta no menu
+  ❌ Duas moedas no scoreboard (Rush Money + Emeralds) sem contexto no join
+  ❌ Hardcore aparece como 🔒 BARRIER — sensação de "servidor bloqueado"
+     antes de entender que é meta-desbloqueável
+  ❌ Battle Pass na hotbar slot 1 — jogador novo não sabe o que é nem porquê abrir
+  ❌ Não existe tutorial, quest inicial, ou "primeira missão" automática
+  ❌ /daily não é sugerido no welcome — hábito D1 não começa no minuto 0
+
+EXCESSO DE INFORMAÇÃO
+  ⚠️ Scoreboard lobby já mostra: 3 modos, 3 levels, 2 moedas, ping, footer
+     → aceitável para veterano; pesado para primeiro join
+
+FALTA DE ORIENTAÇÃO
+  ⚠️ Caminho ideal não está explícito:
+     Lobby → Bússola → SMP → Rush → primeiro objetivo (?)
+  O jogador pode clicar Perfil/BP antes de jogar e ver números sem contexto.
+
+IMPACTO NA RETENÇÃO
+  Alto. 30–40% dos novos em servidores MC abandonam no lobby se não entendem
+  o próximo clique em <60s.
+
+SOLUÇÃO PRÁTICA
+  • Welcome +1 linha: "§e1) Bússola → SMP  §72) §e/daily  §73) §e/rankup"
+  • Title pós-entrada SMP (primeira vez): "§aMata jogadores · vende loot · sobe rank"
+  • Hardcore locked: trocar tom de "bloqueado" para "§7Desbloqueia em §e10k coins§7…"
+  • Onboarding único (flag first_join): compass glow 10s + action bar "Clica na bússola"
+
+
+================================================================================
+2. LOOP DE GAMEPLAY
+================================================================================
+
+LOOP IDEAL
+  jogar → ganhar → progredir → repetir
+
+LOOP ACTUAL NO SMP (Rush) — o motor principal
+---------------------------------------------
+  Entrar SMP
+    → explorar / PvP fora da zona segura (100 blocos)
+    → kill: +100 coins (com multiplicadores rank/VIP/BP)
+    → death: -40 coins (se tiver saldo)
+    → sell / shop / market para converter itens
+    → acumular coins → /rankup ou GUI ranks
+    → level SMP sobe com kills/vendas/playtime
+    → Battle Pass ganha XP paralelo
+    → repetir
+
+  Loop secundário: playtime a cada 30 min (+400 coins) + marcos 30/60 min
+
+O QUE PRENDE
+  ✅ Feedback imediato em kills (action bar verde)
+  ✅ Season no scoreboard com countdown ("Ends in Xd") — urgência saudável
+  ✅ Zona spawn protegida mas com saída livre — segurança para novatos
+  ✅ Múltiplas vias de ganho: PvP, venda, playtime, daily, BP quests
+
+PROBLEMAS NO LOOP (❌)
+  ❌ Jogador pacífico (mine/build) tem loop mais lento — kills não aplicam,
+     sell precisa descobrir /sell, recompensa esparsa
+  ❌ Primeiro rank útil (Survivor) custa 10.000 coins; saldo inicial 100
+     → ~90+ kills limpas OU horas de grind antes do primeiro rank up
+     → primeiro "ding" de progressão tardio (1–3h para casual)
+  ❌ Duels têm loop excelente (BO3, countdown, titles) mas NÃO estão no
+     menu Rush — descoberta só por /duel ou chat
+  ❌ Após morrer 2–3x seguidas: perda de coins + gear + possível frustração
+     sem mensagem de recuperação ("faz X para recuperar")
+
+JOGADOR NÃO SABE O QUE FAZER — cenários reais
+  • Entra SMP, fica no spawn, não vê players → sai em 3 min
+  • Entra SMP, morre na primeira saída, não sabe /shop ou spawn safe → sai em 5 min
+  • Fica rico em coins mas não sabe /rankup → sensação de estagnação
+
+IMPACTO NA RETENÇÃO
+  Loop funciona para PvP-oriented (core audience). Casual/builder churn alto.
+  Tempo médio de sessão estimado: 25–45 min (PvP) | 8–15 min (confuso) | 60+ (grinders)
+
+SOLUÇÃO PRÁTICA
+  • Missão tutorial SMP (1x): "Sai do spawn · mata 1 jogador OU vende 64 cobble"
+    → recompensa 2.000 coins + abre /rankup com highlight
+  • Botão "Duelos" no Rush Menu (slot vazio) — loop PvP curto sem perder gear
+  • Morte: action bar "§7Perdeste §c40 coins§7 · Saldo: §eX §7· §a/rankup para ficar mais forte"
+  • Builder path: BP quest "quebrar 500 blocos" ou sell tutorial no primeiro /sell
+
+
+================================================================================
+3. OBJETIVOS E MOTIVAÇÃO
+================================================================================
+
+OBJETIVOS EXISTENTES
+--------------------
+  Curto prazo (sessão)
+    • Ganhar coins (kill/sell/playtime)
+    • Completar BP daily quests (10 kills, 1000 coins, 20 min)
+    • Subir 1 nível SMP
+
+  Médio prazo (semana)
+    • Rank seguinte (Survivor → Fighter → …)
+    • BP weekly quests (5 duelos, 25k coins, 15 HC kills)
+    • Daily streak dia 7
+    • Season SMP (countdown visível)
+
+  Longo prazo (meses)
+    • Godlike rank (1.000.000.000 coins — aspiracional)
+    • Hardcore unlock (level 10 + 200.000 coins)
+    • Achievements lendários (200 kills, 100k balance, killstreak 10)
+    • BP nível 50 + season end reward (45+ → 750 emeralds)
+
+O JOGADOR SABE O PRÓXIMO PASSO?
+  ✅ Rank GUI: mostra NEXT rank, custo, "faltam X coins" — excelente
+  ✅ Scoreboard SMP: rank, level, money, season
+  ✅ BP GUI: quests com progresso
+  ❌ Fora do /rankup, pouca indicação in-world do próximo marco
+  ❌ Achievements são longínquos (50–200 kills) — meta invisível no gameplay
+
+METAS CONFUSAS (❌)
+  ❌ 4 progressões paralelas no lobby scoreboard:
+     SMP Level · HC Level · Global Level · Rank — qual importa?
+  ❌ Emeralds vs Rush Money — quando usar cada uma?
+  ❌ Season SMP vs Season BP vs ranked season — três "seasons" mentais
+
+METAS DIFÍCEIS DEMAIS (❌)
+  ❌ Godlike 1B coins — 99% nunca chega; pode desmotivar em vez de aspirar
+  ❌ Hardcore 200k + level 10 — ~20–40h SMP antes de desbloquear
+  ❌ Achievement "200 kills" — sem milestone intermédio (10, 25, 50)
+
+RECOMPENSA FREQUENTE?
+  PvP activo: sim (kill + BP XP + possível level)
+  Casual: não (gaps de 30 min entre playtime ticks)
+
+IMPACTO NA RETENÇÃO
+  Quem vê progresso nas primeiras 2h fica. Quem não vê, assume servidor "pay to win"
+  ou "só para tryhards".
+
+SOLUÇÃO PRÁTICA
+  • Scoreboard SMP: linha "§7Próximo: §eSurvivor §7(§fX§7/§f10000§7)"
+  • Unificar narrativa no welcome: "§7Rush Money = ranks/loja · Emeralds = rede global/BP"
+  • Achievements intermédios: 10 kills, 25 kills (recompensas menores)
+  • Hardcore gate: barra de progresso no menu (% coins + % level)
+
+
+================================================================================
+4. RECOMPENSAS
+================================================================================
+
+FREQUÊNCIA (jogador PvP médio, 1h sessão)
+-----------------------------------------
+  • Kill reward: cada kill válido (~100+ coins)
+  • Death penalty: cada morte (-40)
+  • Playtime: +400 coins / 30 min
+  • BP XP: kill 12, money 6/80 coins, playtime 18/2min
+  • Level up SMP: variável (25 coins/level + bónus)
+  • Emeralds: kill 5 (cooldown 60s), cap 500/dia
+  • Milestones: 30 min (+500), 60 min (+1200) — únicos, uma vez na vida
+  • Daily: 10–100 emeralds + 2000 coins SMP (se /daily no SMP)
+
+QUALIDADE PERCEBIDA
+  ✅ Coins por kill sentem-se "justos" (100 vs 40 death = net positivo PvP)
+  ✅ Crate física no mundo + animação roleta = alto impacto emocional
+  ✅ Rank up deveria ser pico — hoje prejudicado por encoding quebrado no title
+  ⚠️ Daily emeralds baixos (dia 7 = 100) vs hype visual do streak
+  ⚠️ VIP/loja coins via web — fora do loop in-game para F2P
+
+FEEDBACK AO RECEBER (✅ / ❌)
+  ✅ Kill/sell: action bar verde temporário
+  ✅ Level up: title + som + coins bónus
+  ✅ Crate: animação + som crescente + chat
+  ✅ Daily: title "DAILY" + som
+  ✅ BP level up: title + som
+  ❌ Anti-farm/anti-alt: mensagem cinzenta vaga — parece bug, não regra
+  ❌ Emerald cap/rate limit: falha em silêncio
+  ❌ Playtime 30 min: só quem fica 30+ min vê — quem sai aos 25 min perde hook
+
+PROBLEMAS
+  ❌ Poucas recompensas nos minutos 0–15 (antes do primeiro playtime tick)
+  ❌ Dupla notificação de coins (EconomyService + RetentionFeedback) — ruído
+  ❌ notifyMoneyGain ignora <100 coins — inconsistência
+
+IMPACTO NA RETENÇÃO
+  Recompensa variável (kills) prende PvP. Intervalo fixo 30 min prende sessões longas
+  mas não ajuda sessões curtas (mobile/casual).
+
+SOLUÇÃO PRÁTICA
+  • Micro-recompensas 5/10/15 min (50/100/150 coins) — primeiras sessões só
+  • Timer visível: "§7Próxima recompensa playtime: §e12:34" no scoreboard
+  • Anti-farm: "§7Cooldown: mesma vítima §f4:32"
+  • Corrigir celebrate rank (§ encoding) — salvar o maior pico de sessão
+
+
+================================================================================
+5. PSICOLOGIA DO JOGADOR
+================================================================================
+
+MOMENTOS DE SATISFAÇÃO (dopamina / orgulho)
+  🟢 Primeiro kill com +coins action bar
+  🟢 Rank up (se UI funcionar)
+  🟢 Abrir crate com animação
+  🟢 Ganhar duelo BO3 (countdown + VICTORY)
+  🟢 Vitória TierSpace + rating + escudo divisão
+  🟢 Daily streak dia 3+
+  🟢 Ver nome no holograma TOP
+  🟢 Desbloquear Hardcore (celebração one-time existe)
+
+MOMENTOS DE FRUSTRAÇÃO (cortisol / rage)
+  🔴 Combat-log: inventário wipe + morte + penalidade — pico negativo extremo
+  🔴 Morrer 2x seguidas perdendo gear + 80 coins
+  🔴 "Sem recompensa (anti farm)" sem explicação
+  🔴 Fila TierSpace longa sem match
+  🔴 "Não tens permissão" sem CTA para VIP/loja
+  🔴 Rank up impossível — ver "faltam 9.900 coins" na primeira hora
+  🔴 Placement TierSpace: 10 jogos sem rank visível
+
+"PORQUE É QUE ALGUÉM SAIRIA AGORA?" — mapa de churn
+----------------------------------------------------
+  Min 0–2   → Confusão no lobby ("o que é isto?")
+  Min 2–5   → SMP vazio no spawn / morreu logo
+  Min 5–15  → Mortes repetidas, sem progressão visível
+  Min 15–25 → Grind sem rank up; chat tóxico (externo ao plugin)
+  Min 25–30 → Ia receber playtime reward mas saiu aos 28 min
+  Min 30+   → Sessão natural; risco se último evento foi morte
+  Evento    → Combat-log quit (quase sempre quit definitivo)
+  Evento    → Perdeu duelo 0-2 rápido sem rematch fácil
+  Evento    → Queue TierSpace 5+ min
+
+IMPACTO NA RETENÇÃO
+  Cada momento 🔴 não mitigado custa ~5–15% dos jogadores afectados nessa sessão.
+  Combat-log sozinho pode ser 20%+ rage quit entre quem PvP.
+
+
+================================================================================
+6. UX GLOBAL
+================================================================================
+
+CLAREZA
+  ✅ Menus 27 slots — limpos, ícones por categoria
+  ✅ Rush Menu: Economia / Combate / Progresso / Loja / Leilão / Jogar
+  ✅ Cores consistentes (MenuColors)
+  ✅ PlayerUx prefix [MineSpace] em comandos
+
+PROBLEMAS
+  ❌ Muitos sistemas para memorizar: 8+ (/money /shop /sell /market /auction
+     /rank /rankup /duel /daily /battlepass /stats /link)
+  ❌ Idioma misto: menus PT, duel EN (VICTORY/FIGHT), achievements EN
+  ❌ Rank GUI com caracteres ? em vez de § — parece produto inacabado
+  ❌ Perfil e BP na hotbar competem com bússola para atenção do novo jogador
+  ❌ TierSpace: entrada via hub separado — salto cognitivo do "um servidor"
+
+NAVEGAÇÃO
+  Lobby → Bússola → Modo → (SMP) Rush Menu → Jogar = 4 cliques até gameplay
+  Aceitável para servidor organizado; 1 clique a mais que o ideal.
+
+IMPACTO NA RETENÇÃO
+  UX não é o maior problema — confusão de sistemas e metas sim.
+
+SOLUÇÃO PRÁTICA
+  • "Jogar agora" no main menu: clicar SMP entra directo (skip Rush menu) com
+    opção secundária "Menu Rush" no lore
+  • /help categorizado já existe — mostrar no first join
+  • Unificar PT em todos os titles
+
+
+================================================================================
+7. PROGRESSÃO
+================================================================================
+
+VISIBILIDADE
+  ✅ Scoreboard SMP: season, rank, level, money, K/D
+  ✅ Rank GUI: path visual rookie → godlike
+  ✅ Profile menu: stats agregados
+  ✅ BP: barra de nível + quests
+
+VELOCIDADE
+  SMP Level: razoável (xp por kill/sell/playtime, max 100)
+  Rank: lento no início (10k primeiro upgrade), acelera com rank boosts
+  BP: 50 níveis / 30 dias — jogador activo chega a 30–40
+  Emeralds/global: lento (cap 500/dia)
+
+RECOMPENSAS INTERMÉDIAS
+  ✅ Level SMP a cada X xp
+  ✅ Playtime milestones 30/60
+  ❌ Falta entre rank Rookie e Survivor (nada aos 2k, 5k coins)
+  ❌ Godlike a 1B sem ranks "prestige" intermédios
+
+PROGRESSÃO INVISÍVEL
+  • Global level (só scoreboard)
+  • Achievement % (sem GUI de progresso fácil no lobby)
+  • Killstreak (guardado mas pouco celebrado até 10)
+
+IMPACTO NA RETENÇÃO
+  Jogadores que veem a barra mover ficam. Barra parada na 1ª hora = churn.
+
+SOLUÇÃO PRÁTICA
+  • Rank intermediário "Grinder" aos 2.500 coins (cosmético ou +2% money)
+  • Killstreak 3/5/7: micro-titles
+  • Achievement progress no Perfil (§73/50 kills para Caçador)
+
+
+================================================================================
+8. MODOS DE JOGO
+================================================================================
+
+SMP (Rush) — motor de retenção principal
+  Score: 78/100 retenção
+  • Objetivos claros para PvP: sim
+  • Prende: sim, se há população e combate
+  • Risco: spawn vazio, grind sem PvP, economia confusa
+  • Retenção D1: daily + BP quests ligadas ao SMP
+
+DUELS — loop de alta qualidade, baixa descoberta
+  Score: 55/100 retenção (potencial 85/100)
+  • UX excelente: countdown, rounds, BO3, sounds
+  • Problema: escondido (/duel), não no menu, não no welcome
+  • Sem wager = baixa stakes — bom para novatos, menos hype para veterans
+  • BP weekly "5 duelos" assume que jogadores sabem que existe
+  • Uso estimado: <10% da base SMP sem promoção
+
+TIERSPACE — retenção competitiva
+  Score: 70/100 para público ranked / 40/100 para casual
+  • Entrada: permissão + teleport hub — fricção
+  • Queue com feedback (estimativa, rating) — bom
+  • Placement 10 jogos — frustrante se fila longa
+  • Vitória/derrota muito bem trabalhadas (escudo, streak, bónus diário)
+  • Retenção: jogadores ranked voltam; casual nem tenta
+
+HARDCORE — retenção end-game
+  Score: 62/100
+  • Gate 200k + level 10 cria meta de longo prazo (bom)
+  • Barreira visual no menu pode afastar antes de explicar
+  • UHC action bar desactivada — modo stress sem feedback contínuo
+  • Quem desbloqueia sente conquista; maioria nem chega
+
+
+================================================================================
+9. SISTEMAS QUE PRENDEM — ranking de impacto
+================================================================================
+
+  1. BATTLE PASS (★★★★★)
+     • Daily + weekly quests dão razão para voltar amanhã
+     • XP cross-mode — uma sessão SMP alimenta progresso global
+     • Season 30 dias + auto-claim free — baixa fricção
+     • Login streak XP no join
+     • Fraco: premium 3500 emeralds — jogador F2P pode ignorar track pago
+     • Retenção D7: ALTA se jogador abriu BP pelo menos uma vez
+
+  2. RANKS SMP (★★★★☆)
+     • Sink de coins + boosts visíveis — motivação económica clara
+     • GUI com próximo passo — óptimo
+     • Fraco: primeiro degrau caro; Godlike irreal
+     • Retenção: ALTA para grinders
+
+  3. CRATES (★★★★☆)
+     • Físicas no mundo = descoberta orgânica
+     • Animação slot-machine — pico emocional
+     • Fraco: depende de keys (loja/eventos); F2P rate unclear
+     • Retenção: média-alta (event-driven)
+
+  4. DAILY REWARDS (★★★☆☆)
+     • Streak 7 dias — hábito clássico
+     • +2000 coins SMP é o melhor prémio real
+     • Fraco: requer /daily manual; emeralds baixos; fácil esquecer
+     • Retenção D1: MÉDIA (sobe se lembrar + notificação)
+
+  5. SEASONS (★★★☆☆)
+     • Countdown no scoreboard — FOMO temporal
+     • Fraco: o que muda na season não está óbvio para o jogador
+     • Retenção: média no fim de season
+
+  6. ACHIEVEMENTS (★★☆☆☆)
+     • Recompensas cosméticas exclusivas — status
+     • Targets longos (50–200 kills) — payoff tardio
+     • Pouca visibilidade durante gameplay
+     • Retenção: baixa-média (só hunters de 100%)
+
+  7. COSMÉTICOS (★★☆☆☆)
+     • Sem vantagem PvP — correto
+     • Impacto social em servidor populado; zero se servidor vazio
+
+SISTEMAS QUASE INÚTEIS PARA RETENÇÃO MÉDIA
+  • Global level (pouco comunicado)
+  • Emeralds leaderboard (niche)
+  • Pay daily limit logs (admin, não jogador)
+
+
+================================================================================
+10. MOMENTO DE DESISTÊNCIA (churn timeline)
+================================================================================
+
+  TEMPO        EVENTO                          % CHURN ESTIMADO   CAUSA
+  ─────────────────────────────────────────────────────────────────────────
+  0–2 min      Lobby sem clicar bússola        15–25%             Incerteza
+  2–5 min      SMP spawn vazio / morreu        20–30%             Sem loop
+  5–15 min     2+ mortes, sem coins líquidos   15–20%             Frustração
+  15–30 min    Sem rank/level up visível       10–15%             Estagnação
+  25–29 min    Sai antes playtime tick         5–10%              Recompensa perdida
+  30–45 min    Fim natural sessão              5%                 Normal
+  Qualquer     Combat-log                      40–60%             Punição severa
+  Qualquer     Queue TS >3 min                 20–30%             Espera
+  Pós-duelo    Derrota 0-2 sem rematch         10–15%             Sem revenge loop
+
+  TEMPO MÉDIO DE SESSÃO ESTIMADO (sem dados analytics)
+    • Novato confuso:     3–8 min
+    • PvP casual:        20–40 min
+    • Grinder:           60–120 min
+    • Ranked TS:         30–90 min (inclui queue)
+
+  META DE PRODUTO SUGERIDA
+    • Novato: >15 min primeira sessão
+    • Média geral: >35 min
+    • D1 return: >40%
+
+
+================================================================================
+11. RETENÇÃO A LONGO PRAZO (D1 / D7 / D30)
+================================================================================
+
+MOTIVOS PARA VOLTAR AMANHÃ
+  ✅ Daily streak (+2000 coins no SMP)
+  ✅ BP daily quests reset
+  ✅ Rank quase alcançável ("faltam 2k")
+  ✅ Revenge no mesmo rival (social, não sistematizado)
+  ⚠️ Season acaba em X dias (se souber o que ganha)
+  ❌ Sem push ao logout ("volta em 14h para daily")
+  ❌ Sem email/discord hook in-game (só /link)
+
+SISTEMAS DE REPETIÇÃO
+  ✅ Daily rewards (7-day curve)
+  ✅ BP daily/weekly
+  ✅ Season 30 dias
+  ✅ Playtime interval 30 min (in-session, não D1)
+  ❌ Sem "welcome back" após 24h+ offline
+  ❌ Sem re-engagement quest ("3 dias sem jogar → bónus catch-up")
+
+D7 RETENÇÃO — previsão
+  Com BP + daily activos: 35–45% (bom para servidor privado)
+  Sem onboarding: 20–30%
+  Com combat-log rage: -5 a -10 pontos percentuais
+
+D30 RETENÇÃO
+  Depende de season + ranked meta + comunidade (Discord)
+  Sistemas suportam; falta conteúdo vivo (eventos GM, reset shop, map changes)
+
+
+================================================================================
+12. RELATÓRIO FINAL — CAUSAS / FRICÇÃO / MELHORIAS
+================================================================================
+
+🔴 CAUSAS DE ABANDONO (críticas)
+────────────────────────────────
+
+  A1. Lobby sem missão clara nos primeiros 60s
+      Impacto: 20–25% novos nunca entram num modo
+      Solução: onboarding 3 passos + compass pulse primeiro join
+
+  A2. Primeira hora sem rank up / marco visível
+      Impacto: churn 10–15% grinders desistentes
+      Solução: rank "Survivor" mais barato (5k) OU missão inicial 2k coins
+               + scoreboard "próximo rank X%"
+
+  A3. Combat-log como último momento da sessão
+      Impacto: 40–60% quit imediato; má marketing boca-a-boca
+      Solução: explicar regra antes do primeiro combate; penalidade sem wipe
+               total ou recuperação guiada; timer grande no action bar
+
+  A4. Morte repetida sem narrativa de recuperação
+      Impacto: 15–20% após 2–3 deaths
+      Solução: death message com saldo + dica contextual (/shop, safe zone)
+
+  A5. Duels escondidos — loop PvP premium subutilizado
+      Impacto: menos tempo de sessão PvP; BP weekly inútil para muitos
+      Solução: botão Duelos no Rush Menu + NPC "Arena Duelos"
+
+  A6. Daily não promovido — hábito D1 fraco
+      Impacto: D1 retention -10–15%
+      Solução: reminder no join + action bar se não claimed + GUI streak
+
+
+🟠 PONTOS DE FRICÇÃO (médias)
+─────────────────────────────
+
+  B1. Duas moedas sem explicação (Rush Money vs Emeralds)
+      Impacto: confusão; erros de compra; desvalorização percebida
+      Solução: 1 linha no welcome + ícones diferentes consistentes
+
+  B2. Hardcore locked parece conteúdo bloqueado, não meta
+      Impacto: sensação de servidor incompleto
+      Solução: copy "Progresso para desbloquear: 45%" no lore
+
+  B3. TierSpace entrada com fricção (perm + hub + placement)
+      Impacto: casual nunca experimenta ranked
+      Solução: tutorial match vs bot ou unranked 1v1 warmup
+
+  B4. Anti-farm mensagens vagas
+      Impacto: desconfiança ("servidor bugado")
+      Solução: cooldown explícito na mensagem
+
+  B5. Playtime reward só aos 30 min — buraco 0–30
+      Impacto: sessões curtas sem reward
+      Solução: escada 5/10/15/20/30 min (primeira semana)
+
+  B6. Rank celebrate com encoding quebrado
+      Impacto: pico de satisfação destruído no melhor momento SMP
+      Solução: fix § no RankGui.java (imediato)
+
+  B7. Godlike 1B — desmotivação por meta impossível
+      Impacto: veteranos sem objetivo realista
+      Solução: ranks prestige pós-Legend ou season leaderboard
+
+
+🟢 MELHORIAS (já forte / quick wins)
+────────────────────────────────────
+
+  C1. Manter loop kill/sell/rank — core sólido
+  C2. Battle Pass cross-mode — melhor sistema de retenção actual
+  C3. Menu modo popular + online counts — prova social
+  C4. TierSpace feedback vitória/derrota — modelo para outros modos
+  C5. Crate animação — manter e eventificar
+  C6. Season countdown no scoreboard — manter
+  C7. Spawn protection com partículas — segurança novato OK
+  C8. Rush Menu organizado — boa base para adicionar Duelos/Tutorial
+
+
+================================================================================
+13. PLANO DE ACÇÃO PRIORITÁRIO (retenção)
+================================================================================
+
+  SPRINT 1 — primeiras 48h de jogador (impacto máximo)
+  ─────────────────────────────────────────────────────
+  [P0] Onboarding first_join: bússola + 3 passos + /daily hint
+  [P0] Fix RankGui celebrate encoding
+  [P0] Combat-log: copy educativa + timer action bar maior
+  [P1] Scoreboard "Próximo rank: X%"
+  [P1] Death tip contextual
+  [P1] Botão Duelos no Rush Menu
+
+  SPRINT 2 — sessão e D1 (semana 1)
+  ─────────────────────────────────
+  [P1] Playtime escada 5/10/15/20/30 min (novatos)
+  [P1] Daily reminder no join se não claimed
+  [P1] Missão tutorial SMP (2k coins)
+  [P2] Anti-farm mensagens com tempo restante
+  [P2] Welcome back após 24h offline (bónus +1 quest)
+
+  SPRINT 3 — D7/D30
+  ─────────────────
+  [P2] Achievement milestones intermédios + GUI progresso
+  [P2] Hardcore progress bar no menu
+  [P2] Season: anunciar recompensas no scoreboard
+  [P3] Catch-up mechanic para jogadores 3+ dias offline
+  [P3] Unranked TierSpace warmup
+
+
+================================================================================
+14. MÉTRICAS A MEDIR (recomendado — produto)
+================================================================================
+
+  Sem analytics actual, implementar tracking mínimo:
+  • time_to_first_mode (join → mundo gameplay)
+  • time_to_first_kill / first_sell / first_rankup
+  • session_length por modo
+  • deaths_per_session antes de quit
+  • daily_claim_rate D0
+  • D1 / D7 return (uuid)
+  • combat_log_quit_rate
+  • duel_invites_sent / completed
+  • queue_wait_seconds TierSpace antes de quit
+
+  KPIs alvo pós-melhorias Sprint 1:
+  • time_to_first_mode < 45s (80% jogadores)
+  • 1ª sessão média > 18 min
+  • D1 > 42%
+  • combat_log_quit < 25%
+
+
+================================================================================
+15. VEREDICTO FINAL
+================================================================================
+
+  O MineSpace TEM um núcleo de retenção jogável:
+    SMP PvP + economia + Battle Pass + seasons + feedback em vários picos.
+
+  O que IMPEDE retenção de elite:
+    • novato perdido no lobby
+    • progressão tardia na 1ª hora
+    • punição combat-log sem recuperação emocional
+    • sistemas fortes (Duel, Daily, BP) mal descobertos ou mal timados
+
+  Score 68/100 = acima da média de servidores MC custom,
+  mas abaixo do potencial com 3–5 mudanças de produto (não refactor).
+
+  Prioridade #1 como jogador fictício:
+    "Quero saber o que fazer nos primeiros 30 segundos,
+     sentir progresso na primeira hora,
+     e não sair humilhado do servidor quando erro."
+
+================================================================================
+  FIM — retention_analysis.txt
+================================================================================

@@ -37,16 +37,16 @@ public final class MainMenuConfig {
         return name == null || name.isEmpty() ? " " : MenuText.colorize(name);
     }
 
-    public static int slotPvp() {
-        return cfg().getInt(ROOT + "layout.pvp", 12);
+    public static int slotSmp() {
+        return cfg().getInt(ROOT + "layout.smp", 11);
     }
 
     public static int slotHardcore() {
         return cfg().getInt(ROOT + "layout.hardcore", 13);
     }
 
-    public static int slotSmp() {
-        return cfg().getInt(ROOT + "layout.smp", 14);
+    public static int slotTierSpace() {
+        return cfg().getInt(ROOT + "layout.tierspace", 15);
     }
 
     public static boolean useTitleFeedback() {
@@ -65,22 +65,22 @@ public final class MainMenuConfig {
         return cfg().getInt(ROOT + "feedback.title-fade-out", 10);
     }
 
-    public static ModeItem pvpItem() {
-        return modeItem("pvp", Material.IRON_SWORD, "&e⚔ PvP",
-                List.of("&7Acede ao modo PvP", "&8Clique para entrar"),
-                "&aA entrar em PvP...");
+    public static ModeItem smpItem() {
+        return modeItem("smp", Material.GRASS_BLOCK, "&6&l⚔ SMP",
+                List.of("&7Survival · Economia · PvP"),
+                "&aA entrar em SMP...");
     }
 
-    public static ModeItem smpItem() {
-        return modeItem("smp", Material.DIAMOND_SWORD, "&b💎 SMP",
-                List.of("&7Modo survival", "&8Clique para entrar"),
-                "&aA entrar em SMP...");
+    public static ModeItem tierSpaceItem() {
+        return modeItem("tierspace", Material.DIAMOND_SWORD, "&b&l🏆 TierSpace",
+                List.of("&7Ranked 1v1 · Elo · Seasons"),
+                "&bA entrar em TierSpace...");
     }
 
     public static HardcoreItems hardcoreItems() {
         Material lockedMat = parseMaterial(cfg().getString(ROOT + "modes.hardcore.locked.material", "BARRIER"),
                 Material.BARRIER);
-        String lockedName = cfg().getString(ROOT + "modes.hardcore.locked.name", "&c🔒 Hardcore");
+        String lockedName = cfg().getString(ROOT + "modes.hardcore.locked.name", "&c&l🔒 Hardcore");
         List<String> lockedLore = cfg().getStringList(ROOT + "modes.hardcore.locked.lore");
         if (lockedLore.isEmpty()) {
             lockedLore = List.of(
@@ -92,13 +92,13 @@ public final class MainMenuConfig {
 
         Material unlockedMat = parseMaterial(cfg().getString(ROOT + "modes.hardcore.unlocked.material", "NETHERITE_SWORD"),
                 Material.NETHERITE_SWORD);
-        String unlockedName = cfg().getString(ROOT + "modes.hardcore.unlocked.name", "&c☠ Hardcore");
+        String unlockedName = cfg().getString(ROOT + "modes.hardcore.unlocked.name", "&c&l☠ Hardcore");
         List<String> unlockedLore = cfg().getStringList(ROOT + "modes.hardcore.unlocked.lore");
         if (unlockedLore.isEmpty()) {
-            unlockedLore = List.of("&7Modo hardcore", "&8Clique para entrar");
+            unlockedLore = List.of("&7Vidas limitadas · alto risco");
         }
 
-        String entering = cfg().getString(ROOT + "modes.hardcore.entering", "&aA entrar em Hardcore...");
+        String entering = cfg().getString(ROOT + "modes.hardcore.entering", "&cA entrar em Hardcore...");
         return new HardcoreItems(lockedMat, lockedName, lockedLore, unlockedMat, unlockedName, unlockedLore, entering);
     }
 

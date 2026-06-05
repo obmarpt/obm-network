@@ -1,0 +1,140 @@
+# MineSpace — Recomendações Gerais (Auditoria Produção)
+# Gerado: 2026-06-02 | Score global: 74/100
+
+================================================================================
+PRIORIDADE P0 — ANTES DE LANÇAMENTO PÚBLICO (100+ jogadores)
+================================================================================
+
+[ECONOMIA] Unificar escritor de smp_balance
+  - Problema: EconomyService, PlayerCacheService e EconomyBridge escrevem a mesma chave com locks diferentes.
+  - Acção: PlayerCacheService como source-of-truth quando activo; SMP EconomyService delega.
+  - Ficheiros: EconomyService.java, PlayerCacheService.java, EconomyBridge.java
+
+[ECONOMIA] Atomicidade PlayerData + sync async
+  - Problema: dirty/pendingCoinDelta podem perder-se durante savePlayerFullSync assíncrono.
+  - Acção: synchronized ou AtomicInteger; snapshot-and-clear atómico antes do HTTP POST.
+  - Ficheiros: PlayerData.java, PlayerCacheSyncTask.java
+
+[LOJA] Promo atómica no checkout
+  - Problema: desconto aplicado no checkout, claim só no webhook → race em promo limitada.
+  - Acção: reservar/claim promo na transacção createOrder; rejeitar fulfill se claim falhar.
+  - Ficheiros: routes/store.js, db/promoRepository.js, routes/stripeWebhook.js
+
+[SEGURANÇA WEB] Headers HTTP + CSP
+  - Problema: sem helmet, sem CSP, sem X-Frame-Options — clickjacking + XSS sem defesa em profundidade.
+  - Acção: npm helmet, CSP restritiva, HSTS em produção.
+  - Ficheiro: server.js
+
+[SEGURANÇA WEB] Username só após confirm link
+  - Problema: link/start grava minecraft_username antes de provar posse via /link in-game.
+  - Acção: persistir username apenas em web/link/confirm com UUID validado.
+  - Ficheiro: routes/webAuth.js
+
+================================================================================
+PRIORIDADE P1 — PRIMEIRA SEMANA PÓS-LANÇAMENTO
+================================================================================
+
+[SEGURANÇA] Remover JWT admin de ?token= query string
+  - Ficheiro: auth.js — usar apenas cookie HttpOnly ou Authorization header.
+
+[SEGURANÇA] Rotação PLUGIN_API_KEY
+  - Suportar múltiplas chaves, documentar rotação, considerar IP allowlist para plugin origin.
+
+[MIGRAÇÕES] Migration runner robusto
+  - Tabela schema_migrations; fail-fast em erros não-IF-NOT-EXISTS; não split por ';' ingénuo.
+  - Ficheiro: database.js
+
+[WAF] Revisar suspiciousRequest middleware
+  - Bloqueia POSTs legítimos com palavras "or/from" em mensagens de suporte/reports.
+  - Ficheiro: middleware/suspiciousRequest.js — log-only ou scope por rota.
+
+[CRATES] Cobrar após entrega confirmada
+  - CrateService cobra emeralds antes do roll; completeOpen pode falhar silenciosamente.
+  - Ficheiro: CrateService.java — charge-on-deliver ou garantia de delivery.
+
+[COMBAT] Combat-log wipe fora de SMP
+  - Inventory clear + setHealth(0) corre mesmo fora do mundo SMP se tag activa.
+  - Ficheiro: CombatLogService.java — gate destrutivo em isSMP().
+
+[WORLDS] Normalizar nomes de mundos
+  - holograms.yml usa "UHC", server-modes.yml "uhc", WorldModeService lowercase.
+  - Verificar nomes reais no Multiverse/paper.yml e alinhar TODOS os configs.
+
+[PERFORMANCE] Prune maps por UUID no quit
+  - GlobalEconomyService.balanceLocks, EconomyService.balanceLocks, CrateService maps.
+  - Adicionar PlayerQuitEvent cleanup.
+
+[MONITORIZAÇÃO] Alertas produção
+  - Stripe webhook 422 (amount/metadata mismatch) → alerta staff, não só log.
+  - Backend health + DB pool saturation + command queue depth.
+  - GrimAC flag burst → já parcialmente em obm.staff.anticheat.alert.
+
+================================================================================
+PRIORIDADE P2 — MELHORIAS CONTÍNUAS
+================================================================================
+
+[UX] Onboarding primeiro join
+  - WelcomeMessage existe; adicionar tour NPC ou /tutorial guiado para novos jogadores.
+
+[UX] Feedback offline backend
+  - Quando backend.enabled=false, mensagens genéricas; indicar modo offline claramente.
+
+[UX] Consistência títulos GUI
+  - Migrar de Inventory.getTitle() string para InventoryHolder/PDC markers (Paper 1.21).
+
+[ESCALA] Redis para cache player + rate limits
+  - PlayerCacheService in-memory não escala multi-proxy Bungee sem Redis.
+
+[ESCALA] Read replicas PostgreSQL
+  - Leaderboards e profile público podem usar replica; writes no primary.
+
+[TESTES] Suite automatizada mínima
+  - Economy transfer concurrent test, promo double-checkout, webhook idempotency.
+  - Integration: /player/save round-trip, command whitelist rejection.
+
+[DOCUMENTAÇÃO] Remover código morto
+  - obm-network-backend/server/* e reference/* nunca arrancados — confusão em deploy.
+  - server-config/holograms/yaml/* duplica holograms.yml — marcar deprecated.
+
+[LOJA] CSRF tokens explícitos
+  - SameSite=strict é suficiente hoje; adicionar Origin check em POST /api/*.
+
+[ADMIN] Rate limit painel admin
+  - /admin/economy e /admin/command sem throttle por utilizador.
+
+[MAP] Crate físicas no SMP
+  - crates.yml define tiers; verificar blocos/estructuras no mapa world com holograms de preço.
+
+[INTEGRAÇÃO] SITE_URL e assets
+  - Já corrigido paths absolutos; validar OG tags e sitemap em produção.
+
+================================================================================
+PONTOS FORTES A MANTER
+================================================================================
+
++ Stripe: assinatura verificada, amount/order_id match, state machine paid→fulfilled
++ Command queue: whitelist + sanitizeRemoteCommand + FOR UPDATE SKIP LOCKED
++ SQL: 100% parametrizado, leaderboard metric whitelist
++ Duel system: ledger offline, state machine, anti-dup defensivo
++ Permissões LuckPerms: permissions-complete.txt hierarquia clara
++ Anti-farm kills: same-victim cooldown, alt same-IP block, KillFarmGuard SMP
++ PlayerUx + HelpRegistry: UX comandos consistente (recente)
++ Leaderboard bulk endpoint + change detection hologramas (recente)
+
+================================================================================
+SCORE BREAKDOWN (74/100)
+================================================================================
+
+Arquitectura & separação modos     : 82/100
+Segurança backend/pagamentos       : 78/100
+Segurança web/frontend             : 62/100
+Economia & anti-exploit in-game    : 58/100  ← maior risco
+Performance & escala               : 70/100
+UX jogador                         : 75/100
+Integração site↔servidor           : 80/100
+Mapa & conteúdo configurado        : 72/100
+Operações (migrations, monitoring) : 65/100
+Documentação & manutenibilidade    : 78/100
+
+Veredicto: SOFT LAUNCH possível com monitorização intensa.
+           LANÇAMENTO PÚBLICO (200+ online) requer P0 resolvido.

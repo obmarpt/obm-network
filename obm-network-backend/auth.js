@@ -8,10 +8,11 @@ function getJwtSecret() {
   return process.env.JWT_SECRET;
 }
 
-function signToken(username) {
+function signToken(username, role = 'admin') {
   const secret = getJwtSecret();
   if (!secret) throw new Error('JWT_SECRET not configured');
-  return jwt.sign({ username, role: 'admin' }, secret, { expiresIn: JWT_EXPIRES });
+  const safeRole = role === 'mod' ? 'mod' : 'admin';
+  return jwt.sign({ username, role: safeRole }, secret, { expiresIn: JWT_EXPIRES });
 }
 
 function extractToken(req) {
@@ -96,14 +97,26 @@ function timingSafeEqual(a, b) {
   return crypto.timingSafeEqual(ba, bb);
 }
 
-function verifyCredentials(username, password) {
+function resolveLoginRole(username, password) {
+  if (!username || !password || !getJwtSecret()) return null;
+
   const adminUser = process.env.ADMIN_USER;
   const adminPass = process.env.ADMIN_PASS;
+  if (adminUser && adminPass && timingSafeEqual(username, adminUser) && timingSafeEqual(password, adminPass)) {
+    return 'admin';
+  }
 
-  if (!adminUser || !adminPass || !getJwtSecret()) return false;
-  if (!username || !password) return false;
+  const modUser = process.env.MOD_USER;
+  const modPass = process.env.MOD_PASS;
+  if (modUser && modPass && timingSafeEqual(username, modUser) && timingSafeEqual(password, modPass)) {
+    return 'mod';
+  }
 
-  return timingSafeEqual(username, adminUser) && timingSafeEqual(password, adminPass);
+  return null;
+}
+
+function verifyCredentials(username, password) {
+  return resolveLoginRole(username, password) != null;
 }
 
 function setAuthCookie(res, token) {
@@ -121,12 +134,19 @@ function clearAuthCookie(res) {
   res.clearCookie(COOKIE_NAME, { path: '/' });
 }
 
+/** Escrita de integração — apenas plugin key (sem fallback JWT). */
+function pluginOnlyAuth(req, res, next) {
+  return pluginAuth(req, res, next);
+}
+
 module.exports = {
   signToken,
   authMiddleware,
   pluginAuth,
+  pluginOnlyAuth,
   pluginOrAuthMiddleware,
   verifyCredentials,
+  resolveLoginRole,
   verifyToken,
   extractToken,
   setAuthCookie,

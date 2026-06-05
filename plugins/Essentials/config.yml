@@ -789,6 +789,9 @@ world-home-permissions: false
 sethome-multiple:
   default: 3
   vip: 5
+  vip_plus: 7
+  mvp: 9
+  mvp_plus: 11
   staff: 10
 
 # Controls whether players need the permission 'essentials.home.compass' in order to point

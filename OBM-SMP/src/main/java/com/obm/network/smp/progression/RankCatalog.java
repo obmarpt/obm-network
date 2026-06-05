@@ -1,8 +1,5 @@
 package com.obm.network.smp.progression;
 
-/**
- * Ranks de <b>progressão gameplay SMP</b> (Bronze → …). Separado dos ranks network (OBM-Core {@code ranks.purchasable}).
- */
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -13,16 +10,27 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Ranks de progressão gameplay SMP (Rookie → Godlike). Separado dos ranks network (OBM-Core).
+ */
 public class RankCatalog {
+
+    private static final Map<String, String> LEGACY_RANK_IDS = Map.of(
+            "bronze", "rookie",
+            "silver", "survivor",
+            "gold", "fighter",
+            "diamond", "warrior",
+            "emerald", "knight"
+    );
 
     private final List<RankDefinition> ranks = new ArrayList<>();
     private final Map<String, RankDefinition> rankById = new LinkedHashMap<>();
-    private String defaultRankId = "bronze";
+    private String defaultRankId = "rookie";
 
     public void reload(FileConfiguration config) {
         ranks.clear();
         rankById.clear();
-        defaultRankId = config.getString("ranks.default", "bronze");
+        defaultRankId = config.getString("ranks.default", "rookie");
 
         ConfigurationSection section = config.getConfigurationSection("ranks.levels");
         if (section == null) {
@@ -38,13 +46,28 @@ public class RankCatalog {
                     id,
                     rankSection.getString("display-name", id),
                     rankSection.getInt("cost", 0),
+                    rankSection.getDouble("money-boost", 0),
                     rankSection.getDouble("sell-boost", 0),
                     rankSection.getDouble("kill-boost", 0),
-                    rankSection.getDouble("shop-discount", 0)
+                    rankSection.getDouble("shop-discount", 0),
+                    rankSection.getInt("extra-homes", 1),
+                    rankSection.getDouble("cooldown-reduction", 0),
+                    rankSection.getString("chat-prefix", "")
             );
             ranks.add(rank);
             rankById.put(id, rank);
         }
+    }
+
+    public String normalizeRankId(String rankId) {
+        if (rankId == null || rankId.isBlank()) {
+            return defaultRankId;
+        }
+        String normalized = LEGACY_RANK_IDS.getOrDefault(rankId.toLowerCase(), rankId.toLowerCase());
+        if (rankById.containsKey(normalized)) {
+            return normalized;
+        }
+        return defaultRankId;
     }
 
     public String getDefaultRankId() {
@@ -56,11 +79,12 @@ public class RankCatalog {
     }
 
     public Optional<RankDefinition> getRank(String id) {
-        return Optional.ofNullable(rankById.get(id));
+        return Optional.ofNullable(rankById.get(normalizeRankId(id)));
     }
 
     public Optional<RankDefinition> getNextRank(String currentRankId) {
-        int index = indexOf(currentRankId);
+        String normalized = normalizeRankId(currentRankId);
+        int index = indexOf(normalized);
         if (index < 0 || index + 1 >= ranks.size()) {
             return Optional.empty();
         }
@@ -68,8 +92,9 @@ public class RankCatalog {
     }
 
     public int indexOf(String rankId) {
+        String normalized = normalizeRankId(rankId);
         for (int i = 0; i < ranks.size(); i++) {
-            if (ranks.get(i).id().equals(rankId)) {
+            if (ranks.get(i).id().equals(normalized)) {
                 return i;
             }
         }

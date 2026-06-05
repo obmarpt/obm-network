@@ -1,41 +1,52 @@
-# Default para todos os grupos (usa LuckPerms)
+# UI premium MineSpace — cores fixas (sem gradientes)
 _DEFAULT_:
   tabprefix: "%luckperms-prefix%"
   tagprefix: "%luckperms-prefix%"
-  customtabname: "%player%"
-  tabsuffix: "%luckperms-suffix%"
-  tagsuffix: "%luckperms-suffix%"
+  customtabname: "&f%player%"
+  tabsuffix: ""
+  tagsuffix: ""
 
-# PLAYER (caso não uses prefix em LuckPerms)
 Player:
-  tabprefix: "&8[&7Player&8] &3"
-  tagprefix: "&7Player &3"
+  tabprefix: ""
+  tagprefix: ""
+  customtabname: "&f%player%"
 
-# STAFF (opcional)
 Owner:
-  tabprefix: "&8[&aOwner&8] &a"
-  tagprefix: "&aOwner &a"
+  tabprefix: "&4&lOWNER "
+  tagprefix: "&4&lOWNER "
 
 Admin:
-  tabprefix: "&8[&cAdmin&8] &c"
-  tagprefix: "&cAdmin &c"
+  tabprefix: "&c&lADMIN "
+  tagprefix: "&c&lADMIN "
 
 Mod:
-  tabprefix: "&8[&2Mod&8] &2"
-  tagprefix: "&2Mod &2"
+  tabprefix: "&9&lMOD "
+  tagprefix: "&9&lMOD "
 
 Helper:
-  tabprefix: "&8[&aHelper&8] &a"
-  tagprefix: "&aHelper &a"
+  tabprefix: "&b&lHELPER "
+  tagprefix: "&b&lHELPER "
 
-# VIP (exemplo)
-VIP:
-  tabprefix: "&8[&6VIP&8] &6"
-  tagprefix: "&6VIP &6"
+Builder:
+  tabprefix: "&2&lBUILDER "
+  tagprefix: "&2&lBUILDER "
 
-# PER WORLD (opcional)
-per-world:
-  world1:
-    Owner:
-      tabprefix: "&8[&aOwner&8] &a"
-      tagprefix: "&aOwner &a"
+mvp_plus:
+  tabprefix: "&6[MVP+] "
+  tagprefix: "&6[MVP+] "
+  customtabname: "&f%player%"
+
+mvp:
+  tabprefix: "&d[MVP] "
+  tagprefix: "&d[MVP] "
+  customtabname: "&f%player%"
+
+vip_plus:
+  tabprefix: "&b[VIP+] "
+  tagprefix: "&b[VIP+] "
+  customtabname: "&f%player%"
+
+vip:
+  tabprefix: "&a[VIP] "
+  tagprefix: "&a[VIP] "
+  customtabname: "&f%player%"

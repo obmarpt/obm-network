@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil — MineSpace</title>
+  <link rel="stylesheet" href="/css/site.css">
+  <link rel="stylesheet" href="/css/portal.css">
+  <link rel="stylesheet" href="/css/profile.css">
+</head>
+<body data-page="profile">
+  <div id="app-nav"></div>
+  <main class="container">
+    <header class="page-header">
+      <h1>Perfil do jogador</h1>
+      <p class="lead">Progressão · Seasons · Rankings · Evolução</p>
+    </header>
+
+    <div class="profile-search-wrap search-box">
+      <input class="input" id="searchInput" placeholder="Pesquisar jogador..." style="margin:0;">
+      <button class="btn btn-primary" id="searchBtn" type="button">Buscar</button>
+    </div>
+    <ul class="search-results hidden card" id="searchResults" style="padding:0.5rem;margin-bottom:1rem;"></ul>
+    <div id="profileContent"><p class="muted">Carrega um perfil ou pesquisa um jogador.</p></div>
+  </main>
+  <div id="app-footer"></div>
+  <script src="/js/layout.js"></script>
+  <script src="/js/site.js"></script>
+  <script src="/js/portal.js"></script>
+  <script src="/js/profile.js"></script>
+  <script>
+    function playerIdFromUrl() {
+      const params = new URLSearchParams(location.search);
+      if (params.get('uuid')) return params.get('uuid');
+      const m = location.pathname.match(/\/player\/([^/]+)/);
+      return m ? decodeURIComponent(m[1]) : null;
+    }
+
+    async function loadProfile(id) {
+      const el = document.getElementById('profileContent');
+      el.innerHTML = '<p class="muted">A carregar perfil...</p>';
+      try {
+        const data = await api(`/api/public/player/${encodeURIComponent(id)}/profile`);
+        el.innerHTML = PlayerProfile.render(data);
+        const url = `/player/${encodeURIComponent(data.profile.uuid)}`;
+        if (location.pathname + location.search !== url) {
+          history.replaceState(null, '', url);
+        }
+        document.title = `${data.profile.username} — MineSpace`;
+        window.msReveal?.(el);
+      } catch (err) {
+        const msg = err?.message === 'player_not_found' || String(err?.message || '').includes('404')
+          ? 'Jogador não encontrado.'
+          : 'Servidor indisponível — tenta mais tarde.';
+        el.innerHTML = `<p class="error">${esc(msg)}</p>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const id = playerIdFromUrl();
+      if (id) loadProfile(id);
+
+      document.getElementById('searchBtn')?.addEventListener('click', async () => {
+        const q = document.getElementById('searchInput').value.trim();
+        if (!q) return;
+        const list = document.getElementById('searchResults');
+        try {
+          const { results } = await api(`/api/public/player/search?q=${encodeURIComponent(q)}`);
+          if (!results.length) {
+            list.classList.remove('hidden');
+            list.innerHTML = '<li class="muted" style="padding:0.65rem;">Sem resultados — tenta username exacto</li>';
+            return;
+          }
+          list.classList.remove('hidden');
+          list.innerHTML = results.map((r) =>
+            `<li data-uuid="${esc(r.uuid)}" style="display:flex;align-items:center;gap:0.5rem;padding:0.65rem;cursor:pointer;">
+              <img src="${Portal.avatarUrl(r.uuid, 28)}" width="28" height="28" style="border-radius:6px;image-rendering:pixelated;" alt="">
+              ${esc(r.username)}
+            </li>`
+          ).join('');
+          list.querySelectorAll('li[data-uuid]').forEach((li) => {
+            li.addEventListener('click', () => {
+              list.classList.add('hidden');
+              loadProfile(li.dataset.uuid);
+            });
+          });
+        } catch {
+          loadProfile(q);
+        }
+      });
+
+      document.getElementById('searchInput')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') document.getElementById('searchBtn')?.click();
+      });
+    });
+  </script>
+</body>
+</html>

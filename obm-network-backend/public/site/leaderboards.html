@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboards — MineSpace</title>
+  <link rel="stylesheet" href="/css/site.css">
+  <link rel="stylesheet" href="/css/portal.css">
+</head>
+<body data-page="leaderboards">
+  <div id="app-nav"></div>
+  <main class="container">
+    <header class="page-header">
+      <h1>Leaderboards</h1>
+      <p class="lead">Top 10 jogadores · actualização a cada 30s · dados da base de dados</p>
+    </header>
+
+    <div id="globalStatsBar"></div>
+    <div class="lb-grid" id="leaderboardsGrid"><p class="muted">A carregar rankings...</p></div>
+  </main>
+  <div id="app-footer"></div>
+  <script src="/js/layout.js"></script>
+  <script src="/js/site.js"></script>
+  <script src="/js/portal.js"></script>
+  <script>
+    const BOARDS = [
+      { key: 'money', title: 'Top Money', icon: '💰' },
+      { key: 'kills', title: 'Top Kills SMP', icon: '⚔' },
+      { key: 'rating', title: 'Top TierSpace Rating', icon: '🏆' },
+      { key: 'hc', title: 'Top HC Kills', icon: '☠' },
+    ];
+
+    async function renderBoards() {
+      const grid = document.getElementById('leaderboardsGrid');
+      try {
+        const bundle = await Portal.fetchLeaderboards();
+        const boards = bundle.boards || {};
+        const extra = await Promise.all(
+          BOARDS.filter((b) => !boards[b.key]).map(async (b) => {
+            const data = await Portal.fetchLeaderboard(b.key);
+            return { key: b.key, entries: data.entries || [] };
+          })
+        );
+        extra.forEach((e) => { boards[e.key] = { entries: e.entries }; });
+
+        grid.innerHTML = BOARDS.map((b) =>
+          Portal.renderLeaderboardCard(b.title, b.icon, boards[b.key]?.entries || [])
+        ).join('');
+      } catch {
+        const html = await Promise.all(BOARDS.map(async (b) => {
+          try {
+            const data = await Portal.fetchLeaderboard(b.key);
+            return Portal.renderLeaderboardCard(b.title, b.icon, data.entries || []);
+          } catch {
+            return Portal.renderLeaderboardCard(b.title, b.icon, [], 'Indisponível');
+          }
+        }));
+        grid.innerHTML = html.join('');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      Portal.mountGlobalStats('globalStatsBar');
+      renderBoards();
+      setInterval(renderBoards, 30000);
+      setInterval(() => Portal.mountGlobalStats('globalStatsBar'), 30000);
+    });
+  </script>
+</body>
+</html>

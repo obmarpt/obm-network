@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loja — MineSpace</title>
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="stylesheet" href="/css/site.css">
+  <link rel="stylesheet" href="/css/portal.css">
+  <link rel="stylesheet" href="/css/store.css">
+</head>
+<body class="store-page" data-page="store">
+  <div id="app-nav"></div>
+
+  <header class="store-hero">
+    <div class="store-hero-inner container">
+      <h1>Loja MineSpace</h1>
+      <p>VIPs premium, bundles exclusivos e cosméticos — pagamento seguro via Stripe</p>
+      <div class="store-trust">
+        <span class="store-trust-pill">🔒 <strong>Stripe</strong> seguro</span>
+        <span class="store-trust-pill">⚡ Entrega <strong>instantânea</strong></span>
+        <span class="store-trust-pill">✅ <strong>Zero</strong> pay-to-win</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="checkoutStatus" class="store-status"></div>
+
+    <section class="store-promo" id="promoSection">
+      <h3>🎟️ Código promocional</h3>
+      <form id="promoForm" class="store-promo-form">
+        <select class="input" id="promoProductSelect"></select>
+        <input class="input" id="promoInput" placeholder="LAUNCH10 / NEWPLAYER / EVENT">
+        <button class="btn btn-ghost" type="submit">Aplicar</button>
+        <button class="btn btn-primary" type="button" id="redeemStarterBtn">NEWPLAYER</button>
+      </form>
+      <p class="store-promo-msg success-msg" id="promoSuccess"></p>
+      <p class="store-promo-msg error" id="promoError"></p>
+    </section>
+
+    <section class="store-featured" id="featuredSection" hidden>
+      <div class="store-section-head">
+        <span class="fire">🔥</span>
+        <h2>Featured Packs</h2>
+      </div>
+      <div class="store-featured-grid" id="featuredGrid"></div>
+    </section>
+
+    <section class="store-compare tier-compare-section" id="tierCompare">
+      <div class="tier-compare-head">
+        <div>
+          <h2>Compare VIPs</h2>
+          <p class="store-compare-sub">Escolhe o tier ideal — QoL only, sem vantagem PvP</p>
+        </div>
+      </div>
+      <div id="tierTableWrap"></div>
+    </section>
+
+    <nav class="store-tabs-bar" id="categoryTabs" aria-label="Categorias da loja"></nav>
+    <div id="productsGrid"><p class="muted">A carregar produtos...</p></div>
+
+    <p class="store-footer-note">
+      VIPs temporários expiram automaticamente · Subscrições renovam via Stripe · Suporte em <a href="support.html">Suporte</a>
+    </p>
+  </main>
+
+  <div id="checkoutModal"></div>
+  <div id="successOverlay"></div>
+
+  <div id="app-footer"></div>
+  <script src="/js/layout.js"></script>
+  <script src="/js/site.js"></script>
+  <script src="/js/portal.js"></script>
+  <script src="/js/store.js"></script>
+</body>
+</html>

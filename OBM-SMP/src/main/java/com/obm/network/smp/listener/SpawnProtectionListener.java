@@ -33,7 +33,7 @@ public class SpawnProtectionListener implements Listener {
 
         if (!spawnProtectionService.isPvpAllowed(attacker, victim)) {
             event.setCancelled(true);
-            attacker.sendMessage("§cPvP está desativado no spawn.");
+            attacker.sendMessage("§cPvP está desativado na zona segura.");
         }
     }
 

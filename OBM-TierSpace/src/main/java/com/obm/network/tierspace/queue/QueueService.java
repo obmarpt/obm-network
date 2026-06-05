@@ -16,6 +16,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class QueueService {
 
     public record QueueEntry(UUID uuid, GameModeId mode, int rating, long joinedAt) {
+        public QueuePlayer toPlayer() {
+            return QueuePlayer.fromEntry(this);
+        }
     }
 
     public record MatchPair(QueueEntry first, QueueEntry second) {
@@ -34,7 +37,7 @@ public class QueueService {
         this.store = store;
         this.initialRange = initialRange;
         this.rangeExpansion = rangeExpansion;
-        this.expansionIntervalSeconds = expansionIntervalSeconds;
+        this.expansionIntervalSeconds = Math.max(1, expansionIntervalSeconds);
         this.maxRange = maxRange;
     }
 
@@ -49,20 +52,23 @@ public class QueueService {
         QueueEntry existing = queuedPlayers.get(uuid);
         if (existing != null) {
             if (existing.mode() == mode) {
-                queuedPlayers.put(uuid, new QueueEntry(uuid, mode, existing.rating(), System.currentTimeMillis()));
+                queuedPlayers.put(uuid, new QueueEntry(uuid, mode, existing.rating(),
+                    System.currentTimeMillis() - queuePriorityBoostMs(player)));
                 TierSpaceLog.debug("Queue refresh " + player.getName() + " mode=" + mode.id());
                 return JoinResult.REFRESHED;
             }
             queuedPlayers.remove(uuid);
             store.ensureInitialized(uuid, mode);
             int rating = store.getRating(uuid, mode);
-            queuedPlayers.put(uuid, new QueueEntry(uuid, mode, rating, System.currentTimeMillis()));
+            queuedPlayers.put(uuid, new QueueEntry(uuid, mode, rating,
+                    System.currentTimeMillis() - queuePriorityBoostMs(player)));
             TierSpaceLog.info("Queue switch " + player.getName() + " mode=" + mode.id());
             return JoinResult.SWITCHED;
         }
         store.ensureInitialized(uuid, mode);
         int rating = store.getRating(uuid, mode);
-        queuedPlayers.put(uuid, new QueueEntry(uuid, mode, rating, System.currentTimeMillis()));
+        long joinedAt = System.currentTimeMillis() - queuePriorityBoostMs(player);
+        queuedPlayers.put(uuid, new QueueEntry(uuid, mode, rating, joinedAt));
         TierSpaceLog.info("Queue join " + player.getName() + " mode=" + mode.id() + " rating=" + rating);
         return JoinResult.JOINED;
     }
@@ -96,9 +102,42 @@ public class QueueService {
         return Optional.ofNullable(queuedPlayers.get(uuid));
     }
 
+    public Optional<QueuePlayer> getPlayer(UUID uuid) {
+        return getEntry(uuid).map(QueueEntry::toPlayer);
+    }
+
+    public List<QueuePlayer> getPlayersInMode(GameModeId mode) {
+        return queuedPlayers.values().stream()
+                .filter(e -> e.mode() == mode)
+                .map(QueueEntry::toPlayer)
+                .toList();
+    }
+
+    /**
+     * Matchmaking ELO — filas independentes por modo, range expande com o tempo.
+     */
     public Optional<MatchPair> findMatch() {
-        List<QueueEntry> entries = new ArrayList<>(queuedPlayers.values());
-        entries.sort(Comparator.comparingLong(QueueEntry::joinedAt));
+        for (GameModeId mode : GameModeId.ordered()) {
+            Optional<MatchPair> pair = findMatchForMode(mode);
+            if (pair.isPresent()) {
+                return pair;
+            }
+        }
+        return Optional.empty();
+    }
+
+    private Optional<MatchPair> findMatchForMode(GameModeId mode) {
+        List<QueueEntry> entries = queuedPlayers.values().stream()
+                .filter(e -> e.mode() == mode)
+                .sorted(Comparator.comparingLong(QueueEntry::joinedAt))
+                .toList();
+
+        if (entries.size() < 2) {
+            return Optional.empty();
+        }
+
+        MatchPair best = null;
+        int bestDiff = Integer.MAX_VALUE;
 
         for (int i = 0; i < entries.size(); i++) {
             QueueEntry anchor = entries.get(i);
@@ -106,26 +145,43 @@ public class QueueService {
 
             for (int j = i + 1; j < entries.size(); j++) {
                 QueueEntry candidate = entries.get(j);
-                if (anchor.mode() != candidate.mode()) {
-                    continue;
-                }
-                if (Math.abs(anchor.rating() - candidate.rating()) <= allowedRange) {
-                    queuedPlayers.remove(anchor.uuid());
-                    queuedPlayers.remove(candidate.uuid());
-                    TierSpaceLog.info("Match pair mode=" + anchor.mode().id()
-                            + " ratings=" + anchor.rating() + "/" + candidate.rating()
-                            + " range=" + allowedRange);
-                    return Optional.of(new MatchPair(anchor, candidate));
+                int diff = Math.abs(anchor.rating() - candidate.rating());
+                if (diff <= allowedRange && diff < bestDiff) {
+                    bestDiff = diff;
+                    best = new MatchPair(anchor, candidate);
                 }
             }
         }
-        return Optional.empty();
+
+        if (best == null) {
+            return Optional.empty();
+        }
+
+        queuedPlayers.remove(best.first().uuid());
+        queuedPlayers.remove(best.second().uuid());
+        TierSpaceLog.info("Match pair mode=" + mode.id()
+                + " ratings=" + best.first().rating() + "/" + best.second().rating()
+                + " diff=" + bestDiff);
+        return Optional.of(best);
     }
 
-    private int currentRange(QueueEntry entry) {
+    /**
+     * Range: ±50 inicial → ±100 → ±200 → cresce até maxRange a cada intervalo.
+     */
+    int currentRange(QueueEntry entry) {
         long waitedSeconds = Math.max(0, (System.currentTimeMillis() - entry.joinedAt()) / 1000L);
-        int expansions = (int) (waitedSeconds / Math.max(1, expansionIntervalSeconds));
-        return Math.min(maxRange, initialRange + expansions * rangeExpansion);
+        int expansions = (int) (waitedSeconds / expansionIntervalSeconds);
+        int range = initialRange;
+        for (int i = 0; i < expansions; i++) {
+            if (range < 100) {
+                range = 100;
+            } else if (range < 200) {
+                range = 200;
+            } else {
+                range = Math.min(maxRange, range + rangeExpansion);
+            }
+        }
+        return Math.min(maxRange, range);
     }
 
     public int getQueueSize(GameModeId mode) {
@@ -146,6 +202,16 @@ public class QueueService {
             return 15;
         }
         long waited = getWaitSeconds(uuid);
-        return (int) Math.min(60, Math.max(10, inQueue * 8L - waited / 2L));
+        return (int) Math.min(90, Math.max(10, inQueue * 6L - waited / 2L));
+    }
+
+    private static long queuePriorityBoostMs(Player player) {
+        if (player.hasPermission("group.mvp_plus")) {
+            return 120_000L;
+        }
+        if (player.hasPermission("group.mvp") || player.hasPermission("obm.queue.priority")) {
+            return 60_000L;
+        }
+        return 0L;
     }
 }

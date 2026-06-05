@@ -1,0 +1,75 @@
+{
+  "tiers": [
+    {
+      "id": "vip",
+      "name": "VIP",
+      "price30": "4.99",
+      "priceLifetime": "19.99",
+      "moneyBoost": "+10%",
+      "repair": "5 min CD",
+      "homes": "2",
+      "keys": "1/dia",
+      "kits": "❌",
+      "priority": "❌",
+      "prefix": "§aVIP"
+    },
+    {
+      "id": "vip_plus",
+      "name": "VIP+",
+      "price30": "9.99",
+      "priceLifetime": "39.99",
+      "moneyBoost": "+20%",
+      "repair": "3 min CD",
+      "homes": "4",
+      "keys": "2/dia",
+      "kits": "✅",
+      "priority": "❌",
+      "prefix": "§bVIP+",
+    },
+    {
+      "id": "mvp",
+      "name": "MVP",
+      "price30": "14.99",
+      "priceLifetime": "59.99",
+      "moneyBoost": "+30%",
+      "repair": "90s CD",
+      "homes": "6",
+      "keys": "3/dia",
+      "kits": "✅",
+      "priority": "✅",
+      "prefix": "§dMVP"
+    },
+    {
+      "id": "mvp_plus",
+      "name": "MVP+",
+      "price30": "19.99",
+      "priceLifetime": "79.99",
+      "moneyBoost": "+50%",
+      "repair": "Instant 3/h",
+      "homes": "8",
+      "keys": "5/dia",
+      "kits": "✅",
+      "priority": "✅",
+      "cosmetics": "✅",
+      "prefix": "Animado",
+      "highlight": "best_value",
+      "bestValue": true
+    }
+  ],
+  "matrix": {
+    "highlightIndex": 3,
+    "columns": ["VIP", "VIP+", "MVP", "MVP+"],
+    "rows": [
+      { "label": "Money Boost", "values": ["10%", "20%", "30%", "50%"], "bestIndex": 3 },
+      { "label": "Homes", "values": ["2", "4", "6", "8"], "bestIndex": 3 },
+      { "label": "Keys/dia", "values": ["1", "2", "3", "5"], "bestIndex": 3 },
+      { "label": "Kits", "values": ["❌", "✅", "✅", "✅"], "bestIndex": 1 },
+      { "label": "Priority", "values": ["❌", "❌", "✅", "✅"], "bestIndex": 2 },
+      { "label": "Warps", "values": ["❌", "❌", "✅", "✅"], "bestIndex": 2 },
+      { "label": "Cosméticos", "values": ["❌", "❌", "❌", "✅"], "bestIndex": 3 },
+      { "label": "30 dias", "values": ["€4.99", "€9.99", "€14.99", "€19.99"], "bestIndex": null },
+      { "label": "Lifetime", "values": ["€19.99", "€39.99", "€59.99", "€79.99"], "bestIndex": null }
+    ]
+  },
+  "rules": "VIPs dão apenas QoL — sem vantagem PvP directa."
+}

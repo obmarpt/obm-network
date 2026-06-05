@@ -1,26 +1,29 @@
 # MineSpace — Sistema de permissões (produção)
 
-Documentação do sistema final. Comandos executáveis: [`config/luckperms/production-setup.txt`](../config/luckperms/production-setup.txt).
+Documentação do sistema final. **Setup completo:** [`config/luckperms/permissions-complete.txt`](../config/luckperms/permissions-complete.txt). Legado/deltas: [`production-setup.txt`](../config/luckperms/production-setup.txt), [`production-delta-v2.txt`](../config/luckperms/production-delta-v2.txt).
 
 ---
 
 ## Hierarquia
 
 ```
-default → vip → mvp → helper → mod → admin → owner
-default → builder (ramo paralelo, sem moderação)
+Jogador:  default → vip → vip_plus → mvp → mvp_plus
+Staff:    default → helper → mod (Moderator) → admin → owner
+Paralelo: default → builder (construção, sem moderação)
 ```
 
 | Grupo | Peso | Papel |
 |-------|------|--------|
-| **default** | 0 | Jogador: modos, economia SMP básica, Emeralds, TierSpace fila |
-| **vip** | 10 | QoL: chat color, loja VIP SMP, 2º home |
-| **mvp** | 20 | QoL+: prefix MVP, workbench, mais homes |
+| **default** | 0 | Jogador: spawn/home/msg/duel, economia SMP, Emeralds, TierSpace |
+| **vip** | 10 | QoL: chat color, loja VIP SMP, `/repair`, 2º home |
+| **vip_plus** | 15 | Kits VIP+, fly, repair Essentials |
+| **mvp** | 20 | Warp MVP, prioridade queue, workbench, mais homes |
+| **mvp_plus** | 25 | Repair all, máximo de homes |
 | **builder** | 15 | Construção: WE/Voxel/Citizens, **sem** staff |
-| **helper** | 30 | Suporte: kick/mute/vanish/tp |
-| **mod** | 40 | Moderação: ban, invsee, fly staff, alertas Grim |
-| **admin** | 50 | Seasons, painel OBM, revive UHC, WE extra, bypass AC |
-| **owner** | 100 | Gestão LP/TAB/PAPI |
+| **helper** | 30 | Suporte: kick/mute, `/report list` — **sem** ban/tp/vanish |
+| **mod** | 40 | Moderator: ban, tp, vanish, invsee, alertas Grim |
+| **admin** | 50 | Painel OBM, economia staff, revive UHC, fly staff |
+| **owner** | 100 | Tudo + gestão LP/TAB/PAPI + bypass AC |
 
 ---
 
@@ -28,7 +31,9 @@ default → builder (ramo paralelo, sem moderação)
 
 ### DEFAULT
 
-**OBM:** `obm.shop.global`, `obm.daily`, `obm.cosmetics`, `obm.crate`, `obm.battlepass`, `obm.season.info`, `obm.lobby`, `obm.menu`, `obm.smp.enter`, `obm.smp.shop`, `obm.smp.sell`, `obm.smp.auction`, `obm.smp.rank`, `obm.smp.money`, `obm.smp.money.pay`, `obm.smp.market`, `obm.smp.top`, `obm.tierspace.use`, `obm.tierspace.queue`, `obm.uhc.stats`
+**OBM:** `obm.help`, `obm.report`, `obm.link`, `obm.achievements`, `obm.duel.use`, `obm.rankup.use`, `obm.crate.open`, `obm.shop.global`, `obm.daily`, `obm.cosmetics`, `obm.battlepass`, `obm.season.info`, `obm.lobby`, `obm.menu`, `obm.smp.*` (enter/shop/sell/auction/rank/money/market/top), `obm.tierspace.use`, `obm.tierspace.queue`, `obm.uhc.stats`
+
+**Nota:** `obm.smp.rank` = progressão SMP (comprar ranks in-game). **Não** confundir com `obm.rank.mod` (display staff).
 
 **Essentials:** spawn, help, list, msg, reply, afk, home/sethome/delhome (1), tpa/tpaccept/tpdeny/tpahere, back, ignore, mail
 
@@ -72,15 +77,17 @@ default → builder (ramo paralelo, sem moderação)
 
 ### HELPER
 
-**+** `obm.rank.helper`, `tab.staff`, kick/mute/tempmute/unmute, tp/tphere/tpoffline, vanish + see, socialspy, nick, chat.color Essentials
+**+** `obm.rank.helper`, `obm.staff.reports`, `tab.staff`, kick/mute/tempmute/unmute, socialspy, nick, `obm.chat.staff`
+
+**Sem:** ban, tp, vanish, `obm.admin.*`
 
 ---
 
-### MOD
+### MOD (Moderator — grupo LP `mod`)
 
-**+** `obm.rank.mod`, ban/tempban/unban/banip, invsee, enderchest.others, fly, speed, heal, feed, `grim.alerts`
+**+** `obm.rank.mod`, ban/tempban/unban/banip, tp/tphere/vanish, invsee, enderchest.others, speed, heal, feed, `grim.alerts`
 
-**Sem:** `grim.exempt`, `spartan.bypass`, `obm.admin.panel`, `luckperms.*`
+**Sem:** fly (só admin+), `grim.exempt`, `spartan.bypass`, `obm.admin.panel`, `luckperms.*`
 
 ---
 
@@ -151,9 +158,10 @@ Ver [`config/luckperms/production-delta-v2.txt`](../config/luckperms/production-
 ## 6. Aplicar no servidor
 
 ```bash
-# Consola — colar blocos de config/luckperms/production-setup.txt
+# Consola — colar config/luckperms/permissions-complete.txt (servidor novo)
 lp user <nick> parent set default
 lp user <nick> parent add vip
+lp user <staff> parent add helper   # track staff paralelo ao VIP
 ```
 
 Recompilar e deploy OBM-* após atualização de permissões no código.

@@ -44,10 +44,11 @@ public class ProfileMenu {
 
         int rushKills = ds.getInt(uuid, "kills_smp");
         int rushDeaths = ds.getInt(uuid, "deaths_smp");
-        int hcKills = ds.getInt(uuid, "kills_uhc");
-        int hcDeaths = ds.getInt(uuid, "deaths_uhc");
-        int hcLives = ds.getInt(uuid, "lives_uhc");
-        int playtime = ds.getInt(uuid, "playtime_smp") + ds.getInt(uuid, "playtime_uhc");
+        int hcKills = com.obm.network.core.integration.HardcoreStatsBridge.getKills(uuid);
+        int hcDeaths = com.obm.network.core.integration.HardcoreStatsBridge.getDeaths(uuid);
+        int hcLives = com.obm.network.core.integration.HardcoreStatsBridge.getLives(uuid);
+        int playtime = ds.getInt(uuid, "playtime_smp")
+                + com.obm.network.core.integration.HardcoreStatsBridge.getPlaytime(uuid);
         int emeralds = OBMCorePlugin.get().getGlobalEconomy() != null
                 ? OBMCorePlugin.get().getGlobalEconomy().getBalance(uuid)
                 : 0;

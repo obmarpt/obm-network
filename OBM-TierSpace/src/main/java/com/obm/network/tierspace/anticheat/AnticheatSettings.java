@@ -31,7 +31,7 @@ public record AnticheatSettings(
                 config.getInt("anticheat.punish.grim-reach-vl", 10),
                 config.getInt("anticheat.punish.grim-hitboxes-vl", 10),
                 config.getInt("anticheat.punish.spartan-killaura-vl", 12),
-                config.getInt("anticheat.exemption-refresh-ticks", 40)
+                Math.max(20, config.getInt("anticheat.exemption-refresh-ticks", 40))
         );
     }
 

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registar — MineSpace</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body data-page="register" data-auth-mode="register">
+  <div id="app-nav"></div>
+  <main class="container auth-wrap">
+    <div class="auth-card card">
+      <h1>Criar conta</h1>
+      <p class="muted">Email + username Minecraft. Depois liga a conta com <code>/link</code> no servidor.</p>
+      <form id="authForm" style="margin-top:1.25rem;">
+        <input class="input" id="email" type="email" placeholder="Email" required>
+        <input class="input" id="password" type="password" placeholder="Password (8+, maiúscula, número)" required minlength="8">
+        <input class="input" id="minecraftUsername" type="text" placeholder="Username Minecraft" required pattern="[a-zA-Z0-9_]{3,16}">
+        <button class="btn btn-primary btn-block" type="submit">Registar</button>
+        <p id="authError" class="error"></p>
+      </form>
+      <p style="margin-top:1rem; text-align:center;" class="muted-sm">Já tens conta? <a href="login.html">Entrar</a></p>
+    </div>
+  </main>
+  <div id="app-footer"></div>
+  <script src="/js/layout.js"></script>
+  <script src="/js/site.js"></script>
+  <script src="/js/auth.js"></script>
+</body>
+</html>

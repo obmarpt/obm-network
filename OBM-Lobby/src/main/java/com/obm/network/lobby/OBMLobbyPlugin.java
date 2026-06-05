@@ -4,8 +4,11 @@ import com.obm.network.core.OBMCorePlugin;
 import com.obm.network.lobby.commands.LobbyCommand;
 import com.obm.network.lobby.commands.MenuCommand;
 import com.obm.network.lobby.gui.MenuManager;
+import com.obm.network.lobby.gui.ModeNavigatorRefreshTask;
 import com.obm.network.lobby.join.JoinHandler;
+import com.obm.network.lobby.join.QuitHandler;
 import com.obm.network.lobby.listener.LobbyItemListener;
+import com.obm.network.lobby.listener.LobbyProtectionListener;
 import com.obm.network.lobby.retention.ProgressFeedbackTask;
 import com.obm.network.lobby.retention.RetentionJoinListener;
 
@@ -41,19 +44,22 @@ public class OBMLobbyPlugin extends JavaPlugin {
         }
 
         if (core.getHologramService() != null) {
-            core.getHologramService().reload();
             getLogger().info("Hologramas do lobby geridos pelo OBM-Core (holograms.yml)");
         } else {
             getLogger().warning("HologramService indisponível — verifica DecentHolograms + OBM-Core");
         }
 
         new JoinHandler(this);
+        new QuitHandler(this);
 
         registerCommand("lobby", new LobbyCommand(this));
         registerCommand("menu", new MenuCommand());
 
         getServer().getPluginManager().registerEvents(new MenuManager(), this);
         getServer().getPluginManager().registerEvents(new LobbyItemListener(), this);
+        getServer().getPluginManager().registerEvents(new LobbyProtectionListener(), this);
+
+        new ModeNavigatorRefreshTask(this).start();
 
         ProgressFeedbackTask progressFeedback = new ProgressFeedbackTask();
         getServer().getPluginManager().registerEvents(new RetentionJoinListener(progressFeedback), this);

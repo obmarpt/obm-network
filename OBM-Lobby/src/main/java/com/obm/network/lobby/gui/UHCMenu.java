@@ -42,11 +42,11 @@ public class UHCMenu {
         DataStore ds = OBMCorePlugin.get().getDataStore();
         HardcoreUnlockStatus unlock = HardcoreUnlockService.evaluate(uuid);
 
-        int lives = ds.getInt(uuid, "lives_uhc");
-        int kills = ds.getInt(uuid, "kills_uhc");
-        int deaths = ds.getInt(uuid, "deaths_uhc");
-        int mobs = ds.getInt(uuid, "mobs_uhc");
-        int playtime = ds.getInt(uuid, "playtime_uhc");
+        int lives = com.obm.network.core.integration.HardcoreStatsBridge.getLives(uuid);
+        int kills = com.obm.network.core.integration.HardcoreStatsBridge.getKills(uuid);
+        int deaths = com.obm.network.core.integration.HardcoreStatsBridge.getDeaths(uuid);
+        int mobs = com.obm.network.core.integration.HardcoreStatsBridge.getMobs(uuid);
+        int playtime = com.obm.network.core.integration.HardcoreStatsBridge.getPlaytime(uuid);
 
         inv.setItem(SLOT_HEADER, buildHeaderItem(unlock, lives));
         inv.setItem(SLOT_STATS, buildStatsItem(kills, deaths, mobs, playtime));

@@ -1,5 +1,6 @@
 package com.obm.network.smp.commands;
 
+import com.obm.network.core.ui.PlayerUx;
 import com.obm.network.core.world.WorldModeService;
 import com.obm.network.smp.auction.AuctionGui;
 import com.obm.network.smp.permission.SmpPermissions;
@@ -20,19 +21,20 @@ public class AuctionCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage("Apenas jogadores podem usar este comando.");
+        if (!PlayerUx.requirePlayer(sender)) {
             return true;
         }
+        Player player = (Player) sender;
 
         if (!worldModeService.isSMP(player.getWorld().getName())) {
-            player.sendMessage("§cEste comando só funciona dentro do SMP.");
+            PlayerUx.error(player, "Este comando só funciona dentro do SMP.");
             return true;
         }
-        if (SmpPermissions.deny(player, SmpPermissions.AUCTION, "Permissão: obm.smp.auction")) {
+        if (SmpPermissions.deny(player, SmpPermissions.AUCTION, "Precisas de: obm.smp.auction")) {
             return true;
         }
 
+        PlayerUx.openGuiFeedback(player, "Leilão");
         auctionGui.openMain(player);
         return true;
     }

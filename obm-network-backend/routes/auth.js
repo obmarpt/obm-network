@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const {
   signToken,
-  verifyCredentials,
+  resolveLoginRole,
   setAuthCookie,
   clearAuthCookie,
   JWT_EXPIRES,
@@ -22,15 +22,16 @@ router.post('/login', loginLimiter, (req, res) => {
     return res.status(503).json({ error: 'Auth not configured' });
   }
 
-  if (!verifyCredentials(username.trim(), password)) {
+  const role = resolveLoginRole(username.trim(), password);
+  if (!role) {
     console.log(`❌ Login falhou: ${username}`);
     return res.status(401).json({ error: 'Invalid credentials' });
   }
 
-  const token = signToken(username.trim());
+  const token = signToken(username.trim(), role);
   setAuthCookie(res, token);
-  console.log(`✅ Login: ${username.trim()}`);
-  res.json({ ok: true, expiresIn: JWT_EXPIRES });
+  console.log(`✅ Login: ${username.trim()} (${role})`);
+  res.json({ ok: true, expiresIn: JWT_EXPIRES, role });
 });
 
 router.post('/logout', (req, res) => {

@@ -38,6 +38,7 @@ public class MatchListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         queueService.leave(player.getUniqueId());
+        matchService.clearPostMatchState(player.getUniqueId());
         matchService.handleDisconnect(player);
     }
 }

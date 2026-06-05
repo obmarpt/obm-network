@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jogar — MineSpace</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body data-page="join">
+  <div id="app-nav"></div>
+  <main class="container" style="text-align:center; padding-top:2rem;">
+    <header class="page-header" style="border:none; text-align:center;">
+      <h1>Entra no servidor</h1>
+      <p class="lead">Java Edition 1.21 · Copia o IP</p>
+    </header>
+    <div class="ip-box" id="ipBox" title="Clica para copiar"><span class="icon-diamond"></span> <span id="serverIp">play.minespace.pt</span></div>
+    <a class="btn btn-primary btn-lg" href="#" id="joinNowBtn" style="margin-top:1rem;">▶ Join Now</a>
+    <section class="section" style="text-align:left; max-width:600px; margin:2rem auto;">
+      <div class="card">
+        <h3>Passos rápidos</h3>
+        <ol class="muted" style="padding-left:1.2rem; line-height:2;">
+          <li>Abre Minecraft Java 1.21</li>
+          <li>Multiplayer → Adicionar servidor</li>
+          <li>IP: <strong id="serverIp2">play.minespace.pt</strong></li>
+          <li>No lobby, usa o Navegador para escolher o modo</li>
+        </ol>
+      </div>
+    </section>
+    <div id="joinStats"></div>
+  </main>
+  <div id="app-footer"></div>
+  <script src="/js/layout.js"></script>
+  <script src="/js/site.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      startOnlinePoll('joinStats', 15000);
+      const box = document.getElementById('ipBox');
+      box?.addEventListener('click', () => {
+        const ip = document.getElementById('serverIp').textContent;
+        navigator.clipboard?.writeText(ip);
+        box.style.borderColor = 'var(--success)';
+      });
+      api('/api/public/server').then((s) => {
+        document.getElementById('serverIp').textContent = s.ip;
+        document.getElementById('serverIp2').textContent = s.ip;
+        document.getElementById('joinNowBtn').addEventListener('click', (e) => {
+          e.preventDefault();
+          navigator.clipboard?.writeText(s.ip);
+          alert('IP copiado: ' + s.ip);
+        });
+      }).catch(() => {});
+    });
+  </script>
+</body>
+</html>

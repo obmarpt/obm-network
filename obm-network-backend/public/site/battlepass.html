@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battle Pass — MineSpace</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body data-page="battlepass">
+  <div id="app-nav"></div>
+  <main class="container">
+    <h1 class="page-title">Battle Pass</h1>
+    <p class="muted">Season activa · 50 níveis de rewards</p>
+    <div class="card" id="bpSummary" style="margin:1.5rem 0;"></div>
+    <div class="card" id="bpLevels"></div>
+    <p class="muted" style="margin-top:1rem;">O teu progresso in-game sincroniza quando jogas no SMP.</p>
+  </main>
+  <div id="app-footer"></div>
+  <script src="/js/layout.js"></script>
+  <script src="/js/site.js"></script>
+  <script src="/js/catalog.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const { battlepass: bp } = await fetch('/api/public/catalog/battlepass').then((r) => r.json());
+        document.getElementById('bpSummary').innerHTML = `
+          <h3>Season atual</h3>
+          <p>Máx. nível: <strong>${bp.maxLevel}</strong> · Premium: <strong>${fmt(bp.premiumPrice)} Emeralds</strong> · Duração: ${bp.seasonDays} dias</p>
+          <div id="myBpProgress" class="muted">Inicia sessão para ver o teu nível.</div>`;
+
+        document.getElementById('bpLevels').innerHTML = `
+          <h3>Rewards por nível</h3>
+          ${(bp.sampleRewards || []).map((r) => `
+            <div class="bp-level">
+              <strong>Nível ${r.level}</strong>
+              <span class="badge">Free: ${esc(r.free)}</span>
+              <span class="badge badge-warn">Premium: ${esc(r.premium)}</span>
+            </div>`).join('')}`;
+
+        try {
+          const { account } = await api('/api/web/auth/me');
+          if (account?.uuid) {
+            const { profile } = await api(`/api/public/player/${account.uuid}`);
+            const lvl = profile.smpLevel || 1;
+            const pct = Math.min(100, (lvl / bp.maxLevel) * 100);
+            document.getElementById('myBpProgress').innerHTML = `
+              <p>O teu nível SMP: <strong>${lvl}</strong> (proxy de progresso BP)</p>
+              <div class="progress-bar"><span style="width:${pct}%"></span></div>`;
+          }
+        } catch { /* guest */ }
+      } catch {
+        document.getElementById('bpSummary').textContent = 'Battle Pass indisponível';
+      }
+    });
+  </script>
+</body>
+</html>

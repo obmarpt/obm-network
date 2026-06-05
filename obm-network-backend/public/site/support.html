@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suporte — MineSpace</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body data-page="support">
+  <div id="app-nav"></div>
+  <main class="container">
+    <h1 class="page-title">Suporte</h1>
+    <p class="muted">Abre um ticket — respondemos por email</p>
+
+    <div class="grid-2" style="margin-top:1.5rem;">
+      <div class="card">
+        <h3>Novo ticket</h3>
+        <p id="supportAuthMsg" class="muted">Inicia sessão para abrir ticket com a tua conta.</p>
+        <form id="ticketForm" class="hidden">
+          <input class="input" id="ticketSubject" placeholder="Assunto" required maxlength="200">
+          <textarea class="input" id="ticketMessage" rows="5" placeholder="Descreve o problema..." required minlength="10"></textarea>
+          <button class="btn btn-primary btn-block" type="submit">Enviar</button>
+          <p class="error" id="ticketError"></p>
+          <p class="success-msg hidden" id="ticketSuccess">Ticket criado! Verificamos o teu email.</p>
+        </form>
+      </div>
+      <div class="card">
+        <h3>Os teus tickets</h3>
+        <div id="ticketList"><p class="muted">—</p></div>
+      </div>
+    </div>
+  </main>
+  <div id="app-footer"></div>
+  <script src="/js/layout.js"></script>
+  <script src="/js/site.js"></script>
+  <script>
+    async function loadTickets() {
+      const list = document.getElementById('ticketList');
+      try {
+        const { tickets } = await api('/api/support/tickets');
+        if (!tickets.length) {
+          list.innerHTML = '<p class="muted">Nenhum ticket ainda.</p>';
+          return;
+        }
+        list.innerHTML = tickets.map((t) => `
+          <div class="ticket-card">
+            <strong>#${t.id}</strong> ${esc(t.subject)}
+            <span class="ticket-status-${t.status}"> · ${t.status}</span>
+            <button class="btn btn-ghost btn-sm view-ticket" data-id="${t.id}" type="button">Ver</button>
+          </div>`).join('');
+        document.querySelectorAll('.view-ticket').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            const data = await api(`/api/support/tickets/${btn.dataset.id}`);
+            const msgs = (data.messages || []).map((m) =>
+              `<p><strong>${esc(m.sender_type)}</strong>: ${esc(m.message)}</p>`
+            ).join('');
+            list.innerHTML = `<div class="card">${msgs}</div><button class="btn btn-ghost btn-sm" id="backTickets">← Voltar</button>`;
+            document.getElementById('backTickets')?.addEventListener('click', loadTickets);
+          });
+        });
+      } catch {
+        list.innerHTML = '<p class="muted">Inicia sessão para ver tickets.</p>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        await api('/api/web/auth/me');
+        document.getElementById('supportAuthMsg').classList.add('hidden');
+        document.getElementById('ticketForm').classList.remove('hidden');
+        loadTickets();
+      } catch {
+        document.getElementById('ticketList').innerHTML = '<p class="muted"><a href="login.html">Entrar</a> para ver tickets.</p>';
+      }
+
+      document.getElementById('ticketForm')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const err = document.getElementById('ticketError');
+        err.textContent = '';
+        try {
+          await api('/api/support/ticket', {
+            method: 'POST',
+            body: JSON.stringify({
+              subject: document.getElementById('ticketSubject').value.trim(),
+              message: document.getElementById('ticketMessage').value.trim(),
+            }),
+          });
+          document.getElementById('ticketSuccess').classList.remove('hidden');
+          document.getElementById('ticketForm').reset();
+          loadTickets();
+        } catch (ex) {
+          err.textContent = ex.message;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

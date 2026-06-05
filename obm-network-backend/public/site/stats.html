@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stats globais — MineSpace</title>
+  <link rel="stylesheet" href="/css/site.css">
+  <link rel="stylesheet" href="/css/portal.css">
+</head>
+<body data-page="stats">
+  <div id="app-nav"></div>
+  <main class="container">
+    <header class="page-header">
+      <h1>Estatísticas globais</h1>
+      <p class="lead">Economia, actividade e crescimento da network</p>
+    </header>
+
+    <div id="globalStatsBar"></div>
+
+    <section class="section" style="margin-top:1rem;">
+      <h2 class="section-title">Resumo da network</h2>
+      <div class="stat-grid" id="globalTotals"></div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">Actividade (7 dias)</h2>
+      <div class="grid-2" id="activityCards"></div>
+    </section>
+  </main>
+  <div id="app-footer"></div>
+  <script src="/js/layout.js"></script>
+  <script src="/js/site.js"></script>
+  <script src="/js/portal.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      Portal.mountGlobalStats('globalStatsBar');
+
+      try {
+        const s = await Portal.fetchGlobalStats();
+        const t = s.totals || {};
+        document.getElementById('globalTotals').innerHTML = `
+          <div class="stat-box"><div class="val">${fmt(t.players)}</div><div class="lbl">Jogadores registados</div></div>
+          <div class="stat-box"><div class="val">${fmt(s.onlineNow)}</div><div class="lbl">Online agora</div></div>
+          <div class="stat-box"><div class="val">${fmt(t.totalCoins)}</div><div class="lbl">Coins totais</div></div>
+          <div class="stat-box"><div class="val">${fmt(t.totalEmeralds)}</div><div class="lbl">Emeralds totais</div></div>
+          <div class="stat-box"><div class="val">${fmt(t.totalKills)}</div><div class="lbl">Kills SMP totais</div></div>`;
+
+        const growth = (s.growth || []).slice(-7);
+        const economy = (s.economy || []).slice(-7);
+        document.getElementById('activityCards').innerHTML = `
+          <div class="card">
+            <h3>📈 Crescimento</h3>
+            <div class="table-wrap"><table>
+              <thead><tr><th>Dia</th><th>Online médio</th></tr></thead>
+              <tbody>${growth.map((g) => `<tr><td>${esc(g.date || g.day || '—')}</td><td>${fmt(g.online ?? g.value ?? 0)}</td></tr>`).join('') || '<tr><td colspan="2" class="muted">Sem histórico</td></tr>'}</tbody>
+            </table></div>
+          </div>
+          <div class="card">
+            <h3>💰 Economia</h3>
+            <div class="table-wrap"><table>
+              <thead><tr><th>Dia</th><th>Volume</th></tr></thead>
+              <tbody>${economy.map((g) => `<tr><td>${esc(g.date || g.day || '—')}</td><td>${fmt(g.volume ?? g.value ?? 0)}</td></tr>`).join('') || '<tr><td colspan="2" class="muted">Sem histórico</td></tr>'}</tbody>
+            </table></div>
+          </div>`;
+      } catch {
+        document.getElementById('globalTotals').innerHTML = '<p class="muted">Stats indisponíveis</p>';
+      }
+
+      setInterval(() => Portal.mountGlobalStats('globalStatsBar'), 30000);
+    });
+  </script>
+</body>
+</html>

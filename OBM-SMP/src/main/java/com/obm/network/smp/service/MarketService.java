@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class MarketService {
@@ -23,6 +24,7 @@ public class MarketService {
     private final EconomyService economyService;
     private final File file;
     private final YamlConfiguration config;
+    private final ConcurrentHashMap<String, Object> listingLocks = new ConcurrentHashMap<>();
 
     public MarketService(JavaPlugin plugin, EconomyService economyService) {
         this.plugin = plugin;
@@ -107,45 +109,46 @@ public class MarketService {
     }
 
     public MarketSaleResult buyListing(Player buyer, String id) {
-        Optional<MarketListing> optional = getListing(id);
-        if (optional.isEmpty()) {
-            return MarketSaleResult.error("Anúncio não encontrado.");
+        synchronized (listingLocks.computeIfAbsent(id, key -> new Object())) {
+            Optional<MarketListing> optional = getListing(id);
+            if (optional.isEmpty()) {
+                return MarketSaleResult.error("Anúncio não encontrado.");
+            }
+
+            MarketListing listing = optional.get();
+            if (listing.getSeller().equals(buyer.getUniqueId())) {
+                return MarketSaleResult.error("Não podes comprar o teu próprio anúncio.");
+            }
+
+            int total = listing.getTotalValue();
+            if (!economyService.canAfford(buyer.getUniqueId(), total)) {
+                return MarketSaleResult.error("Saldo insuficiente. Precisas de "
+                        + com.obm.network.core.economy.CurrencyLabels.formatSmpMoney(total) + ".");
+            }
+
+            ItemStack itemToGive = listing.getItem().clone();
+            if (buyer.getInventory().firstEmpty() == -1
+                    && buyer.getInventory().first(itemToGive.getType()) == -1) {
+                return MarketSaleResult.error("Inventário cheio. Libera espaço antes de comprar.");
+            }
+
+            if (!economyService.transfer(buyer.getUniqueId(), listing.getSeller(), total)) {
+                return MarketSaleResult.error("Pagamento falhou. Tenta novamente.");
+            }
+
+            config.set("listings." + id, null);
+            save();
+
+            var leftovers = buyer.getInventory().addItem(itemToGive);
+            if (!leftovers.isEmpty()) {
+                economyService.transfer(listing.getSeller(), buyer.getUniqueId(), total);
+                restoreListing(id, listing);
+                return MarketSaleResult.error("Inventário cheio. Compra cancelada e reembolsada.");
+            }
+
+            return MarketSaleResult.success("§aCompra confirmada! Pagaste §e"
+                    + com.obm.network.core.economy.CurrencyLabels.formatSmpMoney(total) + "§a.");
         }
-
-        MarketListing listing = optional.get();
-        if (listing.getSeller().equals(buyer.getUniqueId())) {
-            return MarketSaleResult.error("Não podes comprar o teu próprio anúncio.");
-        }
-
-        int total = listing.getTotalValue();
-        if (!economyService.canAfford(buyer.getUniqueId(), total)) {
-            return MarketSaleResult.error("Saldo insuficiente. Precisas de "
-                    + com.obm.network.core.economy.CurrencyLabels.formatSmpMoney(total) + ".");
-        }
-
-        ItemStack itemToGive = listing.getItem().clone();
-        if (buyer.getInventory().firstEmpty() == -1
-                && buyer.getInventory().first(itemToGive.getType()) == -1) {
-            return MarketSaleResult.error("Inventário cheio. Libera espaço antes de comprar.");
-        }
-
-        config.set("listings." + id, null);
-        save();
-
-        if (!economyService.transfer(buyer.getUniqueId(), listing.getSeller(), total)) {
-            restoreListing(id, listing);
-            return MarketSaleResult.error("Pagamento falhou. Tenta novamente.");
-        }
-
-        var leftovers = buyer.getInventory().addItem(itemToGive);
-        if (!leftovers.isEmpty()) {
-            economyService.transfer(listing.getSeller(), buyer.getUniqueId(), total);
-            restoreListing(id, listing);
-            return MarketSaleResult.error("Inventário cheio. Compra cancelada e reembolsada.");
-        }
-
-        return MarketSaleResult.success("§aCompra confirmada! Pagaste §e"
-                + com.obm.network.core.economy.CurrencyLabels.formatSmpMoney(total) + "§a.");
     }
 
     private void restoreListing(String id, MarketListing listing) {
@@ -157,20 +160,28 @@ public class MarketService {
         save();
     }
 
-    public MarketSaleResult removeListing(String id, UUID owner) {
+    public MarketSaleResult removeListing(Player seller, String id) {
         Optional<MarketListing> optional = getListing(id);
         if (optional.isEmpty()) {
             return MarketSaleResult.error("Anúncio não encontrado.");
         }
 
         MarketListing listing = optional.get();
-        if (!listing.getSeller().equals(owner)) {
+        if (!listing.getSeller().equals(seller.getUniqueId())) {
             return MarketSaleResult.error("Apenas o dono do anúncio pode removê-lo.");
         }
 
+        ItemStack item = listing.getItem().clone();
         config.set("listings." + id, null);
         save();
-        return MarketSaleResult.success("Anúncio removido.");
+
+        var leftovers = seller.getInventory().addItem(item);
+        if (!leftovers.isEmpty()) {
+            for (ItemStack leftover : leftovers.values()) {
+                seller.getWorld().dropItemNaturally(seller.getLocation(), leftover);
+            }
+        }
+        return MarketSaleResult.success("§aAnúncio removido. Item devolvido ao inventário.");
     }
 
     private Optional<MarketListing> loadListing(String id) {

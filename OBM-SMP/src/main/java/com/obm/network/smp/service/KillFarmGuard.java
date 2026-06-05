@@ -23,11 +23,14 @@ public class KillFarmGuard {
         String key = killer + ":" + victim;
         Long last = recentKills.get(key);
         long now = System.currentTimeMillis();
-        if (last != null && now - last < cooldownMs) {
-            return false;
+        return last == null || now - last >= cooldownMs;
+    }
+
+    public void recordKill(UUID killer, UUID victim) {
+        if (cooldownMs <= 0) {
+            return;
         }
-        recentKills.put(key, now);
-        return true;
+        recentKills.put(killer + ":" + victim, System.currentTimeMillis());
     }
 
     public long remainingCooldownSeconds(UUID killer, UUID victim) {

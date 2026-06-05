@@ -23,7 +23,7 @@ public class PlayerProgressionStore {
             return defaultRank;
         }
         Object value = dataStore.getYaml().get("players." + uuid + "." + RANK_KEY);
-        return value != null ? value.toString() : defaultRank;
+        return value != null ? value.toString().toLowerCase() : defaultRank;
     }
 
     public void setRankId(UUID uuid, String rankId) {

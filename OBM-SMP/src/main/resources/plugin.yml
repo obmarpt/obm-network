@@ -48,46 +48,87 @@ permissions:
   obm.smp.admin:
     description: Bypass de restrições SMP e mensagens debug
     default: op
+  obm.smp.duel:
+    description: Desafiar jogadores para duelos 1v1 no SMP
+    default: false
+  obm.smp.hud:
+    description: Configurar HUD do SMP (/hud)
+    default: true
+  obm.duel.use:
+    description: Alias para duelos 1v1
+    default: false
+    children:
+      obm.smp.duel: true
+  obm.rankup.use:
+    description: Alias para rankup SMP
+    default: false
+    children:
+      obm.smp.rank: true
 
 commands:
   smp:
     description: Entrar no SMP
     usage: /smp
+    permission: obm.smp.enter
 
   shop:
     description: Abrir a loja do SMP
     usage: /shop
+    permission: obm.smp.shop
 
   sell:
     description: Vender itens no SMP
     usage: /sell
+    permission: obm.smp.sell
 
   ah:
     description: Abrir o leilão do SMP
     usage: /ah
     aliases: [auction]
+    permission: obm.smp.auction
 
   auction:
     description: Abrir o leilão do SMP
     usage: /auction
+    permission: obm.smp.auction
 
   money:
     description: Ver saldo e pagar outros jogadores
     usage: /money [pay <player> <amount>]
+    permission: obm.smp.money
 
   market:
     description: Mercado de SMP com ofertas de players
     usage: /market <list|sell|buy|remove>
+    permission: obm.smp.market
 
   rank:
-    description: Ver rank, comprar rank ou listar ranks
-    usage: /rank [buy|list]
+    description: Abrir GUI de ranks ou comprar via comando
+    usage: /rank [gui|buy|list|info]
+    permission: obm.smp.rank
+
+  rankup:
+    description: Abrir GUI de rankup
+    usage: /rankup
+    aliases: [ru]
+    permission: obm.rankup.use
 
   top:
     description: Ver leaderboards
     usage: /top
+    permission: obm.smp.top
 
   stats:
     description: Consultar estatísticas de um jogador (staff)
     usage: /stats <modo> <stat> <player>
     permission: obm.stats
+
+  duel:
+    description: Duelos 1v1 seguros no SMP
+    usage: /duel <player> | /duel accept | /duel deny
+    permission: obm.duel.use
+
+  hud:
+    description: Configurar HUD no SMP
+    usage: /hud
+    permission: obm.smp.hud

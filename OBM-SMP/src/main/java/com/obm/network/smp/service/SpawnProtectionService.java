@@ -1,6 +1,7 @@
 package com.obm.network.smp.service;
 
 import com.obm.network.core.world.WorldModeService;
+import com.obm.network.smp.spawn.SpawnBoundarySettings;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -10,22 +11,28 @@ import org.bukkit.entity.Player;
 public class SpawnProtectionService {
 
     private final WorldModeService worldModeService;
+    private final SpawnBoundarySettings settings;
+    private final double radius;
     private final double radiusSquared;
-    private final boolean useWorldSpawn;
-    private final String configuredWorld;
-    private final double centerX;
-    private final double centerY;
-    private final double centerZ;
 
     public SpawnProtectionService(FileConfiguration config, WorldModeService worldModeService) {
         this.worldModeService = worldModeService;
-        double radius = config.getDouble("spawn.protection-radius", 100);
+        double legacyRadius = config.getDouble("spawn.protection-radius", 100);
+        this.settings = SpawnBoundarySettings.from(config, worldModeService.getPrimarySMPWorld(), legacyRadius);
+        this.radius = settings.radius();
         this.radiusSquared = radius * radius;
-        this.useWorldSpawn = config.getBoolean("spawn.center.use-world-spawn", true);
-        this.configuredWorld = worldModeService.getPrimarySMPWorld();
-        this.centerX = config.getDouble("spawn.center.x", 0);
-        this.centerY = config.getDouble("spawn.center.y", 64);
-        this.centerZ = config.getDouble("spawn.center.z", 0);
+    }
+
+    public SpawnBoundarySettings settings() {
+        return settings;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public boolean isEnabled() {
+        return settings.enabled();
     }
 
     public boolean isInSpawnProtection(Location location) {
@@ -37,16 +44,63 @@ public class SpawnProtectionService {
         }
 
         Location center = resolveCenter(location.getWorld());
-        if (center == null) {
-            return false;
-        }
-        if (!center.getWorld().equals(location.getWorld())) {
+        if (center == null || !center.getWorld().equals(location.getWorld())) {
             return false;
         }
 
+        return horizontalDistanceSquared(location, center) <= radiusSquared;
+    }
+
+    public double horizontalDistance(Location location) {
+        Location center = resolveCenter(location.getWorld());
+        if (center == null) {
+            return Double.MAX_VALUE;
+        }
+        return Math.sqrt(horizontalDistanceSquared(location, center));
+    }
+
+    public boolean isNearBoundary(Location location) {
+        if (!isInSpawnProtection(location)) {
+            return false;
+        }
+        double dist = horizontalDistance(location);
+        return dist >= radius - settings.proximityWarningBlocks();
+    }
+
+    public boolean isOutsideBoundary(Location location) {
+        if (location == null || location.getWorld() == null) {
+            return true;
+        }
+        if (!worldModeService.isSMP(location.getWorld().getName())) {
+            return false;
+        }
+        Location center = resolveCenter(location.getWorld());
+        if (center == null) {
+            return false;
+        }
+        return horizontalDistanceSquared(location, center) > radiusSquared;
+    }
+
+    public Location clampInside(Location location) {
+        Location center = resolveCenter(location.getWorld());
+        if (center == null) {
+            return location;
+        }
         double dx = location.getX() - center.getX();
         double dz = location.getZ() - center.getZ();
-        return (dx * dx + dz * dz) <= radiusSquared;
+        double dist = Math.sqrt(dx * dx + dz * dz);
+        if (dist <= radius - 0.5 || dist < 0.001) {
+            return location;
+        }
+        double scale = (radius - 0.5) / dist;
+        return new Location(
+                location.getWorld(),
+                center.getX() + dx * scale,
+                location.getY(),
+                center.getZ() + dz * scale,
+                location.getYaw(),
+                location.getPitch()
+        );
     }
 
     public boolean isPvpAllowed(Player attacker, Player victim) {
@@ -63,17 +117,40 @@ public class SpawnProtectionService {
     }
 
     public Location getSpawnCenter() {
-        World world = Bukkit.getWorld(configuredWorld);
+        World world = Bukkit.getWorld(settings.world());
+        if (world == null) {
+            world = Bukkit.getWorld(worldModeService.getPrimarySMPWorld());
+        }
         if (world == null) {
             return null;
         }
         return resolveCenter(world);
     }
 
-    private Location resolveCenter(World world) {
-        if (useWorldSpawn) {
+    public Location resolveCenter(World world) {
+        if (world == null) {
+            return null;
+        }
+        if (settings.useWorldSpawn()) {
             return world.getSpawnLocation();
         }
-        return new Location(world, centerX, centerY, centerZ);
+        return new Location(world, settings.centerX(), settings.centerY(), settings.centerZ());
+    }
+
+    public boolean isBoundaryWorld(World world) {
+        if (world == null) {
+            return false;
+        }
+        if (!worldModeService.isSMP(world.getName())) {
+            return false;
+        }
+        Location center = resolveCenter(world);
+        return center != null && center.getWorld().equals(world);
+    }
+
+    private double horizontalDistanceSquared(Location a, Location center) {
+        double dx = a.getX() - center.getX();
+        double dz = a.getZ() - center.getZ();
+        return dx * dx + dz * dz;
     }
 }

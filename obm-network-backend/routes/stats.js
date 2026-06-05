@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const pool = require('../database');
-const { authMiddleware, pluginOrAuthMiddleware } = require('../auth');
+const { authMiddleware, pluginOnlyAuth } = require('../auth');
 const { broadcast } = require('../ws');
 const { col } = require('../database');
 const {
@@ -35,33 +35,42 @@ router.get('/stats/global', authMiddleware, async (req, res) => {
   }
 });
 
-router.post('/stats/sync', pluginOrAuthMiddleware, async (req, res) => {
-  const { uuid, name, coins, emeralds, kills, playtime } = req.body || {};
-  const safeUuid = validateUuid(res, uuid);
+router.post('/stats/sync', pluginOnlyAuth, async (req, res) => {
+  const body = req.body || {};
+  const safeUuid = validateUuid(res, body.uuid);
   if (!safeUuid) return;
 
-  const safeName = isNonEmptyString(name) ? name.trim().slice(0, 32) : 'Unknown';
-  const safeCoins = Math.max(0, parseInteger(coins) ?? 0);
-  const safeEmeralds = Math.max(0, parseInteger(emeralds) ?? 0);
-  const safeKills = Math.max(0, parseInteger(kills) ?? 0);
-  const safePlaytime = Math.max(0, parseInteger(playtime) ?? 0);
+  const safeName = isNonEmptyString(body.name) ? body.name.trim().slice(0, 32) : 'Unknown';
+  const safeCoins = Math.max(0, parseInteger(body.coins) ?? 0);
+  const safeEmeralds = Math.max(0, parseInteger(body.emeralds) ?? 0);
+  const safeKills = Math.max(0, parseInteger(body.kills) ?? 0);
+  const safePlaytime = Math.max(0, parseInteger(body.playtime) ?? 0);
+  const smp = body.smp || {};
+  const hc = body.hc || {};
+  const ts = body.tierspace || {};
 
   try {
-    const coinsCol = col('coins');
-    const emeraldsCol = col('emeralds');
-
-    await pool.query(
-      `INSERT INTO players (uuid, name, ${coinsCol}, ${emeraldsCol}, kills, playtime, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, NOW())
-       ON CONFLICT (uuid) DO UPDATE SET
-         name = EXCLUDED.name,
-         ${coinsCol} = EXCLUDED.${coinsCol},
-         ${emeraldsCol} = EXCLUDED.${emeraldsCol},
-         kills = EXCLUDED.kills,
-         playtime = EXCLUDED.playtime,
-         updated_at = NOW()`,
-      [safeUuid, safeName, safeCoins, safeEmeralds, safeKills, safePlaytime]
-    );
+    const playerRepo = require('../db/playerRepository');
+    await playerRepo.savePlayerFull({
+      uuid: safeUuid,
+      username: safeName,
+      name: safeName,
+      coins: safeCoins,
+      emeralds: safeEmeralds,
+      smp_level: parseInteger(body.smp_level) ?? 1,
+      hc_level: parseInteger(body.hc_level) ?? 1,
+      global_level: parseInteger(body.global_level) ?? 1,
+      rank: body.rank || 'bronze',
+      smp: {
+        kills: parseInteger(smp.kills) ?? safeKills,
+        deaths: parseInteger(smp.deaths) ?? 0,
+        playtime: parseInteger(smp.playtime) ?? safePlaytime,
+        money_earned: parseInteger(smp.money_earned) ?? 0,
+        blocks_broken: parseInteger(smp.blocks_broken) ?? 0,
+      },
+      hc: hc,
+      tierspace: ts,
+    });
 
     console.log(`✅ Stats sync: ${safeName} (${safeUuid})`);
     broadcast({ type: 'update' });
@@ -71,13 +80,31 @@ router.post('/stats/sync', pluginOrAuthMiddleware, async (req, res) => {
   }
 });
 
+router.get('/top/kills', authMiddleware, async (req, res) => {
+  try {
+    const playerRepo = require('../db/playerRepository');
+    const data = await playerRepo.getLeaderboard('smp_kills', 10);
+    res.json(data.entries.map((e) => ({ uuid: e.uuid, name: e.name, kills: e.value })));
+  } catch (err) {
+    return internalError(res, err, 'top/kills');
+  }
+});
+
+router.get('/top/playtime', authMiddleware, async (req, res) => {
+  try {
+    const playerRepo = require('../db/playerRepository');
+    const data = await playerRepo.getLeaderboard('smp_playtime', 10);
+    res.json(data.entries.map((e) => ({ uuid: e.uuid, name: e.name, playtime: e.value })));
+  } catch (err) {
+    return internalError(res, err, 'top/playtime');
+  }
+});
+
 router.get('/top/coins', authMiddleware, async (req, res) => {
   try {
-    const coinsCol = col('coins');
-    const result = await pool.query(
-      `SELECT name, uuid, ${coinsCol} AS coins FROM players ORDER BY ${coinsCol} DESC LIMIT 10`
-    );
-    res.json(result.rows);
+    const playerRepo = require('../db/playerRepository');
+    const data = await playerRepo.getLeaderboard('coins', 10);
+    res.json(data.entries.map((e) => ({ uuid: e.uuid, name: e.name, coins: e.value })));
   } catch (err) {
     return internalError(res, err, 'top/coins');
   }
@@ -85,13 +112,24 @@ router.get('/top/coins', authMiddleware, async (req, res) => {
 
 router.get('/top/emeralds', authMiddleware, async (req, res) => {
   try {
-    const emeraldsCol = col('emeralds');
-    const result = await pool.query(
-      `SELECT name, uuid, ${emeraldsCol} AS emeralds FROM players ORDER BY ${emeraldsCol} DESC LIMIT 10`
-    );
-    res.json(result.rows);
+    const playerRepo = require('../db/playerRepository');
+    const data = await playerRepo.getLeaderboard('emeralds', 10);
+    res.json(data.entries.map((e) => ({ uuid: e.uuid, name: e.name, emeralds: e.value })));
   } catch (err) {
     return internalError(res, err, 'top/emeralds');
+  }
+});
+
+router.get('/top/:metric', authMiddleware, async (req, res) => {
+  try {
+    const playerRepo = require('../db/playerRepository');
+    const data = await playerRepo.getLeaderboard(req.params.metric, 10);
+    if (data.error) {
+      return res.status(400).json(data);
+    }
+    res.json(data.entries);
+  } catch (err) {
+    return internalError(res, err, 'top/:metric');
   }
 });
 

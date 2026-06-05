@@ -1,6 +1,7 @@
 package com.obm.network.smp.listener;
 
 import com.obm.network.smp.auction.AuctionGui;
+import com.obm.network.smp.permission.SmpPermissions;
 import com.obm.network.smp.auction.AuctionGui.AuctionSession;
 import com.obm.network.smp.market.MarketGui;
 import com.obm.network.smp.sell.SellGui;
@@ -9,16 +10,22 @@ import com.obm.network.smp.service.MarketListing;
 import com.obm.network.smp.service.MarketService;
 import com.obm.network.smp.service.SellService;
 import com.obm.network.smp.util.GuiTitles;
+import com.obm.network.smp.util.SmpRateLimits;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SmpGuiListener implements Listener {
 
@@ -28,6 +35,7 @@ public class SmpGuiListener implements Listener {
     private final AuctionService auctionService;
     private final MarketGui marketGui;
     private final MarketService marketService;
+    private final Set<UUID> sellInProgress = ConcurrentHashMap.newKeySet();
 
     public SmpGuiListener(SellGui sellGui, SellService sellService,
                           AuctionGui auctionGui, AuctionService auctionService,
@@ -40,7 +48,25 @@ public class SmpGuiListener implements Listener {
         this.marketService = marketService;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onInventoryDrag(InventoryDragEvent event) {
+        if (!(event.getWhoClicked() instanceof Player)) {
+            return;
+        }
+        String title = event.getView().getTitle();
+        if (title == null) {
+            return;
+        }
+        if (GuiTitles.SELL.equals(title)
+                || GuiTitles.AUCTION_MAIN.equals(title)
+                || GuiTitles.AUCTION_BROWSE.equals(title)
+                || GuiTitles.AUCTION_SELL.equals(title)
+                || marketGui.isMarketTitle(title)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) {
             return;
@@ -86,6 +112,11 @@ public class SmpGuiListener implements Listener {
     }
 
     private void handleMarket(InventoryClickEvent event, Player player) {
+        if (SmpPermissions.deny(player, SmpPermissions.MARKET, null)) {
+            event.setCancelled(true);
+            player.closeInventory();
+            return;
+        }
         event.setCancelled(true);
         ItemStack clicked = event.getCurrentItem();
         if (clicked == null || clicked.getType().isAir()) {
@@ -131,34 +162,40 @@ public class SmpGuiListener implements Listener {
     }
 
     private void handleSell(InventoryClickEvent event, Player player) {
+        if (SmpPermissions.deny(player, SmpPermissions.SELL, null)) {
+            event.setCancelled(true);
+            player.closeInventory();
+            return;
+        }
         int rawSlot = event.getRawSlot();
         Inventory top = event.getView().getTopInventory();
 
+        if (isExploitClick(event)) {
+            event.setCancelled(true);
+            return;
+        }
+
         if (rawSlot >= top.getSize()) {
-            if (rawSlot >= SellGui.INPUT_START && rawSlot <= SellGui.INPUT_END) {
-                org.bukkit.Bukkit.getScheduler().runTaskLater(
-                        com.obm.network.smp.SMPPlugin.get(),
-                        () -> sellGui.refreshFooter(player, top, collectSellItems(top)),
-                        1L);
+            if (isExploitClick(event)) {
+                event.setCancelled(true);
             }
+            org.bukkit.Bukkit.getScheduler().runTaskLater(
+                    com.obm.network.smp.SMPPlugin.get(),
+                    () -> sellGui.refreshFooter(player, top, collectSellItems(top)),
+                    1L);
             return;
         }
 
         if (rawSlot == SellGui.CONFIRM_SLOT) {
             event.setCancelled(true);
-            ItemStack[] items = collectSellItems(top);
-            var result = sellService.sellItems(player, items);
-            player.sendMessage(result.message());
-            if (result.success()) {
-                for (int i = SellGui.INPUT_START; i <= SellGui.INPUT_END; i++) {
-                    ItemStack slot = top.getItem(i);
-                    if (slot == null || slot.getType().isAir()) {
-                        continue;
-                    }
-                    if (sellService.getCatalog().isSellable(slot.getType())) {
-                        top.setItem(i, null);
-                    }
-                }
+            if (!sellInProgress.add(player.getUniqueId())) {
+                return;
+            }
+            try {
+                var result = sellService.sellItems(player, top);
+                player.sendMessage(result.message());
+            } finally {
+                sellInProgress.remove(player.getUniqueId());
             }
             sellGui.refreshFooter(player, top, collectSellItems(top));
             return;
@@ -187,7 +224,21 @@ public class SmpGuiListener implements Listener {
         event.setCancelled(true);
     }
 
+    private static boolean isExploitClick(InventoryClickEvent event) {
+        ClickType click = event.getClick();
+        return event.isShiftClick()
+                || click == ClickType.NUMBER_KEY
+                || click == ClickType.DOUBLE_CLICK
+                || click == ClickType.SWAP_OFFHAND
+                || click == ClickType.UNKNOWN;
+    }
+
     private void handleAuctionMain(InventoryClickEvent event, Player player) {
+        if (SmpPermissions.deny(player, SmpPermissions.AUCTION, null)) {
+            event.setCancelled(true);
+            player.closeInventory();
+            return;
+        }
         event.setCancelled(true);
         ItemStack clicked = event.getCurrentItem();
         if (clicked == null) {
@@ -202,6 +253,11 @@ public class SmpGuiListener implements Listener {
     }
 
     private void handleAuctionBrowse(InventoryClickEvent event, Player player) {
+        if (SmpPermissions.deny(player, SmpPermissions.AUCTION, null)) {
+            event.setCancelled(true);
+            player.closeInventory();
+            return;
+        }
         event.setCancelled(true);
         ItemStack clicked = event.getCurrentItem();
         if (clicked == null) {
@@ -226,6 +282,11 @@ public class SmpGuiListener implements Listener {
     }
 
     private void handleAuctionSell(InventoryClickEvent event, Player player) {
+        if (SmpPermissions.deny(player, SmpPermissions.AUCTION, null)) {
+            event.setCancelled(true);
+            player.closeInventory();
+            return;
+        }
         int rawSlot = event.getRawSlot();
         Inventory top = event.getView().getTopInventory();
 
@@ -290,9 +351,15 @@ public class SmpGuiListener implements Listener {
                         + " e " + auctionService.getMaxPrice() + ".");
                 return;
             }
+            SmpRateLimits.MarketCheckResult rate = SmpRateLimits.checkMarketListing(player);
+            if (!rate.allowed()) {
+                player.sendMessage(rate.message());
+                return;
+            }
             var result = auctionService.createListing(player, item, price);
             player.sendMessage(result.getMessage());
             if (result.isSuccess()) {
+                SmpRateLimits.recordMarketListing(player);
                 top.setItem(13, null);
                 auctionGui.clearSellSession(player.getUniqueId());
                 player.closeInventory();

@@ -1,9 +1,23 @@
 crates:
   enabled: true
   cooldown-ms: 3000
+  world-interact-cooldown-ms: 1000
   duplicate-emerald-compensation: 25
   animation-ticks: 45
   animation-interval-ticks: 3
+  world:
+    enabled: true
+    world: world
+    center-x: 0
+    center-z: 0
+    pedestal-material: POLISHED_BLACKSTONE
+    hologram-height: 2.35
+    particle-interval-ticks: 20
+    layout:
+      common: { x: 0, z: 0 }
+      rare: { x: 3, z: 0 }
+      epic: { x: -3, z: 0 }
+      legendary: { x: 0, z: 3 }
   common:
     price: 50
     rewards:

@@ -1,6 +1,6 @@
-# MineSpace — LuckPerms produção
-# Aplicar na consola (ou importar por blocos). Sem wildcards (*).
-# Ordem: criar grupos → parents → permissões → negar perigosas no default
+# MineSpace — LuckPerms produção (LEGADO)
+# ⚠️ Usar config/luckperms/permissions-complete.txt para setup novo ou reset completo.
+# Este ficheiro mantém-se para referência / servidores já configurados (aplicar deltas).
 #
 # Pré-requisito: OBM-* recompilados com permissões novas (obm.smp.money.pay, etc.)
 

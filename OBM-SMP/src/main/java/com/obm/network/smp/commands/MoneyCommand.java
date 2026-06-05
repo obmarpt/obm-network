@@ -1,10 +1,10 @@
 package com.obm.network.smp.commands;
 
+import com.obm.network.core.ui.PlayerUx;
 import com.obm.network.smp.permission.SmpPermissions;
 import com.obm.network.smp.service.EconomyService;
 import com.obm.network.smp.util.SmpRateLimits;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,34 +20,36 @@ public class MoneyCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage("Apenas jogadores podem usar este comando.");
+        if (!PlayerUx.requirePlayer(sender)) {
             return true;
         }
+        Player player = (Player) sender;
 
         if (args.length == 0) {
-            if (SmpPermissions.deny(player, SmpPermissions.MONEY, "Permissão: obm.smp.money")) {
+            if (SmpPermissions.deny(player, SmpPermissions.MONEY, "Precisas de: obm.smp.money")) {
                 return true;
             }
             int balance = economyService.getBalance(player.getUniqueId());
-            player.sendMessage("§aSaldo Rush: §e" + economyService.format(balance));
+            PlayerUx.success(player, "Saldo SMP: §e" + economyService.format(balance));
+            PlayerUx.actionBar(player, "§7Coins: §e" + economyService.format(balance));
             return true;
         }
 
         if (args.length == 3 && args[0].equalsIgnoreCase("pay")) {
-            if (SmpPermissions.deny(player, SmpPermissions.MONEY_PAY, "Permissão: obm.smp.money.pay")) {
+            if (SmpPermissions.deny(player, SmpPermissions.MONEY_PAY, "Precisas de: obm.smp.money.pay")) {
                 return true;
             }
             Player target = Bukkit.getPlayerExact(args[1]);
             if (target == null) {
-                player.sendMessage("§cJogador não encontrado.");
+                PlayerUx.error(player, "Jogador não encontrado.");
+                PlayerUx.errorSound(player);
                 return true;
             }
 
             try {
                 int amount = Integer.parseInt(args[2]);
                 if (amount <= 0) {
-                    player.sendMessage("§cO valor deve ser maior que zero.");
+                    PlayerUx.error(player, "O valor deve ser maior que zero.");
                     return true;
                 }
 
@@ -58,20 +60,24 @@ public class MoneyCommand implements CommandExecutor {
                 }
 
                 if (!economyService.transfer(player.getUniqueId(), target.getUniqueId(), amount)) {
-                    player.sendMessage("§cSaldo insuficiente.");
+                    PlayerUx.error(player, "Não tens dinheiro suficiente.");
+                    PlayerUx.errorSound(player);
                     return true;
                 }
 
                 SmpRateLimits.recordPay(player, amount);
-                player.sendMessage("§aPagaste §e" + economyService.format(amount) + " §apara §f" + target.getName() + "§a.");
-                target.sendMessage("§aRecebeste §e" + economyService.format(amount) + " §ade §f" + player.getName() + "§a.");
+                String formatted = economyService.format(amount);
+                PlayerUx.success(player, "Pagaste §e" + formatted + " §apara §f" + target.getName());
+                PlayerUx.success(target, "Recebeste §e" + formatted + " §ade §f" + player.getName());
+                PlayerUx.notifyMoneyGain(target, amount, formatted);
+                PlayerUx.successSound(player);
             } catch (NumberFormatException ex) {
-                player.sendMessage("§cValor inválido. Use um número inteiro.");
+                PlayerUx.error(player, "Valor inválido — usa um número inteiro.");
             }
             return true;
         }
 
-        player.sendMessage("§eUso: /money [pay <player> <amount>]");
+        PlayerUx.usage(player, "/money §7| §f/money pay <jogador> <valor>");
         return true;
     }
 }

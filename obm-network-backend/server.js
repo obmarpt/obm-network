@@ -5,23 +5,62 @@ const pool = require('./database');
 const initDb = pool.initDb;
 const routes = require('./routes');
 const { initWebSocket } = require('./ws');
+const backupService = require('./services/backupService');
+const statsHistoryService = require('./services/statsHistoryService');
+const { startExpirationScheduler } = require('./services/entitlementExpirationService');
+
+const rateLimit = require('express-rate-limit');
+
+const path = require('path');
+const { handleStripeWebhook } = require('./routes/stripeWebhook');
 
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 3000;
 
 app.set('trust proxy', 1);
-app.use(express.json());
-app.use(cookieParser());
-app.use(express.static('public'));
 
-app.get('/health', async (req, res) => {
+app.post(
+  '/api/stripe/webhook',
+  express.raw({ type: 'application/json' }),
+  handleStripeWebhook
+);
+
+app.use(express.json({ limit: '256kb' }));
+app.use(cookieParser());
+
+app.get('/player/:id', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'site', 'profile.html'));
+});
+
+app.use('/admin', express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public', 'site')));
+
+const healthLimiter = rateLimit({
+  windowMs: 60_000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.get('/health', healthLimiter, async (req, res) => {
   try {
-    await pool.query('SELECT 1');
-    res.json({ ok: true, service: 'obm-backend' });
+    const dbOk = await pool.ping();
+    const minimal = process.env.NODE_ENV === 'production';
+    res.json(minimal
+        ? { ok: dbOk, service: 'obm-backend' }
+        : {
+          ok: dbOk,
+          service: 'obm-backend',
+          databaseAvailable: pool.isDatabaseAvailable(),
+          db: dbOk,
+        });
   } catch (err) {
     console.error('Erro (health):', err);
-    res.status(503).json({ ok: false, error: 'internal error' });
+    res.status(503).json({
+      ok: false,
+      error: process.env.NODE_ENV === 'production' ? 'database_unavailable' : err.message,
+    });
   }
 });
 
@@ -38,7 +77,10 @@ app.use((err, req, res, next) => {
 async function start() {
   try {
     await initDb();
+    backupService.startScheduledBackups();
+    statsHistoryService.startSchedulers();
     initWebSocket(server);
+    startExpirationScheduler(60_000);
 
     server.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
@@ -58,6 +100,17 @@ async function start() {
         console.log('✅ Plugin API key configurada');
       } else {
         console.log('❌ PLUGIN_API_KEY em falta — plugin Minecraft não autentica');
+      }
+
+      const siteUrl = process.env.SITE_URL || '';
+      if (process.env.NODE_ENV === 'production' && (!siteUrl || siteUrl.includes('localhost'))) {
+        console.log('❌ SITE_URL em falta ou localhost — Stripe return URLs inválidos');
+      } else if (siteUrl) {
+        console.log(`✅ SITE_URL: ${siteUrl}`);
+      }
+
+      if (!process.env.STRIPE_SECRET_KEY || !process.env.STRIPE_WEBHOOK_SECRET) {
+        console.log('⚠️ Stripe não configurado — loja em modo limitado');
       }
     });
   } catch (err) {

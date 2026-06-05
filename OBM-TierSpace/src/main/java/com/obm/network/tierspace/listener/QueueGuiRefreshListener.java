@@ -22,8 +22,12 @@ public final class QueueGuiRefreshListener implements Listener {
         long ticks = Math.max(20L, plugin.getConfig().getLong("ranked-spawn.gui-refresh-ticks", 40L));
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.getOpenInventory().getTitle().equals(TierGuiMenu.TITLE)) {
-                    player.openInventory(tierGuiMenu.create(player));
+                if (!player.getOpenInventory().getTitle().equals(TierGuiMenu.TITLE)) {
+                    continue;
+                }
+                var top = player.getOpenInventory().getTopInventory();
+                if (top != null && top.getSize() >= 54) {
+                    tierGuiMenu.refreshQueueSlots(player, top);
                 }
             }
         }, ticks, ticks);

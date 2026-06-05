@@ -1,5 +1,6 @@
 package com.obm.network.smp.permission;
 
+import com.obm.network.core.ui.PlayerUx;
 import com.obm.network.smp.SMPPlugin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -17,9 +18,9 @@ public final class SmpPermissions {
     public static final String TOP = "obm.smp.top";
     public static final String STATS = "obm.stats";
     public static final String VIP = "obm.smp.vip";
+    public static final String DUEL = "obm.duel.use";
+    public static final String RANKUP = "obm.rankup.use";
     public static final String ADMIN = "obm.smp.admin";
-
-    private static final String DENY_MESSAGE = "§cNão tens permissão para usar isto.";
 
     private SmpPermissions() {
     }
@@ -47,9 +48,12 @@ public final class SmpPermissions {
         if (has(sender, permission)) {
             return false;
         }
-        sender.sendMessage(DENY_MESSAGE);
+        PlayerUx.error(sender, "Não tens permissão para usar isto.");
         if (context != null && !context.isBlank()) {
-            sender.sendMessage("§7" + context);
+            PlayerUx.hint(sender, context);
+        }
+        if (sender instanceof Player p) {
+            PlayerUx.errorSound(p);
         }
         return true;
     }
@@ -58,22 +62,30 @@ public final class SmpPermissions {
         if (has(player, permission)) {
             return false;
         }
-        player.sendMessage(DENY_MESSAGE);
+        PlayerUx.error(player, "Não tens permissão para usar isto.");
         if (context != null && !context.isBlank()) {
-            player.sendMessage("§7" + context);
+            PlayerUx.hint(player, context);
         }
+        PlayerUx.errorSound(player);
         return true;
     }
 
     public static double vipCoinMultiplier(Player player) {
-        if (player == null || !hasVip(player)) {
+        if (player == null) {
+            return 1.0D;
+        }
+        double tier = com.obm.network.core.integration.VipTierBridge.moneyMultiplier(player.getUniqueId());
+        if (tier > 1.0D) {
+            return tier;
+        }
+        if (!hasVip(player)) {
             return 1.0D;
         }
         SMPPlugin plugin = SMPPlugin.get();
         if (plugin == null) {
-            return 1.5D;
+            return 1.1D;
         }
-        return plugin.getConfig().getDouble("vip.coin-multiplier", 1.5D);
+        return plugin.getConfig().getDouble("vip.coin-multiplier", 1.1D);
     }
 
     public static void debug(Player player, String message) {

@@ -3,8 +3,13 @@ package com.obm.network.smp.service;
 import com.obm.network.smp.progression.LevelService;
 import com.obm.network.smp.progression.ProgressionBonusService;
 import com.obm.network.smp.retention.RetentionFeedback;
+import com.obm.network.smp.sell.SellGui;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 
 public class SellService {
@@ -57,15 +62,19 @@ public class SellService {
         return bonusService.applySellPayout(player.getUniqueId(), calculateBaseValue(items));
     }
 
-    public SellResult sellItems(Player player, ItemStack[] items) {
+    public SellResult sellItems(Player player, Inventory inventory) {
+        Map<Integer, ItemStack> removed = new LinkedHashMap<>();
         int baseTotal = 0;
-        for (ItemStack item : items) {
+        for (int slot = SellGui.INPUT_START; slot <= SellGui.INPUT_END; slot++) {
+            ItemStack item = inventory.getItem(slot);
             if (item == null || item.getType().isAir()) {
                 continue;
             }
             int unit = catalog.getPrice(item.getType());
             if (unit > 0) {
                 baseTotal += unit * item.getAmount();
+                removed.put(slot, item.clone());
+                inventory.setItem(slot, null);
             }
         }
 
@@ -74,14 +83,29 @@ public class SellService {
         }
 
         int total = bonusService.applySellPayout(player.getUniqueId(), baseTotal);
-        economyService.deposit(player.getUniqueId(), total);
-        RetentionFeedback.coinsGained(player, total, "Sell");
+        if (!com.obm.network.core.security.SecurityBridge.tryClaimEconomy(
+                player.getUniqueId(), "smp_sell", total, "sell:" + baseTotal)) {
+            restoreRemoved(inventory, removed);
+            return SellResult.fail("§cTransação duplicada bloqueada.");
+        }
+        var deposit = economyService.deposit(player.getUniqueId(), total);
+        if (!deposit.transactionSuccess()) {
+            restoreRemoved(inventory, removed);
+            return SellResult.fail("§cNão foi possível processar o pagamento. Itens devolvidos.");
+        }
 
+        RetentionFeedback.coinsGained(player, total, "Sell");
         levelService.addSellXp(player, total);
 
         String boostInfo = total > baseTotal
                 ? " §7(§a+" + (total - baseTotal) + " bónus rank/nível§7)" : "";
         return SellResult.ok("§aVenda confirmada: §e"
                 + com.obm.network.core.economy.CurrencyLabels.formatSmpMoney(total) + boostInfo + "§a.", total);
+    }
+
+    private static void restoreRemoved(Inventory inventory, Map<Integer, ItemStack> removed) {
+        for (Map.Entry<Integer, ItemStack> entry : removed.entrySet()) {
+            inventory.setItem(entry.getKey(), entry.getValue());
+        }
     }
 }

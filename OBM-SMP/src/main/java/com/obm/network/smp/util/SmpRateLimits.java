@@ -26,7 +26,7 @@ public final class SmpRateLimits {
         if (plugin == null) {
             return PayCheckResult.ok();
         }
-        int cooldownSec = plugin.getConfig().getInt("economy.pay.cooldown-seconds", 30);
+        int cooldownSec = effectivePayCooldown(player);
         if (cooldownSec > 0) {
             long last = LAST_PAY_MS.getOrDefault(player.getUniqueId(), 0L);
             long elapsed = System.currentTimeMillis() - last;
@@ -75,7 +75,7 @@ public final class SmpRateLimits {
         if (plugin == null) {
             return MarketCheckResult.ok();
         }
-        int cooldownSec = plugin.getConfig().getInt("market.listing-cooldown-seconds", 45);
+        int cooldownSec = effectiveMarketCooldown(player);
         if (cooldownSec <= 0) {
             return MarketCheckResult.ok();
         }
@@ -99,6 +99,37 @@ public final class SmpRateLimits {
 
     private static String dayKey() {
         return LocalDate.now().toString();
+    }
+
+    private static int effectivePayCooldown(Player player) {
+        SMPPlugin plugin = SMPPlugin.get();
+        if (plugin == null) {
+            return 0;
+        }
+        int base = plugin.getConfig().getInt("economy.pay.cooldown-seconds", 30);
+        return applyRankCooldownReduction(player, base);
+    }
+
+    private static int effectiveMarketCooldown(Player player) {
+        SMPPlugin plugin = SMPPlugin.get();
+        if (plugin == null) {
+            return 0;
+        }
+        int base = plugin.getConfig().getInt("market.listing-cooldown-seconds", 45);
+        return applyRankCooldownReduction(player, base);
+    }
+
+    private static int applyRankCooldownReduction(Player player, int baseSeconds) {
+        if (baseSeconds <= 0 || player == null) {
+            return baseSeconds;
+        }
+        try {
+            var rankService = SMPPlugin.get().getRankService();
+            double reduction = rankService.getCooldownReduction(player.getUniqueId());
+            return Math.max(5, (int) Math.round(baseSeconds * (1.0 - reduction)));
+        } catch (Exception ignored) {
+            return baseSeconds;
+        }
     }
 
     public record PayCheckResult(boolean allowed, String message) {

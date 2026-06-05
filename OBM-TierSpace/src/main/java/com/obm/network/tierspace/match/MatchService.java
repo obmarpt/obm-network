@@ -2,6 +2,9 @@ package com.obm.network.tierspace.match;
 
 import com.obm.network.core.OBMCorePlugin;
 import com.obm.network.core.integration.EmeraldRewardBridge;
+import com.obm.network.core.location.LobbySpawnService;
+import com.obm.network.core.state.PlayerStateBridge;
+import com.obm.network.core.state.TierSpaceStateHelper;
 import com.obm.network.core.tier.TierRankUtil;
 import com.obm.network.tierspace.TierSpacePlugin;
 import com.obm.network.tierspace.anticheat.AnticheatExemptionService;
@@ -26,6 +29,8 @@ import com.obm.network.tierspace.ui.PostMatchGui;
 import com.obm.network.tierspace.ui.PostMatchSnapshot;
 import com.obm.network.tierspace.ui.TierSpaceScoreboardService;
 import com.obm.network.tierspace.ui.TierSpaceTabService;
+import com.obm.network.tierspace.hub.TierSpaceHub;
+import com.obm.network.tierspace.hub.TierSpaceHubService;
 import com.obm.network.tierspace.util.TierSpaceLog;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -36,6 +41,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -69,6 +75,8 @@ public class MatchService {
     private final Map<String, Integer> liveBarTasks = new ConcurrentHashMap<>();
     private final Map<UUID, GameModeId> postMatchModes = new ConcurrentHashMap<>();
     private final Map<UUID, PostMatchSnapshot> postMatchSnapshots = new ConcurrentHashMap<>();
+    private final Map<UUID, Integer> restoreTaskIds = new ConcurrentHashMap<>();
+    private final Set<UUID> postMatchKitLocked = ConcurrentHashMap.newKeySet();
 
     public MatchService(TierSpacePlugin plugin,
                         ArenaService arenaService,
@@ -125,6 +133,9 @@ public class MatchService {
     }
 
     public boolean joinQueue(Player player, GameModeId mode) {
+        if (!com.obm.network.core.security.SecurityBridge.allowQueueJoin(player)) {
+            return false;
+        }
         if (!modeRegistry.isEnabled(mode)) {
             player.sendMessage("§cEste modo não está disponível.");
             return false;
@@ -138,6 +149,9 @@ public class MatchService {
     }
 
     public boolean switchQueue(Player player, GameModeId mode) {
+        if (!com.obm.network.core.security.SecurityBridge.allowQueueJoin(player)) {
+            return false;
+        }
         if (!modeRegistry.isEnabled(mode)) {
             player.sendMessage("§cEste modo não está disponível.");
             return false;
@@ -155,6 +169,9 @@ public class MatchService {
     }
 
     private boolean requeue(Player player, GameModeId mode, boolean fromPostMatch) {
+        if (!fromPostMatch && !com.obm.network.core.security.SecurityBridge.allowQueueJoin(player)) {
+            return false;
+        }
         if (isInMatch(player.getUniqueId())) {
             player.sendMessage("§cAinda estás num match.");
             return false;
@@ -178,6 +195,7 @@ public class MatchService {
                     + " §8(§7" + inQueue + " na queue§8)");
             case REFRESHED -> player.sendMessage("§dTierSpace §8| §aFila atualizada: §f" + modeName);
         }
+        PlayerStateBridge.setQueue(player);
         return true;
     }
 
@@ -197,13 +215,55 @@ public class MatchService {
         return activeMatches.containsKey(uuid);
     }
 
+    public boolean isKitLocked(UUID uuid) {
+        return uuid != null && (activeMatches.containsKey(uuid) || postMatchKitLocked.contains(uuid));
+    }
+
+    public void shutdown() {
+        for (UUID uuid : new java.util.ArrayList<>(activeMatches.keySet())) {
+            Optional<Match> match = getMatch(uuid);
+            match.ifPresent(this::cleanupMatch);
+            clearPostMatchState(uuid);
+        }
+        activeMatches.clear();
+        postMatchKitLocked.clear();
+        restoreTaskIds.clear();
+        postMatchSnapshots.clear();
+        postMatchModes.clear();
+    }
+
+    public void clearPostMatchState(UUID uuid) {
+        if (uuid == null) {
+            return;
+        }
+        postMatchKitLocked.remove(uuid);
+        postMatchSnapshots.remove(uuid);
+        postMatchModes.remove(uuid);
+        cancelPendingRestore(uuid);
+    }
+
     public void startMatch(QueueService.MatchPair pair) {
         Player playerOne = Bukkit.getPlayer(pair.first().uuid());
         Player playerTwo = Bukkit.getPlayer(pair.second().uuid());
-        if (playerOne == null || playerTwo == null || !playerOne.isOnline() || !playerTwo.isOnline()) {
+        GameModeId mode = pair.first().mode();
+        if (playerOne == null || !playerOne.isOnline()) {
+            requeueAfterFailedMatch(playerTwo, mode);
             return;
         }
-        beginMatch(playerOne, playerTwo, pair.first().mode());
+        if (playerTwo == null || !playerTwo.isOnline()) {
+            requeueAfterFailedMatch(playerOne, mode);
+            return;
+        }
+        beginMatch(playerOne, playerTwo, mode);
+    }
+
+    private void requeueAfterFailedMatch(Player player, GameModeId mode) {
+        if (player == null || !player.isOnline()) {
+            return;
+        }
+        queueService.joinOrSwitch(player, mode);
+        queueFeedbackService.startTracking(player);
+        player.sendMessage("§eOponente indisponível — voltaste à fila.");
     }
 
     public void startDirectMatch(Player playerOne, Player playerTwo, GameModeId mode) {
@@ -221,13 +281,29 @@ public class MatchService {
     }
 
     private void beginMatch(Player playerOne, Player playerTwo, GameModeId mode) {
+        if (isInMatch(playerOne.getUniqueId()) || isInMatch(playerTwo.getUniqueId())) {
+            playerOne.sendMessage("§cUm dos jogadores ainda está num match.");
+            playerTwo.sendMessage("§cUm dos jogadores ainda está num match.");
+            return;
+        }
         seasonManager.ensurePlayerSeason(playerOne);
         seasonManager.ensurePlayerSeason(playerTwo);
 
         Optional<ArenaDefinition> arenaOptional = arenaService.acquireArena(mode);
         if (arenaOptional.isEmpty()) {
+            int total = arenaService.getArenaCount(mode);
+            int free = arenaService.getAvailableCount(mode);
+            String detail = total == 0
+                    ? "§7Nenhuma arena configurada para este modo."
+                    : "§7Arenas: §f" + free + "§7/§f" + total + " §7livres.";
             playerOne.sendMessage("§cNenhuma arena livre para §f" + modeRegistry.displayName(mode) + "§c.");
+            playerOne.sendMessage(detail);
             playerTwo.sendMessage("§cNenhuma arena livre para §f" + modeRegistry.displayName(mode) + "§c.");
+            playerTwo.sendMessage(detail);
+            queueService.joinOrSwitch(playerOne, mode);
+            queueService.joinOrSwitch(playerTwo, mode);
+            queueFeedbackService.startTracking(playerOne);
+            queueFeedbackService.startTracking(playerTwo);
             return;
         }
 
@@ -271,6 +347,8 @@ public class MatchService {
 
         onMatchStart(playerOne);
         onMatchStart(playerTwo);
+        applyMatchCombatState(playerOne);
+        applyMatchCombatState(playerTwo);
         playerKitService.applyForMatch(playerOne, kitId);
         playerKitService.applyForMatch(playerTwo, kitId);
 
@@ -340,6 +418,7 @@ public class MatchService {
         if (winner != null) {
             EmeraldRewardBridge.rankedWin(winner);
             com.obm.network.core.integration.BattlePassBridge.rankedWin(winner);
+            com.obm.network.core.integration.BattlePassBridge.rankedMatch(winner);
             postMatchSnapshots.put(winnerId, PostMatchSnapshot.win(winChange, winnerInPlacement));
             feedbackService.sendWin(winner, winChange, winnerOpponent, winnerInPlacement);
             if (winnerPlaced) {
@@ -350,6 +429,7 @@ public class MatchService {
             tabService.refresh(winner);
         }
         if (loser != null) {
+            com.obm.network.core.integration.BattlePassBridge.rankedMatch(loser);
             postMatchSnapshots.put(loserId, PostMatchSnapshot.defeat(lossChange, loserInPlacement));
             feedbackService.sendLoss(loser, lossChange, loserOpponent, loserInPlacement, demotionShieldLosses);
             if (loserPlaced) {
@@ -368,11 +448,13 @@ public class MatchService {
 
         activeMatches.remove(playerOneId);
         activeMatches.remove(playerTwoId);
+        postMatchKitLocked.add(playerOneId);
+        postMatchKitLocked.add(playerTwoId);
         scoreboardService.untrack(playerOneId);
         scoreboardService.untrack(playerTwoId);
         arenaService.releaseArena(match.arenaId());
 
-        Bukkit.getScheduler().runTaskLater(plugin, () -> restorePlayers(match), postMatchDelayTicks);
+        scheduleRestorePlayers(match);
         Bukkit.getScheduler().runTaskLater(plugin, () -> openPostMatchGui(playerOneId, mode), postMatchGuiDelayTicks);
         Bukkit.getScheduler().runTaskLater(plugin, () -> openPostMatchGui(playerTwoId, mode), postMatchGuiDelayTicks);
     }
@@ -426,14 +508,49 @@ public class MatchService {
     }
 
     public void teleportToLobby(Player player) {
-        String lobbyWorldName = OBMCorePlugin.get().getWorldModeService().getLobbyWorld();
-        World world = Bukkit.getWorld(lobbyWorldName);
-        if (world == null) {
+        if (player == null || !player.isOnline()) {
+            return;
+        }
+        UUID uuid = player.getUniqueId();
+        clearPostMatchState(uuid);
+        clearMatchKit(player);
+        TierSpaceStateHelper.leaveQueueIfQueued(player);
+        if (!LobbySpawnService.teleportToLobby(player)) {
             player.sendMessage("§cLobby não encontrado.");
             return;
         }
-        player.teleport(world.getSpawnLocation());
         player.sendMessage("§aVoltaste ao lobby.");
+    }
+
+    public void clearMatchKit(Player player) {
+        if (player == null) {
+            return;
+        }
+        player.getInventory().clear();
+        player.getInventory().setArmorContents(null);
+        player.setItemOnCursor(null);
+        player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
+    }
+
+    public void cancelPendingRestore(UUID uuid) {
+        if (uuid == null) {
+            return;
+        }
+        Integer taskId = restoreTaskIds.remove(uuid);
+        if (taskId != null) {
+            Bukkit.getScheduler().cancelTask(taskId);
+        }
+    }
+
+    private void scheduleRestorePlayers(Match match) {
+        UUID one = match.playerOne();
+        UUID two = match.playerTwo();
+        cancelPendingRestore(one);
+        cancelPendingRestore(two);
+        int taskId = Bukkit.getScheduler().runTaskLater(plugin, () -> restorePlayers(match), postMatchDelayTicks)
+                .getTaskId();
+        restoreTaskIds.put(one, taskId);
+        restoreTaskIds.put(two, taskId);
     }
 
     private void runCountdown(Match match, int secondsLeft) {
@@ -524,15 +641,32 @@ public class MatchService {
         if (player == null || !player.isOnline()) {
             return;
         }
-        player.getInventory().clear();
+        player.setGameMode(GameMode.SURVIVAL);
+        if (location != null) {
+            player.teleport(location);
+        }
+        String currentWorld = player.getWorld().getName();
+        if (TierSpaceHub.isInTierSpaceHub(currentWorld)) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (!player.isOnline() || isInMatch(player.getUniqueId())) {
+                    return;
+                }
+                TierSpaceHubService hub = plugin.getHubService();
+                if (hub != null) {
+                    hub.handleTierSpaceJoin(player, true);
+                }
+                PlayerStateBridge.setTierSpace(player);
+                restoreTaskIds.remove(player.getUniqueId());
+                postMatchKitLocked.remove(player.getUniqueId());
+            }, 2L);
+            return;
+        }
+        clearMatchKit(player);
+        postMatchKitLocked.remove(player.getUniqueId());
         player.getInventory().setContents(contents);
         player.getInventory().setArmorContents(armor);
         if (offhand != null) {
             player.getInventory().setItemInOffHand(offhand);
-        }
-        player.setGameMode(GameMode.SURVIVAL);
-        if (location != null) {
-            player.teleport(location);
         }
     }
 
@@ -543,10 +677,31 @@ public class MatchService {
         }
     }
 
+    private void applyMatchCombatState(Player player) {
+        PlayerStateBridge.enterMatchCombat(player);
+    }
+
     private void onMatchEnd(Player player) {
         if (player != null) {
             matchProtectionService.onMatchEnd(player);
+            if (!isInMatch(player.getUniqueId())) {
+                if (TierSpaceHub.isInTierSpaceHub(player.getWorld().getName())) {
+                    PlayerStateBridge.setTierSpace(player);
+                } else {
+                    PlayerStateBridge.syncFromWorld(player);
+                }
+            }
         }
+    }
+
+    public void leaveQueueState(Player player) {
+        if (player != null && !com.obm.network.core.security.SecurityBridge.allowQueueLeave(player)) {
+            return;
+        }
+        if (player == null || isInMatch(player.getUniqueId())) {
+            return;
+        }
+        PlayerStateBridge.leaveQueue(player);
     }
 
     private void cleanupMatch(Match match) {

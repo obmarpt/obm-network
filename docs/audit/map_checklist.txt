@@ -1,0 +1,226 @@
+# MineSpace — Checklist Completo do Mapa & Infraestrutura In-Game
+# Usar como lista de verificação pré-lançamento (marcar [ ] → [x] in-game)
+
+================================================================================
+MUNDOS OBRIGATÓRIOS (Multiverse / Paper)
+================================================================================
+
+[ ] Lobby          — Hub principal (spawn config: 0.5, 164, 0.5)
+[ ] world          — Rush SMP overworld
+[ ] world_nether   — SMP nether (portais)
+[ ] world_the_end  — SMP end (portais)
+[ ] uhc OU UHC     — ⚠ VERIFICAR CASE! Config usa "uhc", holograms "UHC"
+[ ] uhc_nether     — Hardcore nether
+[ ] uhc_the_end    — Hardcore end
+[ ] rankedSpawn    — Hub TierSpace competitivo
+[ ] duel           — Arena duelos BO3 (spawn1/spawn2 configurados)
+
+================================================================================
+LOBBY — SPAWN & NAVEGAÇÃO
+================================================================================
+
+[ ] Spawn seguro (sem void, sem blocos dentro do jogador)
+[ ] Day time fixo (lobby.day-time: 1000)
+[ ] World border ou barreiras nos limites do lobby
+[ ] Bússola / hotbar items (OBM-Lobby join handler)
+[ ] Protecção de build no spawn (combat-rules.spawn-build-protection)
+[ ] /lobby e /hub funcionam de todos os modos
+[ ] /menu abre GUI principal
+
+================================================================================
+LOBBY — CITIZENS NPCs (config: nomes contêm rush/hardcore/tier)
+================================================================================
+
+[ ] NPC Rush/SMP     — ~35.50, 161, 6.47 (clique → joinRush)
+[ ] NPC Hardcore/UHC — ~37.35, 161, 0.48 (clique → handleHardcore)
+[ ] NPC TierSpace    — ~35.55, 161, -5.55 (clique → teleport ranked hub)
+[ ] NPCs com skin adequada e nome visível
+[ ] NPCClickListener activo (sem duplicate handlers)
+
+================================================================================
+LOBBY — HOLOGRAMAS ESTÁTICOS (holograms.yml)
+================================================================================
+
+[ ] obm_lobby_welcome        — 0.5, 168, -6.5
+[ ] obm_lobby_smp_info       — 35.55, 163.2, -5.55
+[ ] obm_lobby_uhc_info       — 37.35, 163.2, 0.48
+[ ] obm_lobby_tierspace_info — 35.50, 163.2, 6.47
+[ ] obm_lobby_boards_smp_label   — 56, 66.5, 28
+[ ] obm_lobby_boards_uhc_label   — 70, 66.5, 28
+[ ] obm_lobby_boards_tier_label  — 40, 66.5, 28
+
+================================================================================
+LOBBY — HOLOGRAMAS LEADERBOARD LOCAIS (Y=65 plataforma)
+================================================================================
+
+[ ] top_smp_kills      — 52, 65, 30
+[ ] top_smp_playtime   — 56, 65, 30
+[ ] top_smp_money      — 60, 65, 30
+[ ] top_uhc_kills      — 68, 65, 30
+[ ] top_uhc_wins       — 72, 65, 30
+[ ] top_tierspace_rating — 36, 65, 30
+[ ] top_tierspace_streak — 40, 65, 30
+[ ] top_tierspace_wins   — 44, 65, 30
+[ ] Dados actualizam (backend ou fallback local)
+[ ] Sem hologramas duplicados (não usar server-config/holograms/yaml legado)
+
+================================================================================
+LOBBY — HOLOGRAMAS GLOBAIS (config.yml remote-leaderboard.holograms)
+================================================================================
+
+[ ] obm_global_coins     — -8.5, 168, 5.5
+[ ] obm_global_kills     — -5.5, 168, 5.5
+[ ] obm_global_playtime  — -2.5, 168, 5.5
+[ ] obm_global_emeralds  — 0.5, 168, 5.5
+[ ] Refresh 90s + backend activo
+
+================================================================================
+LOBBY — NPCs TOP #1 (config.yml leaderboards.npcs.placements)
+================================================================================
+
+[ ] top_smp_money NPC      — 60, 65, 31
+[ ] top_smp_kills NPC      — 52, 65, 31
+[ ] top_uhc_kills NPC      — 68, 65, 31
+[ ] top_tierspace_rating NPC — 36, 65, 31
+[ ] Skins/nomes actualizam com #1 real
+
+================================================================================
+LOBBY — ZONAS & EFEITOS
+================================================================================
+
+[ ] Partículas decorativas (opcional)
+[ ] Som ambiente ou música lobby (opcional)
+[ ] Void kill abaixo de Y mínimo
+[ ] Sem mobs hostis no lobby
+[ ] PvP desactivado no lobby
+[ ] Fly desactivado para players (VIP+ fly só onde permitido)
+
+================================================================================
+RUSH SMP — MUNDO "world"
+================================================================================
+
+[ ] obm_smp_entry holograma — 0.5, 72, 0.5
+[ ] Spawn seguro SMP (SafeSpawnService)
+[ ] Zona spawn protegida (SpawnProtectionListener)
+[ ] Loja física ou NPC /shop (opcional)
+[ ] Crates físicas common/rare/epic/legendary (mencionado server-modes.yml)
+[ ] Portal/nether link correcto
+[ ] Combat rules: no crystal, no anchor, no TNT (config)
+[ ] World border adequada
+
+================================================================================
+HARDCORE — MUNDO uhc/UHC
+================================================================================
+
+[ ] obm_uhc_entry holograma — 0.5, 72, 0.5
+[ ] Spawn seguro UHC
+[ ] Sistema de vidas activo (HardcoreUnlockService)
+[ ] Stats hc_* separadas de SMP
+[ ] Revive staff (uhc.revive perm) testado
+[ ] Morte = -1 vida, 0 vidas bloqueia entrada
+
+================================================================================
+TIERSPACE — MUNDO rankedSpawn
+================================================================================
+
+[ ] obm_tierspace_entry — 32.5, 125.5, -9.5
+[ ] Queue holograms (8 modos):
+    [ ] obm_ts_queue_sword      — 22.5, 124.2, -9.5
+    [ ] obm_ts_queue_axe        — 24.5, 124.2, -9.5
+    [ ] obm_ts_queue_mace       — 26.5, 124.2, -9.5
+    [ ] obm_ts_queue_uhc        — 28.5, 124.2, -9.5
+    [ ] obm_ts_queue_netherite  — 30.5, 124.2, -9.5
+    [ ] obm_ts_queue_op         — 34.5, 124.2, -9.5
+    [ ] obm_ts_queue_pot        — 36.5, 124.2, -9.5
+    [ ] obm_ts_queue_smp        — 38.5, 124.2, -9.5
+    [ ] obm_ts_queue_vanilla    — 40.5, 124.2, -9.5
+[ ] Placeholders %obm_tier_queue_*% funcionam
+[ ] Arenas criadas (/arena) para cada modo activo
+[ ] Hub teleport desde lobby NPC funciona
+[ ] GrimAC activo em ranked (softdepend)
+
+================================================================================
+DUEL ARENA — MUNDO "duel"
+================================================================================
+
+[ ] Mundo "duel" existe e carrega
+[ ] spawn1 — 0, 64, 0 yaw 0
+[ ] spawn2 — 10, 64, 0 yaw 180
+[ ] Arena flat, sem hazards
+[ ] World border pequena
+[ ] Return-to-original-position testado pós-duelo
+
+================================================================================
+VIP WARPS (vip-warps.yml — se usado)
+================================================================================
+
+[ ] Warp lobby (world: lobby — verificar case)
+[ ] Warp smp (world: smp — verificar nome real "world")
+[ ] Permissão obm.vip.warp para MVP+
+
+================================================================================
+SISTEMAS TRANSVERSAIS NO MAPA
+================================================================================
+
+[ ] PlaceholderAPI + expansão OBM registada
+[ ] DecentHolograms activo (HologramService depende)
+[ ] LuckPerms groups aplicados (permissions-complete.txt)
+[ ] TAB/footer com %obm_coins% %obm_emeralds%
+[ ] Essentials spawn/home/msg (grupo default)
+[ ] GrimAC + alertas staff (obm.staff.anticheat.alert)
+[ ] Backend plugin-key configurado (não vazio em produção)
+[ ] PostgreSQL acessível do plugin
+[ ] Stripe webhook URL configurado
+[ ] SITE_URL correcto no backend
+
+================================================================================
+COMANDOS CRÍTICOS — TESTAR IN-GAME POR MODO
+================================================================================
+
+LOBBY:     /menu /lobby /help /link /report /daily /cosmetics /shopglobal
+SMP:       /smp /shop /sell /ah /money /market /rank /rankup /top /duel
+TIERSPACE: /tierspace /queue /leave /party
+UHC:       entrada via NPC/menu (sem economy SMP)
+STAFF:     /admin /report list /investigate /stats
+VIP:       /repair /vipkit /vipwarp
+
+================================================================================
+WEB — PÁGINAS QUE DEVEM FUNCIONAR
+================================================================================
+
+[ ] / (index)
+[ ] /store.html + checkout Stripe
+[ ] /login.html /register.html
+[ ] /account.html + link flow
+[ ] /player/:uuid (profile)
+[ ] /leaderboards.html
+[ ] /join.html
+[ ] Assets /css/ /js/ absolutos
+
+================================================================================
+ANTI-DUPLICAÇÃO CONFIG (VERIFICAR MANUALMENTE)
+================================================================================
+
+[ ] NÃO existem hologramas DH manuais duplicando obm_* IDs
+[ ] server-config/holograms/yaml/* NÃO deployados em paralelo com holograms.yml
+[ ] plugins/OBM-Core/config.yml backend.plugin-key ≠ ""
+[ ] plugins/OBM-Core/config.yml admin-bridge ≠ change-me-bridge-key
+[ ] .env produção com secrets reais (não change-me)
+[ ] NODE_ENV=production no backend
+
+================================================================================
+TESTE DE CARGA SUGERIDO (PRÉ-LANÇAMENTO)
+================================================================================
+
+[ ] 50 bots join lobby simultâneo — TPS > 18
+[ ] 20 jogadores em queue TierSpace — matchmaking < 30s
+[ ] 10 duelos paralelos — sem item loss
+[ ] 5 checkout Stripe em 1 min — todas fulfilled
+[ ] Hologram refresh com 100 online — sem lag spike
+[ ] Restart servidor — player data persiste (DB)
+
+================================================================================
+FIM DO CHECKLIST
+================================================================================
+Total itens verificáveis: ~120
+Prioridade: mundos + NPCs + hologramas + duel world + backend link

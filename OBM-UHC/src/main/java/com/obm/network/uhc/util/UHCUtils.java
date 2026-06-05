@@ -1,17 +1,16 @@
 package com.obm.network.uhc.util;
 
-import org.bukkit.entity.Player;
 import com.obm.network.core.OBMCorePlugin;
+import com.obm.network.core.integration.HardcoreStatsBridge;
 import com.obm.network.core.storage.DataStore;
+import com.obm.network.core.storage.PlayerStatsKeys;
+import org.bukkit.entity.Player;
 
 public class UHCUtils {
 
     private static final DataStore ds = OBMCorePlugin.get().getDataStore();
-    
+
     private static final long PROTECTION_TIME_MS = 10L * 60L * 1000L; // 10 minutos
-    
-    private static final String LIVES_KEY = "lives_uhc";
-    private static final String JOIN_TIME_KEY = "join_time_uhc";
 
     public static boolean isUHC(Player p) {
         if (p == null || p.getWorld() == null) return false;
@@ -19,12 +18,13 @@ public class UHCUtils {
     }
 
     public static int getLives(Player p) {
-        return ds.getInt(p.getUniqueId(), LIVES_KEY);
+        return HardcoreStatsBridge.getLives(p.getUniqueId());
     }
 
     public static void setLives(Player p, int lives) {
         int clampedLives = Math.max(0, Math.min(1, lives));
-        ds.set(p.getUniqueId(), LIVES_KEY, clampedLives);
+        HardcoreStatsBridge.ensureInitialized(p.getUniqueId());
+        ds.set(p.getUniqueId(), PlayerStatsKeys.HC_LIVES, clampedLives);
     }
 
     public static void giveFullLives(Player p) {
@@ -33,11 +33,14 @@ public class UHCUtils {
     }
 
     public static void setJoinTime(Player p) {
-        ds.set(p.getUniqueId(), JOIN_TIME_KEY, System.currentTimeMillis());
+        ds.set(p.getUniqueId(), PlayerStatsKeys.HC_JOIN_TIME, System.currentTimeMillis());
     }
 
     public static long getJoinTime(Player p) {
-        return ds.getLong(p.getUniqueId(), JOIN_TIME_KEY);
+        if (ds.has(p.getUniqueId(), PlayerStatsKeys.HC_JOIN_TIME)) {
+            return ds.getLong(p.getUniqueId(), PlayerStatsKeys.HC_JOIN_TIME);
+        }
+        return ds.getLong(p.getUniqueId(), PlayerStatsKeys.LEGACY_JOIN_TIME_UHC);
     }
 
     public static boolean hasProtection(Player p) {

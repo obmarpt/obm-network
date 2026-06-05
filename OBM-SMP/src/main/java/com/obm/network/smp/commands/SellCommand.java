@@ -1,5 +1,6 @@
 package com.obm.network.smp.commands;
 
+import com.obm.network.core.ui.PlayerUx;
 import com.obm.network.core.world.WorldModeService;
 import com.obm.network.smp.permission.SmpPermissions;
 import com.obm.network.smp.sell.SellGui;
@@ -20,19 +21,20 @@ public class SellCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage("Apenas jogadores podem usar este comando.");
+        if (!PlayerUx.requirePlayer(sender)) {
             return true;
         }
+        Player player = (Player) sender;
 
         if (!worldModeService.isSMP(player.getWorld().getName())) {
-            player.sendMessage("§cEste comando só funciona dentro do SMP.");
+            PlayerUx.error(player, "Este comando só funciona dentro do SMP.");
             return true;
         }
-        if (SmpPermissions.deny(player, SmpPermissions.SELL, "Permissão: obm.smp.sell")) {
+        if (SmpPermissions.deny(player, SmpPermissions.SELL, "Precisas de: obm.smp.sell")) {
             return true;
         }
 
+        PlayerUx.openGuiFeedback(player, "Venda de Itens");
         sellGui.open(player);
         return true;
     }

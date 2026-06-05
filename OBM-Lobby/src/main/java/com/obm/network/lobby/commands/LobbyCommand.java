@@ -5,7 +5,9 @@ import com.obm.network.core.combat.CombatLogService;
 import com.obm.network.core.combat.CooldownService;
 import com.obm.network.core.location.LobbySpawnService;
 import com.obm.network.core.player.PlayerStateReset;
+import com.obm.network.lobby.LobbyWorldService;
 import com.obm.network.lobby.OBMLobbyPlugin;
+import com.obm.network.lobby.items.LobbyItemsService;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -43,14 +45,15 @@ public class LobbyCommand implements CommandExecutor {
         boolean force = plugin.getConfig().getBoolean("lobby.command.force-always", true);
         boolean bypass = player.hasPermission("obm.lobby.bypass");
 
-        if (!force && !bypass) {
-            if (CombatLogService.isInCombat(player)) {
-                player.sendMessage("§cNão podes usar /lobby enquanto estás em combate!");
-                if (plugin.isCommandDebug()) {
-                    plugin.getLogger().info("[lobby-debug] bloqueado (combat): " + player.getName());
-                }
-                return true;
+        if (!bypass && CombatLogService.isTaggedInSmpCombat(player)) {
+            player.sendMessage("§cNão podes usar /lobby enquanto estás em combate!");
+            if (plugin.isCommandDebug()) {
+                plugin.getLogger().info("[lobby-debug] bloqueado (combat tag): " + player.getName());
             }
+            return true;
+        }
+
+        if (!force && !bypass) {
             if (!CooldownService.canUseLobby(player)) {
                 long rem = CooldownService.getRemainingSeconds(player);
                 player.sendMessage("§cAinda não podes voltar ao lobby. Aguarda " + rem + " segundos.");
@@ -61,8 +64,6 @@ public class LobbyCommand implements CommandExecutor {
             }
         }
 
-        CombatLogService.clearCombat(player);
-        CooldownService.clear(player);
         PlayerStateReset.clearTransientState(player);
 
         if (!LobbySpawnService.teleportToLobby(player)) {
@@ -72,14 +73,20 @@ public class LobbyCommand implements CommandExecutor {
             return true;
         }
 
+        CooldownService.clear(player);
+
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (player.isOnline()) {
-                OBMCorePlugin core = OBMCorePlugin.get();
-                if (core != null) {
-                    PlayerStateReset.resyncVisual(core, player, true);
-                }
+            if (!player.isOnline()) {
+                return;
             }
-        }, 2L);
+            OBMCorePlugin core = OBMCorePlugin.get();
+            if (core != null) {
+                PlayerStateReset.resyncVisual(core, player, true);
+            }
+            if (LobbyWorldService.isInLobby(player)) {
+                LobbyItemsService.equip(player);
+            }
+        }, 3L);
 
         player.sendMessage("§aFoste teleportado para o lobby.");
         if (plugin.isCommandDebug()) {

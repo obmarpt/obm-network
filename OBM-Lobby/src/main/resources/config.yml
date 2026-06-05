@@ -11,51 +11,85 @@ lobby:
     yaw: -90
     pitch: 0
 
-# Menu principal (27 slots) — linha central: [vidro][PvP][Hardcore][SMP][vidro]
+# Hotbar fixa no lobby (slots 0, 1, 2, 8)
+lobby-items:
+  navigator:
+    slot: 0
+    material: COMPASS
+    name: "&e&lNavegador"
+    lore:
+      - "&7Escolhe um modo de jogo"
+      - "&eClique para abrir"
+  battlepass:
+    slot: 1
+    material: NETHER_STAR
+    name: "&6&lBattle Pass"
+    lore:
+      - "&7Recompensas e quests"
+      - "&eClique para ver"
+  profile:
+    slot: 2
+    material: PLAYER_HEAD
+    name: "&b&lPerfil"
+    lore:
+      - "&7As tuas estatísticas"
+      - "&eClique para abrir"
+  back:
+    slot: 8
+    material: RED_BED
+    name: "&c&lVoltar"
+    lore:
+      - "&7Regressar ao spawn"
+      - "&eClique para voltar"
+
+# NPCs Citizens — nomes sugeridos (criar no mapa com Citizens):
+#   SMP:       &6&l⚔ SMP
+#   Hardcore:  &c&l☠ Hardcore
+#   TierSpace: &b&l🏆 TierSpace
+# Clique → NpcModeRouter (OBM-Core). Hologramas → plugins/OBM-Core/holograms.yml
+
+# Navegador de modos (27 slots) — linha central: SMP · Hardcore · TierSpace
 main-menu:
-  title: "&8✦ &7Seleciona um modo"
+  title: "&8✦ &7Escolhe um modo"
   filler:
     material: GRAY_STAINED_GLASS_PANE
     name: " "
   layout:
-    pvp: 12
+    smp: 11
     hardcore: 13
-    smp: 14
+    tierspace: 15
   feedback:
     use-title: true
     title-fade-in: 5
     title-stay: 25
     title-fade-out: 10
   modes:
-    pvp:
-      material: IRON_SWORD
-      name: "&e⚔ PvP"
-      lore:
-        - "&7Acede ao modo PvP"
-        - "&8Clique para entrar"
-      entering: "&aA entrar em PvP..."
     smp:
-      material: DIAMOND_SWORD
-      name: "&b💎 SMP"
+      material: GRASS_BLOCK
+      name: "&6&l⚔ SMP"
       lore:
-        - "&7Modo survival"
-        - "&8Clique para entrar"
+        - "&7Survival · Economia · PvP"
       entering: "&aA entrar em SMP..."
+    tierspace:
+      material: DIAMOND_SWORD
+      name: "&b&l🏆 TierSpace"
+      lore:
+        - "&7Ranked 1v1 · Elo · Seasons"
+      entering: "&bA entrar em TierSpace..."
     hardcore:
       locked:
         material: BARRIER
-        name: "&c🔒 Hardcore"
+        name: "&c&l🔒 Hardcore"
         lore:
           - "&7Desbloqueado em:"
           - "&e{coins} Money"
           - "&eNível {level}"
       unlocked:
         material: NETHERITE_SWORD
-        name: "&c☠ Hardcore"
+        name: "&c&l☠ Hardcore"
         lore:
-          - "&7Modo hardcore"
-          - "&8Clique para entrar"
-      entering: "&aA entrar em Hardcore..."
+          - "&7Vidas limitadas · alto risco"
+      entering: "&cA entrar em Hardcore..."
 
 # Hologramas: plugins/OBM-Core/holograms.yml (HologramService)
 # Requisitos Hardcore (coins/level): plugins/OBM-Core/config.yml → hardcore.unlock

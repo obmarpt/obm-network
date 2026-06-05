@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modos — MineSpace</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body data-page="modes">
+  <div id="app-nav"></div>
+  <main class="container">
+    <header class="page-header">
+      <h1>Modos de jogo</h1>
+      <p class="lead">Escolhe como queres jogar na MineSpace</p>
+    </header>
+    <div class="grid-2" id="modesGrid"></div>
+  </main>
+  <div id="app-footer"></div>
+  <script src="/js/layout.js"></script>
+  <script src="/js/site.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const grid = document.getElementById('modesGrid');
+      try {
+        const { modes } = await fetch('/api/public/catalog/modes').then((r) => r.json());
+        grid.innerHTML = (modes || []).map((m) => `
+          <article class="card mode-card">
+            <div class="mode-icon">${m.icon}</div>
+            <h3>${m.name}</h3>
+            <p class="muted">${m.tagline}</p>
+            <p>${m.description}</p>
+            <ul class="product-perks">${(m.features || []).map((f) => `<li>${f}</li>`).join('')}</ul>
+            <a class="btn btn-primary" href="join.html" style="margin-top:0.75rem;">Jogar</a>
+          </article>`).join('');
+      } catch {
+        grid.innerHTML = '<p class="muted">Catálogo indisponível</p>';
+      }
+    });
+  </script>
+</body>
+</html>

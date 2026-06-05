@@ -9,15 +9,19 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EconomyService {
 
     private static final String TOTAL_EARNED_KEY = "smp_total_earned";
     private static final String TOTAL_SPENT_KEY = "smp_total_spent";
 
+    private static final int MAX_BALANCE = Integer.MAX_VALUE / 2;
+
     private final Economy economy;
     private final int startingBalance;
     private final DataStore dataStore;
+    private final ConcurrentHashMap<UUID, Object> balanceLocks = new ConcurrentHashMap<>();
 
     public EconomyService(Economy economy, int startingBalance) {
         this.economy = economy;
@@ -95,15 +99,26 @@ public class EconomyService {
             return new EconomyResponse(0, getBalance(uuid), EconomyResponse.ResponseType.SUCCESS, "No deposit needed");
         }
 
-        ensureBalanceInitialized(uuid);
-        int newBalance = getBalance(uuid) + amount;
-        dataStore.set(uuid, EconomyBridge.BALANCE_KEY, newBalance);
-        trackEarned(uuid, amount);
-        syncVaultToMatch(uuid, newBalance);
-        dataStore.save(uuid);
-        notifyRemoteStorage(uuid, newBalance);
-
-        return new EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null);
+        synchronized (lockFor(uuid)) {
+            ensureBalanceInitialized(uuid);
+            long newBalanceLong = (long) getBalance(uuid) + amount;
+            int newBalance = (int) Math.min(MAX_BALANCE, newBalanceLong);
+            dataStore.set(uuid, EconomyBridge.BALANCE_KEY, newBalance);
+            trackEarned(uuid, amount);
+            syncVaultToMatch(uuid, newBalance);
+            dataStore.save(uuid);
+            notifyRemoteStorage(uuid, newBalance);
+            org.bukkit.entity.Player online = Bukkit.getPlayer(uuid);
+            if (online != null) {
+                com.obm.network.core.integration.BattlePassBridge.smpMoneyEarned(online, amount);
+                com.obm.network.core.integration.AchievementBridge.smpMoney(online);
+                com.obm.network.core.ui.PlayerUx.notifyMoneyGain(online, amount, format(amount));
+            } else {
+                com.obm.network.core.integration.BattlePassBridge.smpMoneyEarned(uuid, amount);
+                com.obm.network.core.integration.AchievementBridge.smpMoney(uuid);
+            }
+            return new EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null);
+        }
     }
 
     public EconomyResponse withdraw(UUID uuid, int amount) {
@@ -111,20 +126,25 @@ public class EconomyService {
             return new EconomyResponse(0, getBalance(uuid), EconomyResponse.ResponseType.SUCCESS, "No withdraw needed");
         }
 
-        ensureBalanceInitialized(uuid);
-        int balance = getBalance(uuid);
-        if (balance < amount) {
-            return new EconomyResponse(0, balance, EconomyResponse.ResponseType.FAILURE, "Insufficient funds");
+        synchronized (lockFor(uuid)) {
+            ensureBalanceInitialized(uuid);
+            int balance = getBalance(uuid);
+            if (balance < amount) {
+                return new EconomyResponse(0, balance, EconomyResponse.ResponseType.FAILURE, "Insufficient funds");
+            }
+
+            int newBalance = balance - amount;
+            dataStore.set(uuid, EconomyBridge.BALANCE_KEY, newBalance);
+            trackSpent(uuid, amount);
+            syncVaultToMatch(uuid, newBalance);
+            dataStore.save(uuid);
+            notifyRemoteStorage(uuid, newBalance);
+            return new EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null);
         }
+    }
 
-        int newBalance = balance - amount;
-        dataStore.set(uuid, EconomyBridge.BALANCE_KEY, newBalance);
-        trackSpent(uuid, amount);
-        syncVaultToMatch(uuid, newBalance);
-        dataStore.save(uuid);
-        notifyRemoteStorage(uuid, newBalance);
-
-        return new EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null);
+    private Object lockFor(UUID uuid) {
+        return balanceLocks.computeIfAbsent(uuid, ignored -> new Object());
     }
 
     private void notifyRemoteStorage(UUID uuid, int newBalance) {
@@ -149,21 +169,30 @@ public class EconomyService {
     }
 
     public boolean transfer(UUID source, UUID target, int amount) {
-        if (amount <= 0 || !canAfford(source, amount)) {
+        if (amount <= 0 || source == null || target == null || source.equals(target)) {
             return false;
         }
-
-        EconomyResponse withdrawResponse = withdraw(source, amount);
-        if (!withdrawResponse.transactionSuccess()) {
-            return false;
+        UUID first = source.compareTo(target) <= 0 ? source : target;
+        UUID second = first.equals(source) ? target : source;
+        Object lock1 = balanceLocks.computeIfAbsent(first, ignored -> new Object());
+        Object lock2 = balanceLocks.computeIfAbsent(second, ignored -> new Object());
+        synchronized (lock1) {
+            synchronized (lock2) {
+                if (!canAfford(source, amount)) {
+                    return false;
+                }
+                EconomyResponse withdrawResponse = withdraw(source, amount);
+                if (!withdrawResponse.transactionSuccess()) {
+                    return false;
+                }
+                EconomyResponse depositResponse = deposit(target, amount);
+                if (!depositResponse.transactionSuccess()) {
+                    deposit(source, amount);
+                    return false;
+                }
+                return true;
+            }
         }
-
-        EconomyResponse depositResponse = deposit(target, amount);
-        if (!depositResponse.transactionSuccess()) {
-            deposit(source, amount);
-            return false;
-        }
-        return true;
     }
 
     public int getTotalEarned(UUID uuid) {

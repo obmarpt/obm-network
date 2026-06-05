@@ -12,22 +12,27 @@ import java.util.List;
 
 public record ArenaDefinition(
         String id,
+        String name,
         Location spawn1,
         Location spawn2,
         List<String> modes,
+        boolean enabled,
         boolean autoReset,
         Location resetMin,
         Location resetMax
 ) {
     public boolean supports(String modeId) {
+        if (!enabled) {
+            return false;
+        }
         if (modes == null || modes.isEmpty() || modes.contains("*")) {
             return true;
         }
         return modes.stream().anyMatch(mode -> mode.equalsIgnoreCase(modeId));
     }
 
-    public static ArenaDefinition fromConfig(String id, ConfigurationSection section, String worldName) {
-        World world = Bukkit.getWorld(worldName);
+    public static ArenaDefinition fromConfig(String id, ConfigurationSection section, String defaultWorld) {
+        World world = resolveWorld(section.getString("world", defaultWorld));
         if (world == null || section == null) {
             return null;
         }
@@ -37,16 +42,48 @@ public record ArenaDefinition(
             return null;
         }
 
-        List<String> modes = section.getStringList("modes");
+        List<String> modes = new ArrayList<>(section.getStringList("modes"));
         if (modes.isEmpty()) {
-            modes = List.of("*");
+            String single = section.getString("mode");
+            if (single != null && !single.isBlank()) {
+                modes.add(single);
+            } else {
+                modes.add("*");
+            }
         }
 
+        boolean enabled = section.getBoolean("enabled", true);
         boolean autoReset = section.getBoolean("auto-reset", false);
         Location resetMin = readCorner(section.getConfigurationSection("reset-min"), world);
         Location resetMax = readCorner(section.getConfigurationSection("reset-max"), world);
+        String name = section.getString("name", id);
 
-        return new ArenaDefinition(id, first, second, modes, autoReset, resetMin, resetMax);
+        return new ArenaDefinition(id, name, first, second, modes, enabled, autoReset, resetMin, resetMax);
+    }
+
+    public static ArenaDefinition fromBackend(
+            String id,
+            String name,
+            String mode,
+            String worldName,
+            Location spawn1,
+            Location spawn2,
+            boolean enabled,
+            boolean autoReset) {
+        if (spawn1 == null || spawn2 == null) {
+            return null;
+        }
+        return new ArenaDefinition(
+                id,
+                name != null ? name : id,
+                spawn1,
+                spawn2,
+                List.of(mode != null ? mode : "sword"),
+                enabled,
+                autoReset,
+                null,
+                null
+        );
     }
 
     public void resetBlocks() {
@@ -83,6 +120,20 @@ public record ArenaDefinition(
                 || type == Material.TNT
                 || type == Material.FIRE
                 || type == Material.SOUL_FIRE;
+    }
+
+    private static World resolveWorld(String worldName) {
+        if (worldName == null) {
+            return null;
+        }
+        World world = Bukkit.getWorld(worldName);
+        if (world != null) {
+            return world;
+        }
+        return Bukkit.getWorlds().stream()
+                .filter(w -> w.getName().equalsIgnoreCase(worldName))
+                .findFirst()
+                .orElse(null);
     }
 
     private static Location readSpawn(ConfigurationSection section, World world) {

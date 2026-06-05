@@ -23,6 +23,15 @@ permissions:
   tierspace.admin.season:
     description: Avançar ou corrigir temporada TierSpace manualmente
     default: op
+  obm.tierspace.arena:
+    description: Gerir arenas TierSpace in-game
+    default: op
+  obm.tierspace.arena.create:
+    description: Criar e guardar arenas
+    default: op
+  obm.tierspace.arena.admin:
+    description: Reload e remover arenas
+    default: op
 
 commands:
   tierspace:
@@ -45,3 +54,8 @@ commands:
     description: Gerir party TierSpace
     usage: /party <create|invite|accept|leave|kick>
     permission: obm.tierspace.use
+
+  arena:
+    description: Configurar arenas competitivas
+    usage: /arena <create|setpos1|setpos2|save|list|reload>
+    permission: obm.tierspace.arena

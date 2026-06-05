@@ -108,7 +108,7 @@ public class MarketCommand implements CommandExecutor {
     }
 
     private boolean handleRemove(Player player, String id) {
-        MarketSaleResult result = marketService.removeListing(id, player.getUniqueId());
+        MarketSaleResult result = marketService.removeListing(player, id);
         player.sendMessage(result.getMessage());
         if (result.isSuccess()) {
             marketGui.open(player);

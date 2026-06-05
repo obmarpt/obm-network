@@ -1,7 +1,11 @@
 package com.obm.network.smp;
 
+import com.obm.network.smp.commands.DuelCommand;
 import com.obm.network.smp.commands.StatsCommand;
 import com.obm.network.smp.commands.TopCommand;
+import com.obm.network.smp.duel.DuelArenaService;
+import com.obm.network.smp.duel.DuelListener;
+import com.obm.network.smp.duel.DuelService;
 
 import com.obm.network.smp.listener.StatsListener;
 
@@ -13,14 +17,24 @@ import com.obm.network.smp.commands.MarketCommand;
 import com.obm.network.smp.market.MarketGui;
 import com.obm.network.smp.commands.MoneyCommand;
 import com.obm.network.smp.commands.RankCommand;
+import com.obm.network.smp.commands.RankupCommand;
 import com.obm.network.smp.commands.SMPCommand;
 import com.obm.network.smp.commands.SellCommand;
 import com.obm.network.smp.commands.ShopCommand;
 import com.obm.network.smp.listener.PlayerConnectionListener;
 import com.obm.network.smp.listener.SMPListener;
 import com.obm.network.smp.listener.SmpRespawnListener;
+import com.obm.network.smp.listener.RankGuiListener;
 import com.obm.network.smp.listener.SmpGuiListener;
+import com.obm.network.smp.progression.RankGui;
+import com.obm.network.smp.listener.SpawnBoundaryListener;
+import com.obm.network.smp.listener.SmpCombatRulesListener;
+import com.obm.network.smp.listener.SpawnBuildProtectionListener;
 import com.obm.network.smp.listener.SpawnProtectionListener;
+import com.obm.network.smp.spawn.SpawnBoundaryManager;
+import com.obm.network.smp.hud.HudCommand;
+import com.obm.network.smp.hud.HudGui;
+import com.obm.network.smp.hud.HudGuiListener;
 import com.obm.network.smp.death.SmpDeathDeduplicator;
 import com.obm.network.smp.manager.SMPManager;
 import com.obm.network.smp.progression.LevelService;
@@ -56,6 +70,7 @@ public class SMPPlugin extends JavaPlugin {
     private EconomyService economyService;
     private MarketService marketService;
     private SpawnProtectionService spawnProtectionService;
+    private SpawnBoundaryManager spawnBoundaryManager;
     private ShopCatalog shopCatalog;
     private ShopService shopService;
     private ShopGui shopGui;
@@ -68,12 +83,15 @@ public class SMPPlugin extends JavaPlugin {
     private PlayerProgressionStore progressionStore;
     private RankCatalog rankCatalog;
     private RankService rankService;
+    private RankGui rankGui;
     private LevelService levelService;
     private ProgressionBonusService bonusService;
     private KillFarmGuard killFarmGuard;
     private SmpDeathDeduplicator deathDeduplicator;
     private SMPManager smpManager;
     private WorldModeService worldModeService;
+    private DuelService duelService;
+    private HudGui hudGui;
 
     @Override
     public void onEnable() {
@@ -114,6 +132,8 @@ public class SMPPlugin extends JavaPlugin {
         economyService = new EconomyService(getEconomy(), getConfig().getInt("starting-balance", 100));
         marketService = new MarketService(this, economyService);
         spawnProtectionService = new SpawnProtectionService(getConfig(), worldModeService);
+        spawnBoundaryManager = new SpawnBoundaryManager(this, spawnProtectionService);
+        spawnBoundaryManager.start();
         killFarmGuard = new KillFarmGuard(getConfig());
         deathDeduplicator = new SmpDeathDeduplicator();
 
@@ -121,6 +141,7 @@ public class SMPPlugin extends JavaPlugin {
         rankCatalog = new RankCatalog();
         rankCatalog.reload(getConfig());
         rankService = new RankService(rankCatalog, progressionStore, economyService);
+        rankGui = new RankGui(rankCatalog, rankService, economyService);
         levelService = new LevelService(progressionStore, economyService::deposit);
         levelService.reload(getConfig());
         bonusService = new ProgressionBonusService(rankService, levelService);
@@ -139,6 +160,9 @@ public class SMPPlugin extends JavaPlugin {
         auctionGui = new AuctionGui(auctionService);
         marketGui = new MarketGui(marketService);
 
+        DuelArenaService duelArenaService = new DuelArenaService(this);
+        duelService = new DuelService(this, worldModeService, duelArenaService);
+
         smpManager = new SMPManager(
                 economyService,
                 worldModeService,
@@ -153,10 +177,17 @@ public class SMPPlugin extends JavaPlugin {
                 getConfig().getBoolean("economy.death-penalty-enabled", true)
         );
 
-        getServer().getPluginManager().registerEvents(new SMPListener(smpManager, worldModeService), this);
+        getServer().getPluginManager().registerEvents(new SMPListener(smpManager, worldModeService, duelService), this);
+        getServer().getPluginManager().registerEvents(new DuelListener(duelService), this);
         getServer().getPluginManager().registerEvents(
                 new SmpRespawnListener(this, worldModeService, shopGui), this);
         getServer().getPluginManager().registerEvents(new SpawnProtectionListener(spawnProtectionService), this);
+        getServer().getPluginManager().registerEvents(
+                new SmpCombatRulesListener(worldModeService), this);
+        getServer().getPluginManager().registerEvents(
+                new SpawnBuildProtectionListener(spawnProtectionService), this);
+        getServer().getPluginManager().registerEvents(
+                new SpawnBoundaryListener(spawnProtectionService, spawnBoundaryManager), this);
         getServer().getPluginManager().registerEvents(
                 new ShopListener(shopGui, shopService, shopCatalog), this);
         getServer().getPluginManager().registerEvents(new ShopSearchListener(shopGui), this);
@@ -165,6 +196,11 @@ public class SMPPlugin extends JavaPlugin {
                         auctionGui, auctionService, marketGui, marketService),
                 this
         );
+        getServer().getPluginManager().registerEvents(new RankGuiListener(rankGui, rankService), this);
+
+        hudGui = new HudGui();
+        getServer().getPluginManager().registerEvents(new HudGuiListener(hudGui), this);
+        registerCommand("hud", new HudCommand(hudGui, worldModeService));
 
         schedulePlaytimeRewards();
 
@@ -186,14 +222,30 @@ public class SMPPlugin extends JavaPlugin {
 
         registerCommand("money", new MoneyCommand(economyService));
         registerCommand("market", new MarketCommand(this, marketGui, marketService, economyService));
-        registerCommand("rank", new RankCommand(rankService, levelService, rankCatalog, progressionStore));
+        registerCommand("rank", new RankCommand(rankService, levelService, rankCatalog, progressionStore, rankGui));
+        registerCommand("rankup", new RankupCommand(rankGui));
         registerCommand("top", new TopCommand());
+
+        DuelCommand duelCommand = new DuelCommand(duelService);
+        registerCommand("duel", duelCommand);
+        PluginCommand duelPluginCmd = getCommand("duel");
+        if (duelPluginCmd != null) {
+            duelPluginCmd.setTabCompleter(duelCommand);
+        }
 
         getLogger().info("OBM-SMP iniciado");
     }
 
     @Override
     public void onDisable() {
+        if (spawnBoundaryManager != null) {
+            spawnBoundaryManager.stop();
+            spawnBoundaryManager = null;
+        }
+        if (duelService != null) {
+            duelService.shutdown();
+            duelService = null;
+        }
         if (marketService != null) {
             marketService.save();
         }
@@ -275,5 +327,9 @@ public class SMPPlugin extends JavaPlugin {
 
     public LevelService getLevelService() {
         return levelService;
+    }
+
+    public DuelService getDuelService() {
+        return duelService;
     }
 }

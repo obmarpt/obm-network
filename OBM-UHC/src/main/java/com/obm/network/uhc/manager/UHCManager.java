@@ -1,7 +1,9 @@
 package com.obm.network.uhc.manager;
 
 import com.obm.network.core.OBMCorePlugin;
+import com.obm.network.core.integration.HardcoreStatsBridge;
 import com.obm.network.core.storage.DataStore;
+import com.obm.network.core.storage.PlayerStatsKeys;
 import com.obm.network.uhc.service.UHCReviveService;
 import com.obm.network.uhc.util.UHCUtils;
 import net.kyori.adventure.text.Component;
@@ -39,21 +41,22 @@ public class UHCManager {
     public void handleJoin(Player player) {
         UUID uuid = player.getUniqueId();
 
-        if (!dataStore.has(uuid, "join_time_uhc")) {
-            dataStore.set(uuid, "join_time_uhc", System.currentTimeMillis());
-            dataStore.set(uuid, "lives_uhc", 1);
+        HardcoreStatsBridge.ensureInitialized(uuid);
+        if (!dataStore.has(uuid, PlayerStatsKeys.HC_JOIN_TIME)) {
+            dataStore.set(uuid, PlayerStatsKeys.HC_JOIN_TIME, System.currentTimeMillis());
+            dataStore.set(uuid, PlayerStatsKeys.HC_LIVES, 1);
         }
     }
 
     public void checkProtection(Player player) {
         UUID uuid = player.getUniqueId();
 
-        if (dataStore.getInt(uuid, "lives_uhc") <= 0) {
+        if (HardcoreStatsBridge.getLives(uuid) <= 0) {
             return;
         }
 
-        if (dataStore.getLong(uuid, "join_time_uhc") <= 0) {
-            dataStore.set(uuid, "join_time_uhc", System.currentTimeMillis());
+        if (dataStore.getLong(uuid, PlayerStatsKeys.HC_JOIN_TIME) <= 0) {
+            dataStore.set(uuid, PlayerStatsKeys.HC_JOIN_TIME, System.currentTimeMillis());
         }
     }
 
@@ -67,8 +70,8 @@ public class UHCManager {
         victim.getWorld().strikeLightningEffect(victim.getLocation());
         dataStore.setInventory(uuid, "saved_inventory", victim.getInventory().getContents());
 
-        int lives = dataStore.getInt(uuid, "lives_uhc") - 1;
-        dataStore.set(uuid, "lives_uhc", lives);
+        int lives = HardcoreStatsBridge.getLives(uuid) - 1;
+        dataStore.set(uuid, PlayerStatsKeys.HC_LIVES, lives);
 
         if (killer != null && isUHC(killer)) {
             handleKill(killer);
@@ -153,6 +156,6 @@ public class UHCManager {
     }
 
     public int getLives(Player player) {
-        return dataStore.getInt(player.getUniqueId(), "lives_uhc");
+        return HardcoreStatsBridge.getLives(player.getUniqueId());
     }
 }

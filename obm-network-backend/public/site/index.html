@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MineSpace — Network Minecraft</title>
+  <meta name="description" content="MineSpace — SMP Rush, Hardcore e TierSpace. Network Minecraft premium.">
+  <meta name="theme-color" content="#0a0a0a">
+  <link rel="stylesheet" href="/css/site.css">
+  <link rel="stylesheet" href="/css/portal.css">
+  <link rel="stylesheet" href="/css/store.css">
+</head>
+<body data-page="home">
+  <div id="app-nav"></div>
+
+  <header class="hero fade-in">
+    <h1>MineSpace</h1>
+    <p>SMP Rush, Hardcore e TierSpace competitivo. Progressão real, economia equilibrada e PvP de alto nível.</p>
+    <div class="hero-live"><span class="live-dot"></span><span class="muted">Servidor activo · dados em tempo real</span></div>
+    <div id="heroStats" style="margin-top:1rem;"></div>
+    <div class="hero-actions">
+      <a class="btn btn-primary btn-lg" href="join.html">▶ Jogar agora</a>
+      <a class="btn btn-secondary" href="store.html">◆ Loja VIP</a>
+      <a class="btn btn-ghost" href="leaderboards.html">Rankings</a>
+    </div>
+  </header>
+
+  <main class="container fade-in-delay">
+    <div id="homeGlobalStats"></div>
+
+    <section class="section tier-compare-section">
+      <div class="tier-compare-head">
+        <div>
+          <h2 class="section-title" style="margin:0;">Compare VIPs</h2>
+          <p class="muted">QoL only — escolhe o teu tier</p>
+        </div>
+        <a href="store.html" class="btn btn-primary btn-sm">Comprar VIP</a>
+      </div>
+      <div id="homeTierCompare"></div>
+    </section>
+
+    <section class="section">
+      <div class="tier-compare-head">
+        <h2 class="section-title" style="margin:0;">🏆 Leaderboards</h2>
+        <a href="leaderboards.html" class="btn btn-ghost btn-sm">Ver todos →</a>
+      </div>
+      <div class="lb-preview-grid" id="homeLeaderboards"></div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="icon-sword"></span> Modos de jogo</h2>
+      <div class="grid-3" id="homeModes"></div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title"><span class="icon-star"></span> Destaques</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Battle Pass</h3>
+          <p>50 níveis de rewards free e premium cada season.</p>
+          <a class="btn btn-ghost btn-sm" href="battlepass.html" style="margin-top:0.85rem;">Ver progressão →</a>
+        </div>
+        <div class="card">
+          <h3>Loja segura</h3>
+          <p>VIPs, cosméticos e bundles com pagamento Stripe.</p>
+          <a class="btn btn-primary btn-sm" href="store.html" style="margin-top:0.85rem;">Abrir loja →</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="app-footer"></div>
+  <script src="/js/layout.js"></script>
+  <script src="/js/site.js"></script>
+  <script src="/js/portal.js"></script>
+  <script>
+    const LB_PREVIEW = [
+      { key: 'money', title: 'Top Money', icon: '💰' },
+      { key: 'kills', title: 'Top Kills', icon: '⚔' },
+      { key: 'rating', title: 'TierSpace ELO', icon: '🏆' },
+    ];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      startOnlinePoll('heroStats', 12000);
+      Portal.mountGlobalStats('homeGlobalStats');
+
+      try {
+        const tierData = await Portal.fetchTiers();
+        document.getElementById('homeTierCompare').innerHTML =
+          Portal.renderTierMatrix(tierData, { compact: true, showCta: true });
+      } catch { /* optional */ }
+
+      try {
+        const { boards } = await Portal.fetchLeaderboards();
+        document.getElementById('homeLeaderboards').innerHTML = LB_PREVIEW.map((b) => {
+          const entries = boards?.[b.key]?.entries || [];
+          const card = Portal.renderLeaderboardCard(b.title, b.icon, entries.slice(0, 5));
+          return card.replace('class="card lb-card"', 'class="card lb-card lb-preview-card"');
+        }).join('');
+      } catch {
+        document.getElementById('homeLeaderboards').innerHTML = '<p class="muted">Leaderboards indisponíveis</p>';
+      }
+
+      try {
+        const c = await fetch('/api/public/catalog').then((r) => r.json());
+        document.getElementById('homeModes').innerHTML = (c.modes || []).map((m) => `
+          <div class="card mode-card">
+            <div class="mode-icon">${m.icon}</div>
+            <h3>${m.name}</h3>
+            <p>${m.description}</p>
+            <span class="tag">${m.tagline}</span>
+          </div>`).join('');
+        window.msReveal?.(document.getElementById('homeModes'));
+      } catch { /* optional */ }
+
+      setInterval(() => Portal.mountGlobalStats('homeGlobalStats'), 30000);
+      setInterval(async () => {
+        try {
+          const { boards } = await Portal.fetchLeaderboards();
+          document.getElementById('homeLeaderboards').innerHTML = LB_PREVIEW.map((b) => {
+            const entries = boards?.[b.key]?.entries || [];
+            const card = Portal.renderLeaderboardCard(b.title, b.icon, entries.slice(0, 5));
+            return card.replace('class="card lb-card"', 'class="card lb-card lb-preview-card"');
+          }).join('');
+        } catch { /* ignore */ }
+      }, 30000);
+    });
+  </script>
+</body>
+</html>

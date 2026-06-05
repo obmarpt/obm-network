@@ -3,7 +3,10 @@ package com.obm.network.tierspace;
 import com.obm.network.core.tier.TierRankUtil;
 import com.obm.network.tierspace.anticheat.AnticheatIntegration;
 import com.obm.network.tierspace.anticheat.MatchProtectionListener;
+import com.obm.network.tierspace.arena.ArenaBackendClient;
 import com.obm.network.tierspace.arena.ArenaService;
+import com.obm.network.tierspace.arena.ArenaSetupManager;
+import com.obm.network.tierspace.command.ArenaCommand;
 import com.obm.network.tierspace.command.LeaveCommand;
 import com.obm.network.tierspace.command.PartyCommand;
 import com.obm.network.tierspace.command.QueueCommand;
@@ -11,10 +14,14 @@ import com.obm.network.tierspace.command.TierSpaceCommand;
 import com.obm.network.tierspace.feedback.MatchFeedbackService;
 import com.obm.network.tierspace.kit.KitService;
 import com.obm.network.tierspace.kit.PlayerKitService;
+import com.obm.network.tierspace.listener.MatchInventoryListener;
 import com.obm.network.tierspace.listener.MatchListener;
 import com.obm.network.tierspace.listener.QueueGuiRefreshListener;
+import com.obm.network.tierspace.hub.TierSpaceHubKeys;
+import com.obm.network.tierspace.hub.TierSpaceHubService;
 import com.obm.network.tierspace.listener.RankedSpawnListener;
 import com.obm.network.tierspace.listener.TierGuiListener;
+import com.obm.network.tierspace.listener.TierSpaceHubInventoryListener;
 import com.obm.network.tierspace.listener.TierSpaceJoinListener;
 import com.obm.network.tierspace.listener.TierSpaceNpcListener;
 import com.obm.network.tierspace.match.MatchService;
@@ -60,11 +67,16 @@ public class TierSpacePlugin extends JavaPlugin {
     private RankRewardService rankRewardService;
     private QueueGuiRefreshListener queueGuiRefreshListener;
     private AnticheatIntegration anticheatIntegration;
+    private TierSpaceHubService hubService;
+    private ArenaService arenaService;
+    private ArenaBackendClient arenaBackendClient;
+    private ArenaSetupManager arenaSetupManager;
 
     @Override
     public void onEnable() {
         instance = this;
         saveDefaultConfig();
+        TierSpaceHubKeys.register(this);
 
         modeRegistry = new ModeRegistry();
         modeRegistry.reload(getConfig());
@@ -110,8 +122,11 @@ public class TierSpacePlugin extends JavaPlugin {
         RematchService rematchService = new RematchService();
         partyService = new PartyService();
 
-        ArenaService arenaService = new ArenaService();
+        arenaService = new ArenaService(getLogger());
         arenaService.reload(getConfig());
+        arenaBackendClient = new ArenaBackendClient(this);
+        arenaSetupManager = new ArenaSetupManager();
+        arenaBackendClient.fetchArenas(arenaService);
 
         KitService kitService = new KitService();
         kitService.reload(getConfig());
@@ -128,9 +143,9 @@ public class TierSpacePlugin extends JavaPlugin {
         queueService = new QueueService(
                 store,
                 getConfig().getInt("matchmaking.initial-range", 50),
-                getConfig().getInt("matchmaking.range-expansion", 25),
-                getConfig().getInt("matchmaking.expansion-interval-seconds", 4),
-                getConfig().getInt("matchmaking.max-range", 250)
+                getConfig().getInt("matchmaking.range-expansion", 50),
+                getConfig().getInt("matchmaking.expansion-interval-seconds", 2),
+                getConfig().getInt("matchmaking.max-range", 500)
         );
 
         tierGuiMenu = new TierGuiMenu(modeRegistry, seasonManager, queueService);
@@ -139,6 +154,8 @@ public class TierSpacePlugin extends JavaPlugin {
 
         queueFeedbackService = new QueueFeedbackService(this, queueService, store, feedbackService);
         queueFeedbackService.start();
+
+        hubService = new TierSpaceHubService(this, queueService, queueFeedbackService);
 
         anticheatIntegration = new AnticheatIntegration(this);
         anticheatIntegration.start();
@@ -168,6 +185,7 @@ public class TierSpacePlugin extends JavaPlugin {
 
         registerCommands();
         getServer().getPluginManager().registerEvents(new MatchListener(matchService, queueService), this);
+        getServer().getPluginManager().registerEvents(new MatchInventoryListener(matchService), this);
         getServer().getPluginManager().registerEvents(
                 new MatchProtectionListener(matchService, anticheatIntegration.matchProtectionService()), this);
         getServer().getPluginManager().registerEvents(
@@ -176,7 +194,8 @@ public class TierSpacePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(
                 new TierSpaceJoinListener(tabService, seasonManager, rankRewardService), this);
         getServer().getPluginManager().registerEvents(
-                new RankedSpawnListener(this, tierGuiMenu, partyGui, queueService, queueFeedbackService), this);
+                new RankedSpawnListener(this, hubService, tierGuiMenu, partyGui), this);
+        getServer().getPluginManager().registerEvents(new TierSpaceHubInventoryListener(), this);
         if (getServer().getPluginManager().isPluginEnabled("Citizens")) {
             getServer().getPluginManager().registerEvents(
                     new TierSpaceNpcListener(tierGuiMenu, matchService), this);
@@ -197,6 +216,14 @@ public class TierSpacePlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (matchService != null) {
+            matchService.shutdown();
+        }
+        if (queueService != null) {
+            for (org.bukkit.entity.Player online : org.bukkit.Bukkit.getOnlinePlayers()) {
+                queueService.leave(online.getUniqueId());
+            }
+        }
         if (queueGuiRefreshListener != null) {
             queueGuiRefreshListener.stop();
         }
@@ -226,6 +253,8 @@ public class TierSpacePlugin extends JavaPlugin {
         registerExecutor("queue", new QueueCommand(matchService, queueService, queueFeedbackService, modeRegistry));
         registerExecutor("leave", new LeaveCommand(queueService, queueFeedbackService));
         registerExecutor("party", new PartyCommand(partyService));
+        registerExecutor("arena", new ArenaCommand(
+                arenaService, arenaBackendClient, arenaSetupManager, modeRegistry));
     }
 
     private void registerExecutor(String name, org.bukkit.command.CommandExecutor executor) {
@@ -241,7 +270,7 @@ public class TierSpacePlugin extends JavaPlugin {
     }
 
     private void startMatchmakingTask() {
-        long interval = getConfig().getLong("matchmaking.tick-interval-seconds", 1L) * 20L;
+        long interval = Math.max(20L, getConfig().getLong("matchmaking.tick-interval-seconds", 2L) * 20L);
         Bukkit.getScheduler().runTaskTimer(this, () ->
                 queueService.findMatch().ifPresent(matchService::startMatch), interval, interval);
     }
@@ -260,6 +289,14 @@ public class TierSpacePlugin extends JavaPlugin {
 
     public PartyService getPartyService() {
         return partyService;
+    }
+
+    public QueueFeedbackService getQueueFeedbackService() {
+        return queueFeedbackService;
+    }
+
+    public TierSpaceHubService getHubService() {
+        return hubService;
     }
 
     public TierSpaceStore getStore() {
@@ -284,5 +321,9 @@ public class TierSpacePlugin extends JavaPlugin {
 
     public TierSeasonManager getSeasonManager() {
         return seasonManager;
+    }
+
+    public ArenaService getArenaService() {
+        return arenaService;
     }
 }

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cosméticos — MineSpace</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body data-page="cosmetics">
+  <div id="app-nav"></div>
+  <main class="container">
+    <h1 class="page-title">Cosméticos</h1>
+    <p class="muted">Trails, auras, prefixes e kill effects — desbloqueia no jogo ou na loja</p>
+    <div class="grid-3" id="cosmeticsGrid" style="margin-top:1.5rem;"></div>
+  </main>
+  <div id="app-footer"></div>
+  <script src="/js/layout.js"></script>
+  <script src="/js/site.js"></script>
+  <script src="/js/catalog.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const { cosmetics } = await fetch('/api/public/catalog/cosmetics').then((r) => r.json());
+        document.getElementById('cosmeticsGrid').innerHTML = (cosmetics || []).map((c) => `
+          <article class="card product-card">
+            <h3>${c.name}</h3>
+            ${rarityBadge(c.rarity)}
+            <p class="muted" style="margin-top:0.5rem;">${c.type}</p>
+            <p style="margin-top:0.5rem;">${esc(c.unlock)}</p>
+            <a href="store.html" class="btn btn-ghost btn-sm" style="margin-top:0.75rem;">Loja</a>
+          </article>`).join('');
+      } catch {
+        document.getElementById('cosmeticsGrid').innerHTML = '<p class="muted">Indisponível</p>';
+      }
+    });
+  </script>
+</body>
+</html>

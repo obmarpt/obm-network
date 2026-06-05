@@ -13,9 +13,34 @@ spawn:
   center:
     use-world-spawn: true
 
+# Zona segura Rush SMP — proteção + limite visual
+spawn-protection:
+  enabled: true
+  use-world-spawn: true
+  world: world
+  x: 0
+  y: 64
+  z: 0
+  radius: 100
+  boundary-shape: circle
+  block-exit: false
+  show-boundary: true
+  show-boundary-blocks: true
+  show-particles: true
+  particle-type: END_ROD
+  particle-density: medium
+  particle-interval-ticks: 15
+  render-distance: 50
+  proximity-warning-blocks: 3
+  show-distance-warning: true
+  block-type: RED_STAINED_GLASS
+  block-height: 1
+  regenerate-on-restart: true
+  boundary-only-replace-air: true
+
 economy:
-  kill-reward: 150
-  death-penalty: 50
+  kill-reward: 100
+  death-penalty: 40
   death-penalty-enabled: true
   pay:
     cooldown-seconds: 30
@@ -35,7 +60,7 @@ rewards:
   playtime:
     enabled: true
     interval-minutes: 30
-    amount: 500
+    amount: 400
 
   # Daily movido para OBM-Core (/daily + daily-rewards.smp-coins)
   daily:
@@ -51,38 +76,128 @@ rewards:
         coins: 1200
 
 ranks:
-  default: bronze
+  default: rookie
   levels:
-    bronze:
-      display-name: "Bronze"
+    rookie:
+      display-name: "Rookie"
       cost: 0
+      money-boost: 0.0
       sell-boost: 0.0
       kill-boost: 0.0
       shop-discount: 0.0
-    silver:
-      display-name: "Silver"
-      cost: 2500
+      extra-homes: 1
+      cooldown-reduction: 0.0
+      chat-prefix: "§7[Rookie]"
+    survivor:
+      display-name: "Survivor"
+      cost: 10000
+      money-boost: 0.05
       sell-boost: 0.05
       kill-boost: 0.05
+      shop-discount: 0.02
+      extra-homes: 2
+      cooldown-reduction: 0.05
+      chat-prefix: "§8[Survivor]"
+    fighter:
+      display-name: "Fighter"
+      cost: 50000
+      money-boost: 0.08
+      sell-boost: 0.08
+      kill-boost: 0.08
       shop-discount: 0.03
-    gold:
-      display-name: "Gold"
-      cost: 10000
+      extra-homes: 2
+      cooldown-reduction: 0.08
+      chat-prefix: "§a[Fighter]"
+    warrior:
+      display-name: "Warrior"
+      cost: 150000
+      money-boost: 0.10
       sell-boost: 0.10
       kill-boost: 0.10
+      shop-discount: 0.04
+      extra-homes: 3
+      cooldown-reduction: 0.10
+      chat-prefix: "§2[Warrior]"
+    knight:
+      display-name: "Knight"
+      cost: 500000
+      money-boost: 0.12
+      sell-boost: 0.12
+      kill-boost: 0.12
       shop-discount: 0.05
-    diamond:
-      display-name: "Diamond"
-      cost: 35000
+      extra-homes: 3
+      cooldown-reduction: 0.12
+      chat-prefix: "§b[Knight]"
+    elite:
+      display-name: "Elite"
+      cost: 1500000
+      money-boost: 0.15
       sell-boost: 0.15
       kill-boost: 0.15
+      shop-discount: 0.06
+      extra-homes: 4
+      cooldown-reduction: 0.15
+      chat-prefix: "§3[Elite]"
+    champion:
+      display-name: "Champion"
+      cost: 5000000
+      money-boost: 0.18
+      sell-boost: 0.18
+      kill-boost: 0.18
       shop-discount: 0.08
-    emerald:
-      display-name: "Emerald"
-      cost: 100000
-      sell-boost: 0.20
-      kill-boost: 0.20
+      extra-homes: 4
+      cooldown-reduction: 0.18
+      chat-prefix: "§e[Champion]"
+    legend:
+      display-name: "Legend"
+      cost: 15000000
+      money-boost: 0.22
+      sell-boost: 0.22
+      kill-boost: 0.22
       shop-discount: 0.10
+      extra-homes: 5
+      cooldown-reduction: 0.20
+      chat-prefix: "§6[Legend]"
+    mythic:
+      display-name: "Mythic"
+      cost: 50000000
+      money-boost: 0.28
+      sell-boost: 0.28
+      kill-boost: 0.28
+      shop-discount: 0.12
+      extra-homes: 5
+      cooldown-reduction: 0.25
+      chat-prefix: "§d[Mythic]"
+    immortal:
+      display-name: "Immortal"
+      cost: 150000000
+      money-boost: 0.35
+      sell-boost: 0.35
+      kill-boost: 0.35
+      shop-discount: 0.15
+      extra-homes: 6
+      cooldown-reduction: 0.28
+      chat-prefix: "§5[Immortal]"
+    divine:
+      display-name: "Divine"
+      cost: 300000000
+      money-boost: 0.42
+      sell-boost: 0.42
+      kill-boost: 0.42
+      shop-discount: 0.18
+      extra-homes: 6
+      cooldown-reduction: 0.32
+      chat-prefix: "§b§l[Divine]"
+    godlike:
+      display-name: "Godlike"
+      cost: 1000000000
+      money-boost: 0.50
+      sell-boost: 0.50
+      kill-boost: 0.50
+      shop-discount: 0.20
+      extra-homes: 7
+      cooldown-reduction: 0.35
+      chat-prefix: "§c§l[Godlike]"
 
 levels:
   xp-per-kill: 25
@@ -102,7 +217,7 @@ vip:
   coin-multiplier: 1.5
 
 admin:
-  debug: true
+  debug: false
 
 shop:
   debug-clicks: false
@@ -118,6 +233,10 @@ shop:
     - NETHERITE_BLOCK
     - NETHERITE_INGOT
     - NETHERITE_SCRAP
+    - END_CRYSTAL
+    - RESPAWN_ANCHOR
+    - TNT
+    - TNT_MINECART
   categories:
     combate:
       BOW: 220
@@ -1470,3 +1589,25 @@ shop:
       WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE: 800
       WILD_ARMOR_TRIM_SMITHING_TEMPLATE: 800
 # Total items: 1339
+
+duel:
+  enabled: true
+  world: duel
+  invite-timeout-seconds: 60
+  max-duration-seconds: 300
+  max-rounds: 3
+  round-countdown-seconds: 3
+  round-timeout-seconds: 120
+  return-to-original-position: true
+  spawn1:
+    x: 0
+    y: 64
+    z: 0
+    yaw: 0
+    pitch: 0
+  spawn2:
+    x: 10
+    y: 64
+    z: 0
+    yaw: 180
+    pitch: 0

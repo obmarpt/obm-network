@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verificar email — MineSpace</title>
+  <link rel="stylesheet" href="/css/site.css">
+</head>
+<body data-page="verify">
+  <div id="app-nav"></div>
+  <main class="container" style="max-width:480px;">
+    <h1 class="page-title">Verificar email</h1>
+    <div class="card" id="verifyResult"><p class="muted">A verificar...</p></div>
+    <a href="account.html" class="btn btn-ghost" style="margin-top:1rem;">Ir para conta</a>
+  </main>
+  <div id="app-footer"></div>
+  <script src="/js/layout.js"></script>
+  <script src="/js/site.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = new URLSearchParams(location.search).get('token');
+      const el = document.getElementById('verifyResult');
+      if (!token) {
+        el.innerHTML = '<p class="error">Token em falta.</p>';
+        return;
+      }
+      try {
+        await api(`/api/web/auth/verify?token=${encodeURIComponent(token)}`);
+        el.innerHTML = '<p class="success-msg">✓ Email verificado com sucesso!</p>';
+      } catch {
+        el.innerHTML = '<p class="error">Link inválido ou expirado. Pede um novo em Conta.</p>';
+      }
+    });
+  </script>
+</body>
+</html>
